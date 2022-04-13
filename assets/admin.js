@@ -46,8 +46,32 @@ $(document).ready(function() {
     });
     authForm.form('validate form');
     if(authForm.form('is valid')) {
-      //TODO: go ajax
-      alert('go ajax');
+      GetGiteeToken(authForm);
     }
   });
 });
+
+function GetGiteeToken(form) {
+  authForm = $('#form-gitee-authorize'); 
+  var data = JSON.stringify( {
+    "client_id" : form.form('get value', 'client_id'),
+    "client_secret": form.form('get value', 'client_secret'),
+    "redirect_url" : form.form('get value', 'redirect_url'),  
+    "code" : form.form('get value', 'code')
+  })
+  $.ajax({
+    type: "POST",
+    url: '/admin/gitee/token',    
+    contentType: "application/json",
+    dataType: "json",
+    data: data,
+    success: function(data) {            
+      $('#gitee-token-message').html('<code>'+data+'</code>');
+      $('#gitee-token-message').removeClass('error').addClass('positive').addClass('visible');
+    },
+    error: function(xhr) {
+      $('#gitee-token-message').html('<code>'+xhr.responseText+'</code>');
+      $('#gitee-token-message').removeClass('positive').addClass('error').addClass('visible');
+    }
+  });
+}

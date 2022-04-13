@@ -10,6 +10,8 @@ package utils
 
 import (
 	"log"
+	"os"
+	"path/filepath"
 	"reflect"
 	"strings"
 )
@@ -22,4 +24,35 @@ func ExitOnError(err error) {
 
 func EmptyString(str string) bool {
 	return reflect.DeepEqual("", strings.TrimSpace(str))
+}
+
+// Write file to RepoStats home path
+//
+func WriteRepoStatsFile(file string, data []byte) error {
+	appHome, err := appHomeDir()
+	if err != nil {
+		return err
+	}
+	return os.WriteFile(filepath.Join(appHome, "/", file), data, os.ModePerm)
+}
+
+// Read file content from RepoStats home path
+//
+func ReadRepoStatsFile(file string) ([]byte, error) {
+	appHome, err := appHomeDir()
+	if err != nil {
+		return nil, err
+	}
+	return os.ReadFile(filepath.Join(appHome, "/", file))
+}
+
+// Get App Home Dir
+//
+func appHomeDir() (string, error) {
+	home, err := os.UserHomeDir()
+	if err != nil {
+		return "", err
+	}
+	appPath := filepath.Join(home, ".repostats")
+	return appPath, os.MkdirAll(appPath, os.ModePerm)
 }

@@ -72,7 +72,7 @@ func initRouter(router *gin.Engine) {
 	router.GET("/login", controller.Login)
 	router.POST("/login", controller.DoLogin)
 
-	admin := router.Group("/admin") //TODO: auth handler needed
+	admin := router.Group("/admin", controller.AdminAuthHanlder())
 	admin.POST("/logout", controller.DoLogout)
 	admin.GET("/", func(ctx *gin.Context) { ctx.Redirect(http.StatusFound, "/admin/dashboard") })
 	admin.GET("/dashboard", controller.DashboardPage)
@@ -81,6 +81,9 @@ func initRouter(router *gin.Engine) {
 	admin.GET("/github", controller.GithubPage)
 	admin.GET("/repos", controller.ReposPage)
 	admin.GET("/grafana", controller.GrafanaPage)
+
+	public := router.Group("/admin") //Same url path with /admin WITHOUT auth handler
+	public.POST("/gitee/token", controller.GiteeTokenRetrieve)
 
 	router.SetHTMLTemplate(tmpl)
 }
