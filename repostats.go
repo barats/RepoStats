@@ -14,8 +14,10 @@ import (
 	"fmt"
 	"html/template"
 	"io/fs"
+	"log"
 	"net/http"
 	"os"
+	"repostats/controller"
 	"repostats/storage"
 	"repostats/utils"
 
@@ -52,6 +54,13 @@ func main() {
 	gin.SetMode(gin.ReleaseMode)
 	router := gin.Default()
 
+	initRouter(router)
+
+	log.Println(fmt.Sprintf("[RepoStats v%s build:%s] starts at http://localhost:%d", Version, Build, utils.RepoStatsConfig.AdminPort))
+	router.Run(fmt.Sprintf("localhost:%d", utils.RepoStatsConfig.AdminPort))
+}
+
+func initRouter(router *gin.Engine) {
 	sub, err := fs.Sub(FS, "assets")
 	utils.ExitOnError(err)
 
@@ -60,7 +69,18 @@ func main() {
 	tmpl, err := template.New("").ParseFS(FS, "templates/*.html")
 	utils.ExitOnError(err)
 
-	router.SetHTMLTemplate(tmpl)
+	router.GET("/login", controller.Login)
+	router.POST("/login", controller.DoLogin)
 
-	router.Run(":9100")
+	admin := router.Group("/admin") //TODO: auth handler needed
+	admin.POST("/logout", controller.DoLogout)
+	admin.GET("/", func(ctx *gin.Context) { ctx.Redirect(http.StatusFound, "/admin/dashboard") })
+	admin.GET("/dashboard", controller.DashboardPage)
+	admin.GET("/schedule", controller.SchedulePage)
+	admin.GET("/gitee", controller.GiteePage)
+	admin.GET("/github", controller.GithubPage)
+	admin.GET("/repos", controller.ReposPage)
+	admin.GET("/grafana", controller.GrafanaPage)
+
+	router.SetHTMLTemplate(tmpl)
 }

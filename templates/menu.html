@@ -1,0 +1,16 @@
+{{define "admin-left-menu.html" -}}
+<div id="admin-left-menu" class="ui inverted vertical left fixed menu">  
+  <div class="item">
+    <div class="ui inverted header">RepoStats</div>
+    <div class="menu">
+      <a class="{{if eq .current_url "/admin/dashboard"}}active {{end}}item" target="_self" href="/admin/dashboard">仪表盘</a>      
+      <a class="{{if eq .current_url "/admin/gitee"}}active {{end}}item" target="_self" href="/admin/gitee">Gitee 配置</a>
+      <a class="{{if eq .current_url "/admin/github"}}active {{end}}item" target="_self"  href="/admin/github">Github 配置</a> 
+      <a class="{{if eq .current_url "/admin/grafana"}}active {{end}}item" target="_self" href="/admin/grafana">Grafana 配置</a>      
+      <a class="{{if eq .current_url "/admin/repos"}}active {{end}}item" target="_self" href="/admin/repos">代码仓库列表</a>      
+      <a class="{{if eq .current_url "/admin/schedule"}}active {{end}}item" target="_self" href="/admin/schedule">计划任务配置</a>      
+    </div>    
+  </div>      
+  <a class="item" target="_self" href="javascript:sign_out_config()">安全退出</a>  
+</div><!--end of left-menu-->
+{{end -}}

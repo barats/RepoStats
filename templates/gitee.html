@@ -1,0 +1,51 @@
+{{define "gitee.html" -}}
+{{template "header.html" .}}
+{{template "admin-left-menu.html" .}}
+<div id="admin-right-content">
+  <div class="ui basic segment">
+    <h3 class="ui header">Gitee 配置</h3>
+    <div class="ui content">
+      <p>RepoStats 使用 Oauth 授权码模式访问 Gitee 授权许可的接口并获取相关数据。</p>
+      <p>1. 请根据 <a target="_blank" href="https://gitee.com/api/v5/oauth_doc#/">《Gitee Oauth 文档》</a> 指南新建第三方应用。 </p>
+      <p>2. 创建第三方应用成功后，请将对应的信息填入下列表格中。</p>
+      <p>3. 首先点击「应用授权」完成操作。再获取 code 之后，再点击「获取 Token」Oauth 过程。</p>
+      <div class="ui two column stackable grid">
+        <div class="eight wide column">
+          <h3>应用信息</h3>
+          <form id="form-gitee-authorize" class="ui form">
+            <div class="ui field">
+              <label>Client ID</label>
+              <input type="text" name="client_id" placeholder="Client ID">
+            </div>
+            <div class="field">
+              <label>Client Secret</label>
+              <input type="text" name="client_secret" placeholder="Client Secret">
+            </div>
+            <div class="field">
+              <label>应用回调地址</label>
+              <input type="text" name="redirect_url" placeholder="应用回调地址">
+            </div>
+            <div class="field">
+              <label>权限</label>
+              <input type="text" name="scopes" readonly value="user_info projects pull_requests issues emails">
+            </div>  
+            <div class="field">
+              <label>授权 Code</label>
+              <input type="text" name="code" placeholder="获取授权完成后，转向到回调地址 url 中携带的 code 值">
+            </div>                      
+            <div class="ui error message"></div>
+            <button id="btn-gitee-authorize" class="ui button" type="button">应用授权</button>
+            <button id="btn-gitee-token" class="ui button" type="button">获取 Token</button>
+          </form>          
+        </div>
+        <div class="eight wide column">
+          <h3>注意事项</h3>
+          <p>RepoStats 当前版本需要获取至少以下权限才能保证各项功能正常。</p>
+          <img src="/assets/imgs/scopes.jpg" />
+        </div>        
+      </div>      
+    </div><!--end of ui content-->
+  </div>  <!--end of basic segment-->
+</div><!--end of admin-right-content-->
+{{template "footer.html" .}}
+{{end -}}
