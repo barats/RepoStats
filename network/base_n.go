@@ -17,7 +17,7 @@ import (
 
 const (
 	CONTENT_TYPE = "application/json"
-	USER_AGENT   = "RepoStats https://gitee.com/barat"
+	USER_AGENT   = "RepoStats https://gitee.com/barat | https://github.com/barats"
 )
 
 type OauthToken struct {

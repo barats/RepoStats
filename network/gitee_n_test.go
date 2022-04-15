@@ -1,0 +1,149 @@
+// Copyright (c) [2022] [巴拉迪维 BaratSemet]
+// [ohUrlShortener] is licensed under Mulan PSL v2.
+// You can use this software according to the terms and conditions of the Mulan PSL v2.
+// You may obtain a copy of Mulan PSL v2 at:
+// 				 http://license.coscl.org.cn/MulanPSL2
+// THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
+// See the Mulan PSL v2 for more details.
+
+package network
+
+import (
+	"log"
+	"reflect"
+	"testing"
+)
+
+func testSetup(t *testing.T) {
+	log.Println("test start -->")
+}
+
+func testTeardown(t *testing.T) {
+	log.Println("test done <--")
+}
+
+func TestGetRepoCommits(t *testing.T) {
+
+	testSetup(t)
+	defer testTeardown(t)
+
+	//https://gitee.com/barat/ohurlshortener 51 commits so far
+
+	type args struct {
+		owner string
+		repo  string
+	}
+	tests := []struct {
+		name    string
+		args    args
+		want    int
+		wantErr bool
+	}{
+		{name: "TestCase1", args: args{owner: "barat", repo: "ohurlshortener"}, want: 51, wantErr: false},
+		{name: "TestCase1", args: args{owner: "barat111", repo: "ohurlshortener"}, want: 0, wantErr: true},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got, err := GetCommits(tt.args.owner, tt.args.repo)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("GetCommits() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if !reflect.DeepEqual(len(got), tt.want) {
+				t.Errorf("GetCommits() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestGrabOrgRepos(t *testing.T) {
+
+	testSetup(t)
+	defer testTeardown(t)
+
+	type args struct {
+		org string
+	}
+	tests := []struct {
+		name    string
+		args    args
+		want    int
+		wantErr bool
+	}{
+		{name: "TestOpenharmony", args: args{org: "openharmony"}, want: 394, wantErr: false}, //currently has 394 repos
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got, err := GetOrgRepos(tt.args.org)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("GetOrgRepos() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if !reflect.DeepEqual(len(got), tt.want) {
+				t.Errorf("GetOrgRepos() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestGrabUserRepos(t *testing.T) {
+
+	testSetup(t)
+	defer testTeardown(t)
+
+	type args struct {
+		name string
+	}
+	tests := []struct {
+		name    string
+		args    args
+		want    int
+		wantErr bool
+	}{
+		{name: "TestCase barat", args: args{name: "barat"}, want: 6, wantErr: false}, // I have 6 public repos
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got, err := GetUserRepos(tt.args.name)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("GetUserRepos() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if !reflect.DeepEqual(len(got), tt.want) {
+				t.Errorf("GetUserRepos() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestGrabIssues(t *testing.T) {
+
+	testSetup(t)
+	defer testTeardown(t)
+
+	type args struct {
+		owner string
+		repo  string
+	}
+	tests := []struct {
+		name    string
+		args    args
+		want    int
+		wantErr bool
+	}{
+		{name: "TestCase barat/ohurlshortener", args: args{owner: "barat", repo: "ohurlshortener"}, want: 3, wantErr: false}, //should be 3 at the moment
+		// {name: "TestCase openharmony/community", args: args{owner: "openharmony", repo: "community"}, want: 107, wantErr: false}, //should be 107 at the moment
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got, err := GetIssues(tt.args.owner, tt.args.repo)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("GetIssues() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if !reflect.DeepEqual(len(got), tt.want) {
+				t.Errorf("GetIssues() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}

@@ -5,10 +5,16 @@
   <div class="ui basic segment">
     <h3 class="ui header">Gitee 配置</h3>
     <div class="ui content">
-      <p>RepoStats 使用 Oauth 授权码模式访问 Gitee 授权许可的接口并获取相关数据。</p>
-      <p>1. 请根据 <a target="_blank" href="https://gitee.com/api/v5/oauth_doc#/">《Gitee Oauth 文档》</a> 指南新建第三方应用。 </p>
-      <p>2. 创建第三方应用成功后，请将对应的信息填入下列表格中。</p>
-      <p>3. 首先点击「应用授权」完成操作。再获取 code 之后，再点击「获取 Token」Oauth 过程。</p>
+      <div class="ui compact info message">
+        <div class="header">须知事项</div>
+        <p>RepoStats 使用 Oauth 授权码模式访问 Gitee 授权许可的接口并获取相关数据。</p>
+        <ul class="list">
+          <li>请根据 <a target="_blank" href="https://gitee.com/api/v5/oauth_doc#/">《Gitee Oauth 文档》</a> 指南在 Gitee 平台新建属于您的第三方应用 </li>
+          <li>将您的应用信息填入下列表格中并点击「应用授权」以获取 Gitee 平台授权 Code，此过程将打开新窗口页面</li>
+          <li>将授权成功后转向页面 url 中的 code 信息填入下列表格，再点击「获取 Token」完成全过程</li>
+          <li>在此过程中，RepoStats 不会保存任何第三方应用信息，只记录最终的 AccessToken 以备网络请求使用</li>
+        </ul>      
+      </div>      
       <div class="ui two column stackable grid">
         <div class="eight wide column">
           <h3>应用信息</h3>          
@@ -36,9 +42,10 @@
             <div id="gitee-token-message" class="ui error message"></div>            
             {{if .oauth_info}}
               <div class="ui bottom attached compact positive message">
+                <i class="close icon"></i>
                 <div class="header">Gitee AccessToken</div>
                   <p>当前 token 信息已存在，若无必要不必重新获取。</p>
-                  <p style="word-break: break-word;">{{.oauth_info}}</p>                 
+                  <code style="word-break: break-word;">{{.oauth_info}}</code>                 
               </div>            
             {{end}}            
             <button id="btn-gitee-authorize" class="ui button" type="button">应用授权</button>
