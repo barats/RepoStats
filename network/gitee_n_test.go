@@ -44,7 +44,7 @@ func TestGetRepoCommits(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, err := GetCommits(tt.args.owner, tt.args.repo)
+			got, err := GetGiteeCommits(tt.args.owner, tt.args.repo)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("GetCommits() error = %v, wantErr %v", err, tt.wantErr)
 				return
@@ -74,7 +74,7 @@ func TestGrabOrgRepos(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, err := GetOrgRepos(tt.args.org)
+			got, err := GetGiteeOrgRepos(tt.args.org)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("GetOrgRepos() error = %v, wantErr %v", err, tt.wantErr)
 				return
@@ -104,7 +104,7 @@ func TestGrabUserRepos(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, err := GetUserRepos(tt.args.name)
+			got, err := GetGiteeUserRepos(tt.args.name)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("GetUserRepos() error = %v, wantErr %v", err, tt.wantErr)
 				return
@@ -136,13 +136,45 @@ func TestGrabIssues(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, err := GetIssues(tt.args.owner, tt.args.repo)
+			got, err := GetGiteeIssues(tt.args.owner, tt.args.repo)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("GetIssues() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
 			if !reflect.DeepEqual(len(got), tt.want) {
 				t.Errorf("GetIssues() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestGetGiteePullRequests(t *testing.T) {
+
+	testSetup(t)
+	defer testTeardown(t)
+
+	type args struct {
+		owner string
+		repo  string
+	}
+	tests := []struct {
+		name    string
+		args    args
+		want    int
+		wantErr bool
+	}{
+		{name: "TestPR barat/ohurlshortener", args: args{owner: "barat", repo: "ohurlshortener"}, want: 1, wantErr: false},
+		{name: "TestPR openharmony/vendor_hisilicon", args: args{owner: "openharmony", repo: "vendor_hisilicon"}, want: 448, wantErr: false}, //should be 448 at the moment
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got, err := GetGiteePullRequests(tt.args.owner, tt.args.repo)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("GetGiteePullRequests() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if !reflect.DeepEqual(len(got), tt.want) {
+				t.Errorf("GetGiteePullRequests() = %v, want %v", got, tt.want)
 			}
 		})
 	}

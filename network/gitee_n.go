@@ -20,10 +20,53 @@ import (
 	"time"
 )
 
+// 获取指定仓库的 PR
+//
+//
+func GetGiteePullRequests(owner string, repo string) ([]gitee_model.PullRequest, error) {
+	token, err := validGiteeToken()
+	if err != nil {
+		return nil, err
+	}
+
+	var allPrs = []gitee_model.PullRequest{}
+	page := gitee_model.GITEE_API_START_PAGE
+	for {
+		page += 1
+		url := fmt.Sprintf("%s/repos/%s/%s/pulls", gitee_model.GITEE_OAUTH_V5PREFIX, owner, repo)
+		code, rs, err := HttpGet(token.AccessToken, url, nil, map[string]string{
+			"page":     strconv.Itoa(page),
+			"per_page": strconv.Itoa(gitee_model.GITEE_API_PAGE_SIZE),
+			"state":    "all",
+		})
+
+		if err != nil {
+			return allPrs, err
+		}
+
+		if code != http.StatusOK {
+			return allPrs, fmt.Errorf("GrabPullRequest failed during network. Status Code: %d", code)
+		}
+
+		var prs = []gitee_model.PullRequest{}
+		e := json.Unmarshal([]byte(rs), &prs)
+		if e != nil {
+			return allPrs, e
+		}
+
+		if len(prs) > 0 {
+			allPrs = append(allPrs, prs...)
+			continue
+		}
+		break
+	} //end of for
+	return allPrs, nil
+}
+
 // 获取组织下的所有公开仓库
 //
 // 调用此方法之前，务必确保是组织帐号
-func GetOrgRepos(org string) ([]gitee_model.Repository, error) {
+func GetGiteeOrgRepos(org string) ([]gitee_model.Repository, error) {
 	token, err := validGiteeToken()
 	if err != nil {
 		return nil, err
@@ -67,7 +110,7 @@ func GetOrgRepos(org string) ([]gitee_model.Repository, error) {
 // 获取个人用户名下的所有公开仓库
 //
 // 调用此方法之前，务必确保是个人帐号
-func GetUserRepos(name string) ([]gitee_model.Repository, error) {
+func GetGiteeUserRepos(name string) ([]gitee_model.Repository, error) {
 	token, err := validGiteeToken()
 	if err != nil {
 		return nil, err
@@ -112,7 +155,7 @@ func GetUserRepos(name string) ([]gitee_model.Repository, error) {
 //获取指定仓库的 issue
 //
 //
-func GetIssues(owner string, repo string) ([]gitee_model.Issue, error) {
+func GetGiteeIssues(owner string, repo string) ([]gitee_model.Issue, error) {
 
 	token, err := validGiteeToken()
 	if err != nil {
@@ -156,7 +199,7 @@ func GetIssues(owner string, repo string) ([]gitee_model.Issue, error) {
 // 从仓库中获取提交记录
 //
 // 从制定的 owner 和 repo 中获取全部提交
-func GetCommits(owner string, repo string) ([]gitee_model.Commit, error) {
+func GetGiteeCommits(owner string, repo string) ([]gitee_model.Commit, error) {
 	token, err := validGiteeToken()
 	if err != nil {
 		return nil, err

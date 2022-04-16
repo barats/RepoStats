@@ -20,10 +20,10 @@ func TestBulkSaveRepos(t *testing.T) {
 	testSetup(t)
 	defer testTeardown(t)
 
-	found1, err := network.GetUserRepos("barat")
+	found1, err := network.GetGiteeUserRepos("barat")
 	utils.ExitOnError(err)
 
-	found2, err := network.GetOrgRepos("openharmony")
+	found2, err := network.GetGiteeOrgRepos("openharmony")
 	utils.ExitOnError(err)
 
 	type args struct {

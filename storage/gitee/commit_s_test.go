@@ -39,7 +39,7 @@ func TestBulkSaveCommits(t *testing.T) {
 	testSetup(t)
 	defer testTeardown(t)
 
-	found, err := network.GetCommits("openharmony", "community")
+	found, err := network.GetGiteeCommits("openharmony", "community")
 	utils.ExitOnError(err)
 
 	type args struct {

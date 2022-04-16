@@ -20,10 +20,10 @@ func TestBulkSaveIssues(t *testing.T) {
 	testSetup(t)
 	defer testTeardown(t)
 
-	found, err := network.GetIssues("barat", "ohurlshortener")
+	found, err := network.GetGiteeIssues("barat", "ohurlshortener")
 	utils.ExitOnError(err)
 
-	found2, err := network.GetIssues("openharmony", "community")
+	found2, err := network.GetGiteeIssues("openharmony", "community")
 	utils.ExitOnError(err)
 
 	type args struct {
