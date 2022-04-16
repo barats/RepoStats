@@ -179,3 +179,56 @@ func TestGetGiteePullRequests(t *testing.T) {
 		})
 	}
 }
+
+func TestGetGiteeUserInfo(t *testing.T) {
+
+	type args struct {
+		login string
+	}
+	tests := []struct {
+		name    string
+		args    args
+		want    string
+		wantErr bool
+	}{
+		{name: "TestCase user", args: args{login: "barat"}, want: "巴拉迪维", wantErr: false},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got, err := GetGiteeUserInfo(tt.args.login)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("GetGiteeUserInfo() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if !reflect.DeepEqual(got.Name, tt.want) {
+				t.Errorf("GetGiteeUserInfo() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestGetGiteeOrgInfo(t *testing.T) {
+	type args struct {
+		login string
+	}
+	tests := []struct {
+		name    string
+		args    args
+		want    string
+		wantErr bool
+	}{
+		{name: "TestCase user", args: args{login: "openharmony"}, want: "OpenHarmony", wantErr: false},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got, err := GetGiteeOrgInfo(tt.args.login)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("GetGiteeOrgInfo() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if !reflect.DeepEqual(got.Name, tt.want) {
+				t.Errorf("GetGiteeOrgInfo() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}

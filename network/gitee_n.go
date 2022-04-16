@@ -20,6 +20,56 @@ import (
 	"time"
 )
 
+// 获取指定用户的详细信息
+//
+// login 是 Gitee 登录帐号
+func GetGiteeUserInfo(login string) (gitee_model.User, error) {
+	var foundUser gitee_model.User
+	token, err := validGiteeToken()
+	if err != nil {
+		return foundUser, err
+	}
+
+	//first try as user
+	url := fmt.Sprintf("%s/users/%s", gitee_model.GITEE_OAUTH_V5PREFIX, login)
+	code, rs, err := HttpGet(token.AccessToken, url, nil, nil)
+
+	if err != nil {
+		return foundUser, err
+	}
+
+	if code != http.StatusOK {
+		return foundUser, fmt.Errorf("GetGiteeUserInfo failed during network. Status Code: %d", code)
+	}
+
+	return foundUser, json.Unmarshal([]byte(rs), &foundUser)
+}
+
+// 获取指定组织帐号的信息
+//
+// login 是 Gitee 登录帐号
+func GetGiteeOrgInfo(login string) (gitee_model.User, error) {
+	var foundUser gitee_model.User
+	token, err := validGiteeToken()
+	if err != nil {
+		return foundUser, err
+	}
+
+	//first try as user
+	url := fmt.Sprintf("%s/orgs/%s", gitee_model.GITEE_OAUTH_V5PREFIX, login)
+	code, rs, err := HttpGet(token.AccessToken, url, nil, nil)
+
+	if err != nil {
+		return foundUser, err
+	}
+
+	if code != http.StatusOK {
+		return foundUser, fmt.Errorf("GetGiteeUserInfo failed during network. Status Code: %d", code)
+	}
+
+	return foundUser, json.Unmarshal([]byte(rs), &foundUser)
+}
+
 // 获取指定仓库的 PR
 //
 //

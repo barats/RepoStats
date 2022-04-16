@@ -7,3 +7,16 @@
 // See the Mulan PSL v2 for more details.
 
 package gitee
+
+import (
+	gitee_model "repostats/model/gitee"
+	"repostats/storage"
+)
+
+func BulkSaveUsers(users []gitee_model.User) error {
+	query := `INSERT INTO gitee.users (id, login, "name", avatar_url, html_url, remark, "type", email, created_at)
+	VALUES(:id,:login,:name,:avatar_url,:html_url,:remark,:type,:email,:created_at)
+	ON CONFLICT (id) DO UPDATE SET login=EXCLUDED.login,name=EXCLUDED.name,avatar_url=EXCLUDED.avatar_url,html_url=EXCLUDED.html_url,
+	remark=EXCLUDED.remark,type=EXCLUDED.type,email=EXCLUDED.email,created_at=EXCLUDED.created_at`
+	return storage.DbNamedExec(query, users)
+}

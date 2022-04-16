@@ -91,6 +91,20 @@ CREATE TABLE gitee.pull_requests (
 	CONSTRAINT uni_gitee_prs UNIQUE (id,repo_id)
 );
 
+-- Users
+CREATE TABLE gitee.users ( 
+	id int8 NOT NULL,
+	login VARCHAR(500),
+	"name" VARCHAR(1000),
+	avatar_url VARCHAR(1000),
+	html_url VARCHAR(1000),
+	remark VARCHAR(1000), 
+	"type" VARCHAR(500),
+	email VARCHAR(1000),
+	created_at TIMESTAMP WITH TIME ZONE,
+	CONSTRAINT uni_gitee_users_id UNIQUE (id)
+);
+
 -- Stargazers
 CREATE TABLE gitee.stargazers ( 
 	user_id int8 NOT NULL,
@@ -106,12 +120,4 @@ CREATE TABLE gitee.collaborators (
 	 CONSTRAINT uni_gitee_rcs UNIQUE (user_id,repo_id)
 );
 
--- Users
-CREATE TABLE gitee.users ( 
-	id int8 NOT NULL,
-	login VARCHAR(100) NOT NULL,
-	"name" VARCHAR(255) NOT NULL,
-	html_url VARCHAR(255) NOT NULL,
-	"type" VARCHAR(50) NULL,
-	CONSTRAINT uni_gitee_users_id UNIQUE (id)
-);
+
