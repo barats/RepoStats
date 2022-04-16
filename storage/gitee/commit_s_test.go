@@ -42,6 +42,10 @@ func TestBulkSaveCommits(t *testing.T) {
 	found, err := network.GetGiteeCommits("openharmony", "community")
 	utils.ExitOnError(err)
 
+	for i := 0; i < len(found); i++ {
+		found[i].RepoID = 10918992
+	}
+
 	type args struct {
 		commits []gitee_model.Commit
 	}
@@ -50,7 +54,6 @@ func TestBulkSaveCommits(t *testing.T) {
 		args    args
 		wantErr bool
 	}{
-
 		{name: "TestCase1", args: args{commits: found}, wantErr: false},
 	}
 	for _, tt := range tests {

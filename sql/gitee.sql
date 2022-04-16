@@ -29,31 +29,31 @@ CREATE TABLE gitee.repos (
   CONSTRAINT uni_gitee_repo_id UNIQUE (id)
 );
 
+-- Commits
 CREATE TABLE gitee.commits (
-	repo_id int8,
-	repo_url VARCHAR(2000),
 	sha VARCHAR(80) NOT NULL,
-	commit_url VARCHAR(2000) NOT NULL,	
-	author_name VARCHAR(500) NULL,
-	author_email VARCHAR(500) NULL,
+	repo_id int8 NOT NULL,	
+	html_url VARCHAR(2000),	
+	author_name VARCHAR(500),
+	author_email VARCHAR(500),
 	author_date TIMESTAMP WITH TIME ZONE,
 	committer_name VARCHAR(200) ,
 	committer_email VARCHAR(200) ,
 	committer_date TIMESTAMP WITH TIME ZONE ,
-	detail_message TEXT ,
+	detail_message TEXT,
 	tree VARCHAR(80),	
 	CONSTRAINT uni_gitee_commits UNIQUE (sha,repo_id)
 );
 
 -- Issues
 CREATE TABLE gitee.issues ( 
-	id int8 ,		
+	id int8 NOT NULL,		
+	"user_id" int8 NOT NULL,
+	repo_id int8 NOT NULL,
 	html_url VARCHAR(2000),
 	"number" VARCHAR(100),
 	"state" VARCHAR(100),
-	title VARCHAR(1000),
-	"user_id" int8,
-	repo_id int8 ,
+	title VARCHAR(1000),	
 	finished_at TIMESTAMP WITH TIME ZONE,
 	created_at TIMESTAMP WITH TIME ZONE,
 	updated_at TIMESTAMP WITH TIME ZONE,	
@@ -63,25 +63,32 @@ CREATE TABLE gitee.issues (
 	issue_type VARCHAR(100),
 	issue_state VARCHAR(100),
 	security_hole BOOLEAN,
-	CONSTRAINT uni_gitee_issue_id UNIQUE (id)
+	CONSTRAINT uni_gitee_issue_id UNIQUE (id,repo_id)
 );
 
 -- Pull requests
 CREATE TABLE gitee.pull_requests ( 
 	id int8 NOT NULL,
 	repo_id int8 NOT NULL,
-	"user_id" BIGINT NOT NULL,
-	html_url VARCHAR(500) NOT NULL,
-	"number" VARCHAR(40) NOT NULL,
-	"state" VARCHAR(40) NOT NULL,
-	finished_at TIMESTAMP WITH TIME ZONE,
-	created_at TIMESTAMP WITH TIME ZONE NOT NULL,
+	"user_id" int8 NOT NULL,		
+	html_url VARCHAR(2000),
+	diff_url VARCHAR(2000),
+	patch_url VARCHAR(2000),
+	"number" int8,
+	"state" VARCHAR(100),
+	created_at TIMESTAMP WITH TIME ZONE,
 	updated_at TIMESTAMP WITH TIME ZONE,
 	closed_at TIMESTAMP WITH TIME ZONE,
 	merged_at TIMESTAMP WITH TIME ZONE,
 	mergeable BOOLEAN, 
 	can_merge_check BOOLEAN,
-	CONSTRAINT uni_gitee_prs UNIQUE (id)
+	title varchar(1000),
+	head_label VARCHAR(100),
+	head_ref VARCHAR(100),
+	head_sha VARCHAR(100),
+	head_user_id int8,	
+	head_repo_id int8,		
+	CONSTRAINT uni_gitee_prs UNIQUE (id,repo_id)
 );
 
 -- Stargazers

@@ -9,11 +9,13 @@
 package gitee
 
 import (
+	"reflect"
 	"time"
 )
 
 type Issue struct {
 	ID             int        `json:"id" db:"id"`
+	RepoID         int64      `json:"repo_id"`
 	RepositoryURL  string     `json:"repository_url" db:"repository_url"`
 	HTMLURL        string     `json:"html_url" db:"html_url"`
 	Number         string     `json:"number" db:"number"`
@@ -30,4 +32,8 @@ type Issue struct {
 	IssueType      string     `json:"issue_type" db:"issue_type"`
 	SecurityHole   bool       `json:"security_hole" db:"security_hole"`
 	IssueState     string     `json:"issue_state" db:"issue_state"`
+}
+
+func (i Issue) isNilOrEmpty() bool {
+	return reflect.DeepEqual(i, Issue{})
 }

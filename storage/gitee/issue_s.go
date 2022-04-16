@@ -18,7 +18,7 @@ func BulkSaveIssues(iss []gitee_model.Issue) error {
 				updated_at, plan_started_at, "comments", priority, issue_type, issue_state, security_hole)
 				VALUES(:id,:html_url,:number,:state,:title,:user.id,:repository.id,:finished_at,:created_at,
 				:updated_at,:plan_started_at,:comments,:priority,:issue_type, :issue_state, :security_hole)
-				ON CONFLICT (id) DO UPDATE SET id=EXCLUDED.id,html_url=EXCLUDED.html_url,number=EXCLUDED.number,
+				ON CONFLICT (id,repo_id) DO UPDATE SET id=EXCLUDED.id,html_url=EXCLUDED.html_url,number=EXCLUDED.number,
 				state=EXCLUDED.state,title=EXCLUDED.title,user_id=EXCLUDED.user_id,repo_id=EXCLUDED.repo_id,
 				finished_at=EXCLUDED.finished_at,created_at=EXCLUDED.created_at, updated_at=EXCLUDED.updated_at,
 				plan_started_at=EXCLUDED.plan_started_at,comments=EXCLUDED.comments,priority=EXCLUDED.priority,

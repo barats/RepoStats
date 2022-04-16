@@ -15,10 +15,8 @@ import (
 
 type Commit struct {
 	RepoID  int    `db:"repo_id"`
-	RepoURL string `db:"repo_url"`
-
-	Sha       string `db:"sha" json:"sha"`
-	CommitURL string `db:"commit_url" json:"html_url"`
+	Sha     string `db:"sha" json:"sha"`
+	HtmlUrl string `db:"html_url" json:"html_url"`
 
 	Committer User `json:"committer"`
 	Author    User `json:"author"`
@@ -39,6 +37,6 @@ type Commit struct {
 	} `json:"commit" db:"commit"`
 }
 
-func (u Commit) isNilOrEmpty() bool {
-	return reflect.DeepEqual(u, Commit{})
+func (c Commit) isNilOrEmpty() bool {
+	return reflect.DeepEqual(c, Commit{})
 }
