@@ -13,6 +13,12 @@ import (
 	"repostats/storage"
 )
 
+var selectQueryPrefix = `SELECT c.author_name AS "author.name",c.author_email AS "author.email", 
+c.author_name AS "commit.author.name", c.author_email AS "commit.author.email", c.author_date AS "commit.author.date",
+c.committer_name AS "committer.name",c.committer_email AS "committer.email", 
+c.committer_name AS "commit.committer.name", c.committer_email AS "commit.committer.email", c.committer_date AS "commit.committer.date",
+c.detail_message AS "commit.message", c.tree AS "commit.tree.sha",c.* FROM gitee.commits c `
+
 func BulkSaveCommits(commits []gitee_model.Commit) error {
 	query := `INSERT INTO gitee.commits (repo_id, sha, html_url, author_name, author_email, author_date, committer_name, 
 		committer_email, committer_date, detail_message,tree)
@@ -22,4 +28,25 @@ func BulkSaveCommits(commits []gitee_model.Commit) error {
 	author_name=EXCLUDED.author_name,author_email=EXCLUDED.author_email,author_date=EXCLUDED.author_date,committer_name=EXCLUDED.committer_name,
 	committer_email=EXCLUDED.committer_email,committer_date=EXCLUDED.committer_date,detail_message=EXCLUDED.detail_message,tree=EXCLUDED.tree`
 	return storage.DbNamedExec(query, commits)
+}
+
+func FindCommits() ([]gitee_model.Commit, error) {
+	found := []gitee_model.Commit{}
+	query := selectQueryPrefix + ` ORDER BY c.author_date DESC`
+	err := storage.DbSelect(query, &found)
+	return found, err
+}
+
+func FindCommitBySha(sha string) (gitee_model.Commit, error) {
+	found := gitee_model.Commit{}
+	query := selectQueryPrefix + ` WHERE c.sha = $1 ORDER BY c.author_date DESC`
+	err := storage.DbGet(query, &found, sha)
+	return found, err
+}
+
+func FindCommitsByRepoID(repoID int) ([]gitee_model.Commit, error) {
+	found := []gitee_model.Commit{}
+	query := selectQueryPrefix + ` WHERE c.repo_id = $1 ORDER BY c.author_date DESC`
+	err := storage.DbSelect(query, &found, repoID)
+	return found, err
 }

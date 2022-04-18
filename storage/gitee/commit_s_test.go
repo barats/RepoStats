@@ -9,6 +9,7 @@
 package gitee
 
 import (
+	"reflect"
 	gitee_model "repostats/model/gitee"
 	"repostats/network"
 	"repostats/storage"
@@ -60,6 +61,92 @@ func TestBulkSaveCommits(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			if err := BulkSaveCommits(tt.args.commits); (err != nil) != tt.wantErr {
 				t.Errorf("BulkSaveCommits() error = %v, wantErr %v", err, tt.wantErr)
+			}
+		})
+	}
+}
+
+func TestFindCommits(t *testing.T) {
+	testSetup(t)
+	defer testTeardown(t)
+
+	tests := []struct {
+		name    string
+		want    int
+		wantErr bool
+	}{
+		{name: "TestCase1", want: 597, wantErr: false},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got, err := FindCommits()
+			if (err != nil) != tt.wantErr {
+				t.Errorf("FindCommits() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if !reflect.DeepEqual(len(got), tt.want) {
+				t.Errorf("FindCommits() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestFindCommitsByRepoID(t *testing.T) {
+
+	testSetup(t)
+	defer testTeardown(t)
+
+	type args struct {
+		repoID int
+	}
+	tests := []struct {
+		name    string
+		args    args
+		want    int
+		wantErr bool
+	}{
+		{name: "TestCase 1", args: args{repoID: 111}, want: 0, wantErr: false},
+		{name: "TestCase 2", args: args{repoID: 10918992}, want: 597, wantErr: false}, // 597
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got, err := FindCommitsByRepoID(tt.args.repoID)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("FindCommitsByRepoID() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if !reflect.DeepEqual(len(got), tt.want) {
+				t.Errorf("FindCommitsByRepoID() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestFindCommitBySha(t *testing.T) {
+	testSetup(t)
+	defer testTeardown(t)
+
+	type args struct {
+		sha string
+	}
+	tests := []struct {
+		name    string
+		args    args
+		want    string
+		wantErr bool
+	}{
+		{name: "TestCase 1", args: args{sha: "adsfas"}, want: "", wantErr: false},
+		{name: "TestCase 2", args: args{sha: "dfb6fb1514ceb065ecd18c71a4c38ecb4b497b1c"}, want: "dfb6fb1514ceb065ecd18c71a4c38ecb4b497b1c", wantErr: false},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got, err := FindCommitBySha(tt.args.sha)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("FindCommitBySha() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if !reflect.DeepEqual(got.Sha, tt.want) {
+				t.Errorf("FindCommitBySha() = %v, want %v", got, tt.want)
 			}
 		})
 	}

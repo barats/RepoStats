@@ -34,7 +34,10 @@ func InitDatabaseService() (*DatabaseService, error) {
 	conn.SetMaxOpenConns(utils.DatabaseConifg.MaxOpenConns)
 	conn.SetMaxIdleConns(utils.DatabaseConifg.MaxIdleConn)
 	conn.SetConnMaxLifetime(0) //always REUSE
-	dbService.Connection = conn
+
+	// Unsafe returns a version of DB which will silently succeed to scan when
+	// columns in the SQL result have no fields in the destination struct.
+	dbService.Connection = conn.Unsafe()
 	return dbService, nil
 }
 

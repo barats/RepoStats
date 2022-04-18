@@ -25,3 +25,10 @@ func BulkSaveRepos(repos []gitee_model.Repository) error {
 		license=EXCLUDED.license,pushed_at=EXCLUDED.pushed_at,created_at=EXCLUDED.created_at,updated_at=EXCLUDED.updated_at`
 	return storage.DbNamedExec(query, repos)
 }
+
+func FindRepos() ([]gitee_model.Repository, error) {
+	repos := []gitee_model.Repository{}
+	query := `SELECT r.owner_id AS "owner", r.assigner_id AS "assigner",r.* FROM gitee.repos r ORDER BY r.id DESC`
+	err := storage.DbSelect(query, &repos)
+	return repos, err
+}

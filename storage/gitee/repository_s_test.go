@@ -9,6 +9,7 @@
 package gitee
 
 import (
+	"reflect"
 	gitee_model "repostats/model/gitee"
 	"repostats/network"
 	"repostats/utils"
@@ -41,6 +42,32 @@ func TestBulkSaveRepos(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			if err := BulkSaveRepos(tt.args.repos); (err != nil) != tt.wantErr {
 				t.Errorf("BulkSaveRepos() error = %v, wantErr %v", err, tt.wantErr)
+			}
+		})
+	}
+}
+
+func TestFindRepos(t *testing.T) {
+
+	testSetup(t)
+	defer testTeardown(t)
+
+	tests := []struct {
+		name    string
+		want    int
+		wantErr bool
+	}{
+		{name: "TestCase FindRepos()", want: 399, wantErr: false},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got, err := FindRepos()
+			if (err != nil) != tt.wantErr {
+				t.Errorf("FindRepos() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if !reflect.DeepEqual(len(got), tt.want) {
+				t.Errorf("FindRepos() = %v, want %v", got, tt.want)
 			}
 		})
 	}
