@@ -182,6 +182,9 @@ func TestGetGiteePullRequests(t *testing.T) {
 
 func TestGetGiteeUserInfo(t *testing.T) {
 
+	testSetup(t)
+	defer testTeardown(t)
+
 	type args struct {
 		login string
 	}
@@ -208,6 +211,10 @@ func TestGetGiteeUserInfo(t *testing.T) {
 }
 
 func TestGetGiteeOrgInfo(t *testing.T) {
+
+	testSetup(t)
+	defer testTeardown(t)
+
 	type args struct {
 		login string
 	}
@@ -228,6 +235,38 @@ func TestGetGiteeOrgInfo(t *testing.T) {
 			}
 			if !reflect.DeepEqual(got.Name, tt.want) {
 				t.Errorf("GetGiteeOrgInfo() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestGetGiteeStargazers(t *testing.T) {
+
+	testSetup(t)
+	defer testTeardown(t)
+
+	type args struct {
+		owner string
+		repo  string
+	}
+	tests := []struct {
+		name    string
+		args    args
+		want    int
+		wantErr bool
+	}{
+		{name: "TestCase barat/ohurlshortener", args: args{owner: "barat", repo: "ohurlshortener"}, want: 127, wantErr: false},                             // 127 star so far
+		{name: "TestCase openharmony/communication_dsoftbus", args: args{owner: "openharmony", repo: "communication_dsoftbus"}, want: 153, wantErr: false}, // 153 star so far
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got, err := GetGiteeStargazers(tt.args.owner, tt.args.repo)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("GetGiteeStargazers() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if !reflect.DeepEqual(len(got), tt.want) {
+				t.Errorf("GetGiteeStargazers() = %v, want %v", got, tt.want)
 			}
 		})
 	}

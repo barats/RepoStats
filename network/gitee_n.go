@@ -10,9 +10,7 @@ package network
 
 import (
 	"encoding/json"
-	"errors"
 	"fmt"
-	"log"
 	"net/http"
 	gitee_model "repostats/model/gitee"
 	"repostats/utils"
@@ -64,16 +62,59 @@ func GetGiteeOrgInfo(login string) (gitee_model.User, error) {
 	}
 
 	if code != http.StatusOK {
-		return foundUser, fmt.Errorf("GetGiteeUserInfo failed during network. Status Code: %d", code)
+		return foundUser, fmt.Errorf("GetGiteeOrgInfo failed during network. Status Code: %d", code)
 	}
 
 	return foundUser, json.Unmarshal([]byte(rs), &foundUser)
 }
 
+// 获取 star 了指定仓库的用户
+//
+//
+func GetGiteeStargazers(owner, repo string) ([]gitee_model.Stargazers, error) {
+	var allStargazers = []gitee_model.Stargazers{}
+	token, err := validGiteeToken()
+	if err != nil {
+		return allStargazers, err
+	}
+
+	page := gitee_model.GITEE_API_START_PAGE
+	for {
+		page += 1
+		url := fmt.Sprintf("%s/repos/%s/%s/stargazers", gitee_model.GITEE_OAUTH_V5PREFIX, owner, repo)
+		code, rs, err := HttpGet(token.AccessToken, url, nil, map[string]string{
+			"page":     strconv.Itoa(page),
+			"per_page": strconv.Itoa(gitee_model.GITEE_API_PAGE_SIZE),
+		})
+
+		if err != nil {
+			return allStargazers, err
+		}
+
+		if code != http.StatusOK {
+			return allStargazers, fmt.Errorf("GetGiteeStargazers failed during network. Status Code: %d", code)
+		}
+
+		var stargazers = []gitee_model.Stargazers{}
+		e := json.Unmarshal([]byte(rs), &stargazers)
+		if e != nil {
+			return allStargazers, e
+		}
+
+		if len(stargazers) > 0 {
+			allStargazers = append(allStargazers, stargazers...)
+			continue
+		}
+		break
+	} //end of for
+
+	return allStargazers, nil
+}
+
 // 获取指定仓库的 PR
 //
 //
-func GetGiteePullRequests(owner string, repo string) ([]gitee_model.PullRequest, error) {
+func GetGiteePullRequests(owner, repo string) ([]gitee_model.PullRequest, error) {
 	token, err := validGiteeToken()
 	if err != nil {
 		return nil, err
@@ -95,7 +136,7 @@ func GetGiteePullRequests(owner string, repo string) ([]gitee_model.PullRequest,
 		}
 
 		if code != http.StatusOK {
-			return allPrs, fmt.Errorf("GrabPullRequest failed during network. Status Code: %d", code)
+			return allPrs, fmt.Errorf("GetGiteePullRequests failed during network. Status Code: %d", code)
 		}
 
 		var prs = []gitee_model.PullRequest{}
@@ -138,7 +179,7 @@ func GetGiteeOrgRepos(org string) ([]gitee_model.Repository, error) {
 		}
 
 		if code != http.StatusOK {
-			return allRepos, errors.New("unexpected StatusCode")
+			return allRepos, fmt.Errorf("GetGiteeOrgRepos failed during network. Status Code: %d", code)
 		}
 
 		var foundRepos = []gitee_model.Repository{}
@@ -182,7 +223,7 @@ func GetGiteeUserRepos(name string) ([]gitee_model.Repository, error) {
 		}
 
 		if code != http.StatusOK {
-			return allRepos, errors.New("unexpected StatusCode")
+			return allRepos, fmt.Errorf("GetGiteeUserRepos failed during network. Status Code: %d", code)
 		}
 
 		var foundRepos = []gitee_model.Repository{}
@@ -205,7 +246,7 @@ func GetGiteeUserRepos(name string) ([]gitee_model.Repository, error) {
 //获取指定仓库的 issue
 //
 //
-func GetGiteeIssues(owner string, repo string) ([]gitee_model.Issue, error) {
+func GetGiteeIssues(owner, repo string) ([]gitee_model.Issue, error) {
 
 	token, err := validGiteeToken()
 	if err != nil {
@@ -228,7 +269,7 @@ func GetGiteeIssues(owner string, repo string) ([]gitee_model.Issue, error) {
 		}
 
 		if code != http.StatusOK {
-			return foundIssues, fmt.Errorf("GrabIssue failed during network. Status Code: %d", code)
+			return foundIssues, fmt.Errorf("GetGiteeIssues failed during network. Status Code: %d", code)
 		}
 
 		var issues = []gitee_model.Issue{}
@@ -249,7 +290,7 @@ func GetGiteeIssues(owner string, repo string) ([]gitee_model.Issue, error) {
 // 从仓库中获取提交记录
 //
 // 从制定的 owner 和 repo 中获取全部提交
-func GetGiteeCommits(owner string, repo string) ([]gitee_model.Commit, error) {
+func GetGiteeCommits(owner, repo string) ([]gitee_model.Commit, error) {
 	token, err := validGiteeToken()
 	if err != nil {
 		return nil, err
@@ -269,13 +310,12 @@ func GetGiteeCommits(owner string, repo string) ([]gitee_model.Commit, error) {
 		}
 
 		if code != http.StatusOK {
-			return allCommits, fmt.Errorf("GrabCommit failed during network. Status Code: %d", code)
+			return allCommits, fmt.Errorf("GetGiteeCommits failed during network. Status Code: %d", code)
 		}
 
 		var commits = []gitee_model.Commit{}
 		e := json.Unmarshal([]byte(rs), &commits)
 		if e != nil {
-			log.Printf("GrabCommit Failed during json parse. %s", e)
 			return allCommits, e
 		}
 
@@ -298,7 +338,7 @@ func validGiteeToken() (OauthToken, error) {
 		return token, err
 	}
 
-	if time.Now().Unix() >= (token.CreatedAt + token.ExpiresIn) {
+	if time.Now().Unix() >= (token.CreatedAt+token.ExpiresIn)/2 {
 		err := refreshGiteeToken(&token)
 		if err != nil {
 			return token, err
