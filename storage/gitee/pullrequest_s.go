@@ -13,8 +13,8 @@ import (
 	"repostats/storage"
 )
 
-var prQueryPrefix = `SELECT pr.user_id AS "user", pr.head_label AS "head.label", pr.head_ref AS "head.ref", pr.head_sha AS "head.sha", 
-pr.head_user_id AS "head.user", pr.head_repo_id AS "head.repo",pr.* FROM gitee.pull_requests pr `
+var prQueryPrefix = `SELECT pr.user_id AS "user.id", pr.head_label AS "head.label", pr.head_ref AS "head.ref", pr.head_sha AS "head.sha", 
+pr.head_user_id AS "head.user.id", pr.head_repo_id AS "head.repo.id",pr.* FROM gitee.pull_requests pr `
 
 func BulkSavePullRequests(prs []gitee_mode.PullRequest) error {
 	query := `INSERT INTO gitee.pull_requests (id, repo_id, user_id, html_url, diff_url, patch_url, "number", 

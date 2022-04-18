@@ -17,6 +17,12 @@ import (
 	_ "github.com/lib/pq"
 )
 
+const (
+	DEFAULT_PAGE_NUMBER   = 1
+	DEFAULT_PAGE_SIZE     = 15
+	DEFAULT_MAX_PAGE_SIZE = 50
+)
+
 var dbService = &DatabaseService{}
 
 type DatabaseService struct {

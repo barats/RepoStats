@@ -1,0 +1,64 @@
+{{define "repos.html" -}}
+{{template "header.html" .}}
+{{template "admin-left-menu.html" .}}
+<div id="admin-right-content">
+  <div class="ui basic segment">
+    <h3 class="ui header">代码仓库列表</h3>
+    <div class="ui grid stackable padded">      
+      <div class="column">
+        <table class="ui celled striped small table">
+          <div class="ui positive message">
+            <p>当前共计 {{.total_item}} 个代码仓库，每页显示 {{.page_size}} 条数据</p>
+          </div>
+          <thead>
+            <tr>       
+              <th class="center aligned collapsing">序号</th>     
+              <th class="center aligned collapsing">仓库ID</th>
+              <th class="center aligned collapsing">仓库名</th>
+              <th class="center aligned collapsing">Star数</th>  
+              <th class="center aligned collapsing">Fork数</th>                
+              <th class="center aligned collapsing">Watch数</th>  
+              <th class="center aligned collapsing">开放协议</th>                      
+              <th class="center aligned">创建时间</th>
+              <th class="center aligned">更新时间</th>
+              <th class="center aligned">Push时间</th>
+              <th class="center aligned">操作</th>       
+            </tr>
+          </thead>
+          <tbody> 
+            {{range $i,$r := .repos}} 
+            <tr>
+              <td class="center aligned collapsing">{{add $i 1}}</td>
+              <td class="center aligned collapsing">{{$r.ID}}</td>
+              <td><a href="{{$r.HTMLURL}}" target="_blank">{{$r.HumanName}}</a></td>
+              <td class="center aligned collapsing">{{$r.StargazersCount}}</td>
+              <td class="center aligned collapsing">{{$r.ForksCount}}</td>              
+              <td class="center aligned collapsing">{{$r.WatchersCount}}</td>
+              <td class="center aligned collapsing">{{$r.License}}</td>
+              <td class="center aligned collapsing">{{$r.CreatedAt | date "2006-01-02 15:04:05"}}</td>
+              <td class="center aligned collapsing">{{$r.UpdatedAt | date "2006-01-02 15:04:05"}}</td>
+              <td class="center aligned collapsing">{{$r.PushedAt | date "2006-01-02 15:04:05"}}</td>
+              <td>hello | world</td>
+            </tr>
+            {{end}}  
+          </tbody>
+          <tfoot>
+            {{if .total_item}}
+            <tr>
+              <td colspan="11" class="center aligned">
+                <div class="ui pagination menu"> 
+                  <a  class="{{if .first_page}}disabled{{end}} item" target="_self"  href="{{.current_url}}?page={{sub .current_page 1}}&size={{.page_size}}"><<</a>
+                  <div class="active item">{{.current_page}}</div>
+                  <a class="{{if .last_page}}disabled{{end}} item" target="_self" href="{{.current_url}}?page={{add .current_page 1}}&size={{.page_size}}">>></a>
+                </div>   
+              </td>                         
+            </tr>
+            {{end}}
+          </tfoot>
+        </table>
+      </div>
+    </div><!--end fo grid-->
+  </div>  <!--end of basic segment-->
+</div><!--end of admin-right-content-->
+{{template "footer.html" .}}
+{{end -}}

@@ -67,6 +67,27 @@ $(document).ready(function() {
   });
 });
 
+function successToast(message) {
+  $('body').toast({
+    class: 'success',
+    displayTime: 2500,
+    message: message,    
+    showIcon:'exclamation circle',
+    showProgress: 'bottom',
+    onHidden: function() {location.reload()}
+  });
+}
+
+function errorToast(message) {
+  $('body').toast({
+    class: 'error',
+    displayTime: 2500,
+    message: message,    
+    showIcon:'exclamation circle',
+    showProgress: 'bottom'
+  });
+}
+
 function GetGiteeToken(form) {
   authForm = $('#form-gitee-authorize'); 
   var data = JSON.stringify( {

@@ -21,6 +21,7 @@ import (
 	"repostats/storage"
 	"repostats/utils"
 
+	"github.com/Masterminds/sprig"
 	"github.com/gin-gonic/gin"
 )
 
@@ -66,7 +67,7 @@ func initRouter(router *gin.Engine) {
 
 	router.StaticFS("/assets", http.FS(sub))
 
-	tmpl, err := template.New("").ParseFS(FS, "templates/*.html")
+	tmpl, err := template.New("").Funcs(sprig.FuncMap()).ParseFS(FS, "templates/*.html")
 	utils.ExitOnError(err)
 
 	router.GET("/login", controller.Login)

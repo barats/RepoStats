@@ -13,7 +13,7 @@ import (
 	"repostats/storage"
 )
 
-var issueQueryPrefix = `SELECT iss.repo_id AS "repository", iss.user_id AS "user", iss.* FROM gitee.issues iss `
+var issueQueryPrefix = `SELECT iss.repo_id AS "repository.id", iss.user_id AS "user.id", iss.* FROM gitee.issues iss `
 
 func BulkSaveIssues(iss []gitee_model.Issue) error {
 	query := `INSERT INTO gitee.issues (id, html_url, "number", state, title, user_id, repo_id, finished_at, created_at, 

@@ -13,7 +13,7 @@ import (
 	"repostats/storage"
 )
 
-var repoQueryPrefix = `SELECT r.owner_id AS "owner", r.assigner_id AS "assigner",r.*  FROM gitee.repos `
+var repoQueryPrefix = `SELECT r.owner_id AS "owner.id", r.assigner_id AS "assigner.id", r.*  FROM gitee.repos r `
 
 func BulkSaveRepos(repos []gitee_model.Repository) error {
 	query := `INSERT INTO gitee.repos (id, full_name, human_name, path,name, url, owner_id,assigner_id, description, 
@@ -35,6 +35,16 @@ func FindRepos() ([]gitee_model.Repository, error) {
 	return repos, err
 }
 
+func FindPagedRepos(page, size int) ([]gitee_model.Repository, error) {
+	if page < 1 {
+		page = 1
+	}
+	repos := []gitee_model.Repository{}
+	query := repoQueryPrefix + ` ORDER BY r.id DESC LIMIT $1 OFFSET $2`
+	offset := (page - 1) * size
+	return repos, storage.DbSelect(query, &repos, size, offset)
+}
+
 func FindRepoByID(repoID int) (gitee_model.Repository, error) {
 	found := gitee_model.Repository{}
 	query := repoQueryPrefix + ` WHERE r.id = $1`
@@ -45,4 +55,10 @@ func FindRepoByID(repoID int) (gitee_model.Repository, error) {
 func DeleteRepo(repoID int) error {
 	query := `DELETE FROM gitee.repos WHERE id = $1`
 	return storage.DbNamedExec(query, repoID)
+}
+
+func FindTotalReposCount() (int, error) {
+	var count int
+	query := `SELECT count(r.id) FROM gitee.repos r`
+	return count, storage.DbGet(query, &count)
 }
