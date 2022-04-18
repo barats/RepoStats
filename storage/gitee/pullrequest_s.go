@@ -13,6 +13,9 @@ import (
 	"repostats/storage"
 )
 
+var prQueryPrefix = `SELECT pr.user_id AS "user", pr.head_label AS "head.label", pr.head_ref AS "head.ref", pr.head_sha AS "head.sha", 
+pr.head_user_id AS "head.user", pr.head_repo_id AS "head.repo",pr.* FROM gitee.pull_requests pr `
+
 func BulkSavePullRequests(prs []gitee_mode.PullRequest) error {
 	query := `INSERT INTO gitee.pull_requests (id, repo_id, user_id, html_url, diff_url, patch_url, "number", 
 	state, created_at, updated_at, closed_at, merged_at, mergeable, can_merge_check, title, head_label, head_ref, 
@@ -24,4 +27,27 @@ func BulkSavePullRequests(prs []gitee_mode.PullRequest) error {
 	closed_at=EXCLUDED.closed_at,merged_at=EXCLUDED.merged_at,mergeable=EXCLUDED.mergeable,can_merge_check=EXCLUDED.can_merge_check,title=EXCLUDED.title,
 	head_label=EXCLUDED.head_label,head_ref=EXCLUDED.head_ref,head_sha=EXCLUDED.head_sha,head_user_id=EXCLUDED.head_user_id,head_repo_id=EXCLUDED.head_repo_id`
 	return storage.DbNamedExec(query, prs)
+}
+
+func FindPRByID(prID int) (gitee_mode.PullRequest, error) {
+	found := gitee_mode.PullRequest{}
+	err := storage.DbGet(prQueryPrefix+` WHERE pr.id = $1`, &found, prID)
+	return found, err
+}
+
+func FindPRs() ([]gitee_mode.PullRequest, error) {
+	found := []gitee_mode.PullRequest{}
+	err := storage.DbSelect(prQueryPrefix+` ORDER BY pr.updated_at DESC`, &found)
+	return found, err
+}
+
+func FindPRsByRepoID(repoID int) ([]gitee_mode.PullRequest, error) {
+	found := []gitee_mode.PullRequest{}
+	err := storage.DbSelect(prQueryPrefix+` WHERE pr.repo_id = $1 ORDER BY pr.updated_at DESC`, &found, repoID)
+	return found, err
+}
+
+func DeletePR(prID int) error {
+	query := `DELETE FROM gitee.pull_requests WHERE id = $1`
+	return storage.DbNamedExec(query, prID)
 }

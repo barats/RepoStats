@@ -13,6 +13,8 @@ import (
 	"repostats/storage"
 )
 
+var repoQueryPrefix = `SELECT r.owner_id AS "owner", r.assigner_id AS "assigner",r.*  FROM gitee.repos `
+
 func BulkSaveRepos(repos []gitee_model.Repository) error {
 	query := `INSERT INTO gitee.repos (id, full_name, human_name, path,name, url, owner_id,assigner_id, description, 
 		html_url, ssh_url,forked_repo,default_branch, forks_count, stargazers_count, watchers_count,license, pushed_at, created_at, updated_at)
@@ -28,7 +30,19 @@ func BulkSaveRepos(repos []gitee_model.Repository) error {
 
 func FindRepos() ([]gitee_model.Repository, error) {
 	repos := []gitee_model.Repository{}
-	query := `SELECT r.owner_id AS "owner", r.assigner_id AS "assigner",r.* FROM gitee.repos r ORDER BY r.id DESC`
+	query := repoQueryPrefix + ` ORDER BY r.id DESC`
 	err := storage.DbSelect(query, &repos)
 	return repos, err
+}
+
+func FindRepoByID(repoID int) (gitee_model.Repository, error) {
+	found := gitee_model.Repository{}
+	query := repoQueryPrefix + ` WHERE r.id = $1`
+	err := storage.DbGet(query, &found, repoID)
+	return found, err
+}
+
+func DeleteRepo(repoID int) error {
+	query := `DELETE FROM gitee.repos WHERE id = $1`
+	return storage.DbNamedExec(query, repoID)
 }

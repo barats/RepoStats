@@ -9,6 +9,7 @@
 package gitee
 
 import (
+	"errors"
 	"reflect"
 	"time"
 )
@@ -38,4 +39,18 @@ type Repository struct {
 
 func (r Repository) isNilOrEmpty() bool {
 	return reflect.DeepEqual(r, Repository{})
+}
+
+func (r *Repository) Scan(src interface{}) error {
+	var repoID int
+	switch src.(type) {
+	case int64:
+		repoID = int(src.(int64))
+	case int32:
+		repoID = int(src.(int32))
+	default:
+		return errors.New("can not find any valid user")
+	}
+	*r = Repository{ID: repoID}
+	return nil
 }

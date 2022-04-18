@@ -13,6 +13,8 @@ import (
 	"repostats/storage"
 )
 
+var issueQueryPrefix = `SELECT iss.repo_id AS "repository", iss.user_id AS "user", iss.* FROM gitee.issues iss `
+
 func BulkSaveIssues(iss []gitee_model.Issue) error {
 	query := `INSERT INTO gitee.issues (id, html_url, "number", state, title, user_id, repo_id, finished_at, created_at, 
 				updated_at, plan_started_at, "comments", priority, issue_type, issue_state, security_hole)
@@ -24,4 +26,32 @@ func BulkSaveIssues(iss []gitee_model.Issue) error {
 				plan_started_at=EXCLUDED.plan_started_at,comments=EXCLUDED.comments,priority=EXCLUDED.priority,
 				issue_type=EXCLUDED.issue_type,issue_state=EXCLUDED.issue_state,security_hole=EXCLUDED.security_hole`
 	return storage.DbNamedExec(query, iss)
+}
+
+func FindIssues() ([]gitee_model.Issue, error) {
+	found := []gitee_model.Issue{}
+	query := issueQueryPrefix + `  ORDER BY iss.created_at DESC`
+	err := storage.DbSelect(query, &found)
+	return found, err
+}
+
+func FindIssuesByRepoID(repoID int) ([]gitee_model.Issue, error) {
+	found := []gitee_model.Issue{}
+	query := issueQueryPrefix + ` WHERE iss.repo_id = $1 ORDER BY iss.created_at DESC`
+	err := storage.DbSelect(query, &found, repoID)
+	return found, err
+}
+
+func FindIssueByID(id int) (gitee_model.Issue, error) {
+	found := gitee_model.Issue{}
+	query := issueQueryPrefix + ` WHERE iss.id = $1 ORDER BY iss.created_at DESC`
+	err := storage.DbGet(query, &found, id)
+	return found, err
+}
+
+func FindIssueByNumber(number string) (gitee_model.Issue, error) {
+	found := gitee_model.Issue{}
+	query := issueQueryPrefix + ` WHERE iss.number = $1 ORDER BY iss.created_at DESC`
+	err := storage.DbGet(query, &found, number)
+	return found, err
 }

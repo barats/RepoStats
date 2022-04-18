@@ -15,8 +15,7 @@ import (
 
 type Issue struct {
 	ID             int        `json:"id" db:"id"`
-	RepoID         int64      `json:"repo_id"`
-	RepositoryURL  string     `json:"repository_url" db:"repository_url"`
+	RepoID         int64      `json:"repo_id" db:"repo_id"`
 	HTMLURL        string     `json:"html_url" db:"html_url"`
 	Number         string     `json:"number" db:"number"`
 	State          string     `json:"state" db:"state"`
