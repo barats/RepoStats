@@ -71,8 +71,8 @@ func GetGiteeOrgInfo(login string) (gitee_model.User, error) {
 // 获取 star 了指定仓库的用户
 //
 //
-func GetGiteeStargazers(owner, repo string) ([]gitee_model.Stargazers, error) {
-	var allStargazers = []gitee_model.Stargazers{}
+func GetGiteeStargazers(owner, repo string) ([]gitee_model.Stargazer, error) {
+	var allStargazers = []gitee_model.Stargazer{}
 	token, err := validGiteeToken()
 	if err != nil {
 		return allStargazers, err
@@ -95,7 +95,7 @@ func GetGiteeStargazers(owner, repo string) ([]gitee_model.Stargazers, error) {
 			return allStargazers, fmt.Errorf("GetGiteeStargazers failed during network. Status Code: %d", code)
 		}
 
-		var stargazers = []gitee_model.Stargazers{}
+		var stargazers = []gitee_model.Stargazer{}
 		e := json.Unmarshal([]byte(rs), &stargazers)
 		if e != nil {
 			return allStargazers, e
@@ -109,6 +109,46 @@ func GetGiteeStargazers(owner, repo string) ([]gitee_model.Stargazers, error) {
 	} //end of for
 
 	return allStargazers, nil
+}
+
+// 获取仓库的 Collaborators
+func GetGiteeCollaborators(owner, repo string) ([]gitee_model.Collaborator, error) {
+	var foundUser = []gitee_model.Collaborator{}
+	token, err := validGiteeToken()
+	if err != nil {
+		return foundUser, err
+	}
+
+	page := gitee_model.GITEE_API_START_PAGE
+	for {
+		page += 1
+		url := fmt.Sprintf("%s/repos/%s/%s/collaborators", gitee_model.GITEE_OAUTH_V5PREFIX, owner, repo)
+		code, rs, err := HttpGet(token.AccessToken, url, nil, map[string]string{
+			"page":     strconv.Itoa(page),
+			"per_page": strconv.Itoa(gitee_model.GITEE_API_PAGE_SIZE),
+		})
+
+		if err != nil {
+			return foundUser, err
+		}
+
+		if code != http.StatusOK {
+			return foundUser, fmt.Errorf("GetGiteeCollaborators failed during network. Status Code: %d", code)
+		}
+
+		var users = []gitee_model.Collaborator{}
+		e := json.Unmarshal([]byte(rs), &users)
+		if e != nil {
+			return foundUser, err
+		}
+
+		if len(users) > 0 {
+			foundUser = append(foundUser, users...)
+			continue
+		}
+		break
+	} //end of for
+	return foundUser, nil
 }
 
 // 获取指定仓库的 PR
@@ -338,7 +378,7 @@ func validGiteeToken() (OauthToken, error) {
 		return token, err
 	}
 
-	if time.Now().Unix() >= (token.CreatedAt+token.ExpiresIn)/2 {
+	if time.Now().Unix() >= (token.CreatedAt + token.ExpiresIn) {
 		err := refreshGiteeToken(&token)
 		if err != nil {
 			return token, err

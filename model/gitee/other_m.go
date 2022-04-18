@@ -13,12 +13,26 @@ import (
 	"time"
 )
 
-type Stargazers struct {
+type Stargazer struct {
 	RepoID int64     `db:"repo_id"`
 	StarAt time.Time `json:"star_at" db:"star_at"`
 	User   `db:"user"`
 }
 
-func (s Stargazers) isNilOrEmpty() bool {
-	return reflect.DeepEqual(s, Stargazers{})
+func (s Stargazer) isNilOrEmpty() bool {
+	return reflect.DeepEqual(s, Stargazer{})
+}
+
+type Collaborator struct {
+	RepoID      int64 `db:"repo_id"`
+	User        `db:"user"`
+	Permissions struct {
+		Pull  bool `json:"pull" db:"can_pull"`
+		Push  bool `json:"push" db:"can_push"`
+		Admin bool `json:"admin" db:"can_admin"`
+	} `db:"permissions"`
+}
+
+func (c Collaborator) isNilOrEmpty() bool {
+	return reflect.DeepEqual(c, Collaborator{})
 }

@@ -37,7 +37,7 @@ func TestBulkSaveStargazers(t *testing.T) {
 	}
 
 	type args struct {
-		s []gitee_mode.Stargazers
+		s []gitee_mode.Stargazer
 	}
 	tests := []struct {
 		name    string
@@ -51,6 +51,47 @@ func TestBulkSaveStargazers(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			if err := BulkSaveStargazers(tt.args.s); (err != nil) != tt.wantErr {
 				t.Errorf("BulkSaveStargazers() error = %v, wantErr %v", err, tt.wantErr)
+			}
+		})
+	}
+}
+
+func TestBulkSaveCollaborators(t *testing.T) {
+
+	testSetup(t)
+	defer testTeardown(t)
+
+	found1, err := network.GetGiteeCollaborators("barat", "ohurlshortener")
+	utils.ExitOnError(err)
+
+	//TEST ONLY
+	for i := 0; i < len(found1); i++ {
+		found1[i].RepoID = 21133399
+	}
+
+	found2, err := network.GetGiteeCollaborators("openharmony", "communication_dsoftbus")
+	utils.ExitOnError(err)
+
+	//TEST ONLY
+	for i := 0; i < len(found2); i++ {
+		found2[i].RepoID = 16184960
+	}
+
+	type args struct {
+		c []gitee_mode.Collaborator
+	}
+	tests := []struct {
+		name    string
+		args    args
+		wantErr bool
+	}{
+		{name: "Testcase barat", args: args{c: found1}, wantErr: false},
+		{name: "Testcase openharmony", args: args{c: found2}, wantErr: false},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if err := BulkSaveCollaborators(tt.args.c); (err != nil) != tt.wantErr {
+				t.Errorf("BulkSaveCollaborators() error = %v, wantErr %v", err, tt.wantErr)
 			}
 		})
 	}

@@ -271,3 +271,34 @@ func TestGetGiteeStargazers(t *testing.T) {
 		})
 	}
 }
+
+func TestGetGiteeCollaborators(t *testing.T) {
+
+	testSetup(t)
+	defer testTeardown(t)
+
+	type args struct {
+		owner string
+		repo  string
+	}
+	tests := []struct {
+		name    string
+		args    args
+		want    int
+		wantErr bool
+	}{
+		{name: "TestCase1", args: args{owner: "barat", repo: "ohurlshortener"}, want: 1, wantErr: false},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got, err := GetGiteeCollaborators(tt.args.owner, tt.args.repo)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("GetGiteeCollaborators() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if !reflect.DeepEqual(len(got), tt.want) {
+				t.Errorf("GetGiteeCollaborators() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}

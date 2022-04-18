@@ -117,7 +117,8 @@ CREATE TABLE gitee.stargazers (
 CREATE TABLE gitee.collaborators (
 	 "user_id" int8 NOT NULL, 
 	 repo_id int8 NOT NULL,
+	 can_pull BOOLEAN,
+	 can_push BOOLEAN,
+	 can_admin BOOLEAN,
 	 CONSTRAINT uni_gitee_rcs UNIQUE (user_id,repo_id)
 );
-
-
