@@ -7,10 +7,12 @@
     <div class="ui grid stackable padded">      
       <div class="column">
         <table class="ui celled striped small table">
-          <div class="ui positive message">
-            <p>当前共计 {{.total_item}} 个代码仓库，共计 {{add (div .total_item .page_size) 1}} 页，当前第 {{.current_page}} 页，每页显示 {{.page_size}} 条数据</p>
-          </div>
           <thead>
+            <tr>
+              <th colspan="11">
+                <p>当前共计 {{.total_item}} 个代码仓库，共计 {{add (div .total_item .page_size) 1}} 页，当前第 {{.current_page}} 页，每页显示 {{.page_size}} 条数据</p>
+              </th>
+            </tr>
             <tr>       
               <th class="center aligned collapsing">序号</th>     
               <th class="center aligned collapsing">仓库ID</th>
@@ -25,7 +27,7 @@
               <th class="center aligned">操作</th>       
             </tr>
           </thead>
-          <tbody> 
+          <tbody>             
             {{range $i,$r := .repos}} 
             {{if not $r.EnableCrawl}}
             <tr class="error">
@@ -55,7 +57,7 @@
             {{if .total_item}}
             <tr>
               <td colspan="11" class="center aligned">
-                <div class="ui pagination menu"> 
+                <div class="ui tiny pagination menu"> 
                   <a  class="{{if .first_page}}disabled{{end}} item" target="_self"  href="{{.current_url}}?page={{sub .current_page 1}}&size={{.page_size}}"><<</a>
                   <div class="active item">{{.current_page}}</div>
                   <a class="{{if .last_page}}disabled{{end}} item" target="_self" href="{{.current_url}}?page={{add .current_page 1}}&size={{.page_size}}">>></a>
