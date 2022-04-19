@@ -30,6 +30,22 @@ func BulkSaveCommits(commits []gitee_model.Commit) error {
 	return storage.DbNamedExec(query, commits)
 }
 
+func FindTotalCommitsCount() (int, error) {
+	var count int
+	query := `SELECT count(c.sha) FROM gitee.commits c`
+	return count, storage.DbGet(query, &count)
+}
+
+func FindPagedCommits(page, size int) ([]gitee_model.Commit, error) {
+	if page < 1 {
+		page = 1
+	}
+	commits := []gitee_model.Commit{}
+	query := commitQueryPrefix + ` ORDER BY c.author_date DESC LIMIT $1 OFFSET $2`
+	offset := (page - 1) * size
+	return commits, storage.DbSelect(query, &commits, size, offset)
+}
+
 func FindCommits() ([]gitee_model.Commit, error) {
 	found := []gitee_model.Commit{}
 	query := commitQueryPrefix + ` ORDER BY c.author_date DESC`
@@ -49,4 +65,9 @@ func FindCommitsByRepoID(repoID int) ([]gitee_model.Commit, error) {
 	query := commitQueryPrefix + ` WHERE c.repo_id = $1 ORDER BY c.author_date DESC`
 	err := storage.DbSelect(query, &found, repoID)
 	return found, err
+}
+
+func DeleteCommitBySha(sha string) error {
+	query := `DELETE FROM gitee.commits WHERE sha = $1`
+	return storage.DbExec(query, sha)
 }

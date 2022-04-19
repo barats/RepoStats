@@ -5,12 +5,12 @@
   <div class="ui basic segment">
     <h3 class="ui header">代码仓库列表</h3>
     <div class="ui grid stackable padded">      
-      <div class="column">
+      <div class="column" style="max-width: 100%; overflow-x: auto;">
         <table class="ui celled striped small table">
           <thead>
             <tr>
               <th colspan="11">
-                <p>当前共计 {{.total_item}} 个代码仓库，共计 {{add (div .total_item .page_size) 1}} 页，当前第 {{.current_page}} 页，每页显示 {{.page_size}} 条数据</p>
+                <p>共计 <span style="color: red;">{{.total_item}}</span> 条记录，当前 <span style="color: red;">{{.current_page}}</span> / <span style="color: red;">{{add (div .total_item .page_size) 1}}</span> 页</p>
               </th>
             </tr>
             <tr>       
@@ -46,10 +46,10 @@
               <td class="center aligned collapsing">{{$r.UpdatedAt | date "2006-01-02 15:04:05"}}</td>              
               <td class="center aligned collapsing"> 
                 {{if $r.EnableCrawl}} 
-                <a href="javascript:disable_crawl('{{$r.ID}}','{{$r.HumanName}}')">禁止爬取</a>
+                <a href="javascript:disableCrawl('{{$r.ID}}','{{$r.HumanName}}')">禁止爬取</a>
                 {{else}}
-                <a href="javascript:enable_crawl('{{$r.ID}}','{{$r.HumanName}}')">开启爬取</a>
-                {{end}} | <a href="javascript:delete_repo('{{$r.ID}}','{{$r.HumanName}}')">删除</a></td>
+                <a href="javascript:enableCrawl('{{$r.ID}}','{{$r.HumanName}}')">开启爬取</a>
+                {{end}} | <a href="javascript:deleteRepo('{{$r.ID}}','{{$r.HumanName}}')">删除</a></td>
             </tr>
             {{end}}  
           </tbody>
@@ -58,9 +58,11 @@
             <tr>
               <td colspan="11" class="center aligned">
                 <div class="ui tiny pagination menu"> 
+                  <a  class="item" target="_self"  href="{{.current_url}}?page=1&size={{.page_size}}">首页</a>
                   <a  class="{{if .first_page}}disabled{{end}} item" target="_self"  href="{{.current_url}}?page={{sub .current_page 1}}&size={{.page_size}}"><<</a>
                   <div class="active item">{{.current_page}}</div>
                   <a class="{{if .last_page}}disabled{{end}} item" target="_self" href="{{.current_url}}?page={{add .current_page 1}}&size={{.page_size}}">>></a>
+                  <a  class="item" target="_self"  href="{{.current_url}}?page={{add (div .total_item .page_size) 1}}&size={{.page_size}}">末页</a>
                 </div>   
               </td>                         
             </tr>

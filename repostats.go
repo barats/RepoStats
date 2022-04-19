@@ -79,10 +79,14 @@ func initRouter(router *gin.Engine) {
 	admin.GET("/dashboard", controller.DashboardPage)
 	admin.GET("/schedule", controller.SchedulePage)
 	admin.GET("/gitee", controller.GiteePage)
-	admin.GET("/github", controller.GithubPage)
+
+	admin.GET("/commits", controller.CommitsPage)
+	admin.POST("/commits/:sha/delete", controller.CommitDelete)
+
 	admin.GET("/repos", controller.ReposPage)
 	admin.PUT("/repos/:repoID/change_state", controller.RepoStateChange)
 	admin.POST("/repos/:repoID/delete", controller.RepoDelete)
+
 	admin.GET("/grafana", controller.GrafanaPage)
 
 	public := router.Group("/admin") //Same url path with /admin WITHOUT auth handler

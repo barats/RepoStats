@@ -26,6 +26,7 @@ func ReposPage(ctx *gin.Context) {
 
 	strPage := ctx.DefaultQuery("page", strconv.Itoa(storage.DEFAULT_PAGE_NUMBER))
 	strSize := ctx.DefaultQuery("size", strconv.Itoa(storage.DEFAULT_PAGE_SIZE))
+	strRepoID := ctx.DefaultQuery("id", "")
 
 	page, err := strconv.Atoi(strPage)
 	if err != nil || page < storage.DEFAULT_PAGE_NUMBER {
@@ -37,17 +38,39 @@ func ReposPage(ctx *gin.Context) {
 		size = storage.DEFAULT_PAGE_SIZE
 	}
 
-	count, err1 := gitee_storage.FindTotalReposCount()
-	repos, err2 := gitee_storage.FindPagedRepos(page, size)
+	repoID, err := strconv.Atoi(strRepoID)
+	if err != nil {
+		repoID = 0
+	}
 
-	if err1 != nil || err2 != nil {
-		log.Printf("error1 %s \t error2 %s", err1, err2)
-		ctx.HTML(http.StatusOK, "repos.html", gin.H{
-			"title":       "代码仓库列表 - RepoStats",
-			"current_url": ctx.Request.URL.Path,
-			"error":       "内部错误，请联系管理员",
-		})
-		return
+	var count int
+	var repos []gitee_model.Repository
+	if repoID <= 0 {
+		count, err = gitee_storage.FindTotalReposCount()
+		repos, err = gitee_storage.FindPagedRepos(page, size)
+
+		if err != nil {
+			log.Printf("error %s", err)
+			ctx.HTML(http.StatusOK, "repos.html", gin.H{
+				"title":       "代码仓库列表 - RepoStats",
+				"current_url": ctx.Request.URL.Path,
+				"error":       "内部错误，请联系管理员",
+			})
+			return
+		}
+	} else {
+		r, errr := gitee_storage.FindRepoByID(repoID)
+		if errr != nil {
+			log.Printf("error %s", err)
+			ctx.HTML(http.StatusOK, "repos.html", gin.H{
+				"title":       "代码仓库列表 - RepoStats",
+				"current_url": ctx.Request.URL.Path,
+				"error":       "内部错误，请联系管理员",
+			})
+			return
+		}
+		count = 1
+		repos = append(repos, r)
 	}
 
 	ctx.HTML(http.StatusOK, "repos.html", gin.H{

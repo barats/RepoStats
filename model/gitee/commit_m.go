@@ -37,6 +37,6 @@ type Commit struct {
 	} `json:"commit" db:"commit"`
 }
 
-func (c Commit) isNilOrEmpty() bool {
+func (c Commit) IsNilOrEmpty() bool {
 	return reflect.DeepEqual(c, Commit{})
 }
