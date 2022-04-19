@@ -8,26 +8,30 @@
       <div class="column">
         <table class="ui celled striped small table">
           <div class="ui positive message">
-            <p>当前共计 {{.total_item}} 个代码仓库，每页显示 {{.page_size}} 条数据</p>
+            <p>当前共计 {{.total_item}} 个代码仓库，共计 {{add (div .total_item .page_size) 1}} 页，当前第 {{.current_page}} 页，每页显示 {{.page_size}} 条数据</p>
           </div>
           <thead>
             <tr>       
               <th class="center aligned collapsing">序号</th>     
               <th class="center aligned collapsing">仓库ID</th>
-              <th class="center aligned collapsing">仓库名</th>
+              <th>仓库名</th>
               <th class="center aligned collapsing">Star数</th>  
               <th class="center aligned collapsing">Fork数</th>                
               <th class="center aligned collapsing">Watch数</th>  
-              <th class="center aligned collapsing">开放协议</th>                      
-              <th class="center aligned">创建时间</th>
-              <th class="center aligned">更新时间</th>
-              <th class="center aligned">Push时间</th>
+              <th class="center aligned collapsing">开源协议</th>                      
+              <th class="center aligned collapsing">是否爬取</th>
+              <th class="center aligned collapsing">创建时间</th>
+              <th class="center aligned collapsing">更新时间</th>              
               <th class="center aligned">操作</th>       
             </tr>
           </thead>
           <tbody> 
             {{range $i,$r := .repos}} 
+            {{if not $r.EnableCrawl}}
+            <tr class="error">
+            {{else}}
             <tr>
+            {{end}}            
               <td class="center aligned collapsing">{{add $i 1}}</td>
               <td class="center aligned collapsing">{{$r.ID}}</td>
               <td><a href="{{$r.HTMLURL}}" target="_blank">{{$r.HumanName}}</a></td>
@@ -35,10 +39,15 @@
               <td class="center aligned collapsing">{{$r.ForksCount}}</td>              
               <td class="center aligned collapsing">{{$r.WatchersCount}}</td>
               <td class="center aligned collapsing">{{$r.License}}</td>
+              <td class="center aligned collapsing">{{$r.EnableCrawl}}</td>
               <td class="center aligned collapsing">{{$r.CreatedAt | date "2006-01-02 15:04:05"}}</td>
-              <td class="center aligned collapsing">{{$r.UpdatedAt | date "2006-01-02 15:04:05"}}</td>
-              <td class="center aligned collapsing">{{$r.PushedAt | date "2006-01-02 15:04:05"}}</td>
-              <td>hello | world</td>
+              <td class="center aligned collapsing">{{$r.UpdatedAt | date "2006-01-02 15:04:05"}}</td>              
+              <td class="center aligned collapsing"> 
+                {{if $r.EnableCrawl}} 
+                <a href="javascript:disable_crawl('{{$r.ID}}','{{$r.HumanName}}')">禁止爬取</a>
+                {{else}}
+                <a href="javascript:enable_crawl('{{$r.ID}}','{{$r.HumanName}}')">开启爬取</a>
+                {{end}} | <a href="javascript:delete_repo('{{$r.ID}}','{{$r.HumanName}}')">删除</a></td>
             </tr>
             {{end}}  
           </tbody>
@@ -58,7 +67,7 @@
         </table>
       </div>
     </div><!--end fo grid-->
-  </div>  <!--end of basic segment-->
+  </div>  <!--end of basic segment-->  
 </div><!--end of admin-right-content-->
 {{template "footer.html" .}}
 {{end -}}

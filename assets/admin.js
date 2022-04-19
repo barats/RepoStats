@@ -112,3 +112,65 @@ function GetGiteeToken(form) {
     }
   });
 }//end of function GetGiteeToken
+
+function enable_crawl(repo_id,repo_name) {
+  $('body').modal('confirm','开启爬取','确认开启爬取 <b>'+repo_name+'</b> 代码仓库吗？<br><br> 启用该仓库将在爬取周期内抓取相关数据并更新 Grfana 视图面板。', function(choice){
+    if(choice) {
+      $.ajax({
+        type:"PUT",
+        url: "/admin/repos/"+repo_id+"/change_state",
+        data: {          
+          "enable": true,
+          "type": "gitee"
+        },
+        success: function() {
+          successToast('操作成功')
+        },
+        error: function(e) {
+          errorToast($.parseJSON(e.responseText).message)
+        }
+      });
+    }//end of if
+  });
+}
+
+function disable_crawl(repo_id,repo_name) {
+  $('body').modal('confirm','禁止爬取','确认禁止爬取 <b>'+repo_name+'</b> 代码仓库吗？<br><br> 禁止该仓库将不再抓取相关数据，已有数据不受影响。', function(choice){
+    if(choice) {
+      $.ajax({
+        type:"PUT",
+        url: "/admin/repos/"+repo_id+"/change_state",
+        data: {          
+          "enable": false,
+          "type": "gitee"
+        },
+        success: function() {
+          successToast('操作成功')
+        },
+        error: function(e) {
+          errorToast($.parseJSON(e.responseText).message)
+        }
+      });
+    }//end of if
+  });
+}
+
+function delete_repo(repo_id,repo_name) {
+  $('body').modal('confirm','删除仓库','确认删除 <b>'+repo_name+'</b> 代码仓库吗？<br><br> 删除该仓库将会同步删除相关的统计数据及 Grfana 视图面板。', function(choice){
+    if(choice) {
+      $.ajax({
+        type:"POST",
+        url: "/admin/repos/"+repo_id+"/delete",
+        data: {
+          "type": "gitee"
+        },
+        success: function() {
+          successToast('操作成功')
+        },
+        error: function(e) {
+          errorToast($.parseJSON(e.responseText).message)
+        }
+      });
+    }//end of if
+  });
+}

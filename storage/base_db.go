@@ -52,6 +52,11 @@ func DbNamedExec(query string, args interface{}) error {
 	return err
 }
 
+func DbExec(query string, args ...interface{}) error {
+	_, err := dbService.Connection.Exec(query, args...)
+	return err
+}
+
 func DbExecTx(query string, args ...interface{}) error {
 	tx, err := dbService.Connection.Begin()
 	if err != nil {

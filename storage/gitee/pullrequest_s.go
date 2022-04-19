@@ -49,5 +49,5 @@ func FindPRsByRepoID(repoID int) ([]gitee_mode.PullRequest, error) {
 
 func DeletePR(prID int) error {
 	query := `DELETE FROM gitee.pull_requests WHERE id = $1`
-	return storage.DbNamedExec(query, prID)
+	return storage.DbExec(query, prID)
 }

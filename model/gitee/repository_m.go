@@ -34,9 +34,10 @@ type Repository struct {
 	PushedAt        time.Time `json:"pushed_at" db:"pushed_at"`
 	CreatedAt       time.Time `json:"created_at" db:"created_at"`
 	UpdatedAt       time.Time `json:"updated_at" db:"updated_at"`
+	EnableCrawl     bool      `db:"enable_crawl"`
 }
 
-func (r Repository) isNilOrEmpty() bool {
+func (r Repository) IsNilOrEmpty() bool {
 	return reflect.DeepEqual(r, Repository{})
 }
 
