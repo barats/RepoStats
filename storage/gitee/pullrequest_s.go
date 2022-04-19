@@ -10,6 +10,7 @@ package gitee
 
 import (
 	gitee_mode "repostats/model/gitee"
+	gitee_model "repostats/model/gitee"
 	"repostats/storage"
 )
 
@@ -29,6 +30,22 @@ func BulkSavePullRequests(prs []gitee_mode.PullRequest) error {
 	return storage.DbNamedExec(query, prs)
 }
 
+func FindTotalPRsCount() (int, error) {
+	var count int
+	query := `SELECT count(pr.id) FROM gitee.pull_requests pr`
+	return count, storage.DbGet(query, &count)
+}
+
+func FindPagedPRs(page, size int) ([]gitee_mode.PullRequest, error) {
+	if page < 1 {
+		page = 1
+	}
+	prs := []gitee_model.PullRequest{}
+	query := prQueryPrefix + ` ORDER BY pr.created_at DESC LIMIT $1 OFFSET $2`
+	offset := (page - 1) * size
+	return prs, storage.DbSelect(query, &prs, size, offset)
+}
+
 func FindPRByID(prID int) (gitee_mode.PullRequest, error) {
 	found := gitee_mode.PullRequest{}
 	err := storage.DbGet(prQueryPrefix+` WHERE pr.id = $1`, &found, prID)
@@ -37,13 +54,13 @@ func FindPRByID(prID int) (gitee_mode.PullRequest, error) {
 
 func FindPRs() ([]gitee_mode.PullRequest, error) {
 	found := []gitee_mode.PullRequest{}
-	err := storage.DbSelect(prQueryPrefix+` ORDER BY pr.updated_at DESC`, &found)
+	err := storage.DbSelect(prQueryPrefix+` ORDER BY pr.created_at DESC`, &found)
 	return found, err
 }
 
 func FindPRsByRepoID(repoID int) ([]gitee_mode.PullRequest, error) {
 	found := []gitee_mode.PullRequest{}
-	err := storage.DbSelect(prQueryPrefix+` WHERE pr.repo_id = $1 ORDER BY pr.updated_at DESC`, &found, repoID)
+	err := storage.DbSelect(prQueryPrefix+` WHERE pr.repo_id = $1 ORDER BY pr.created_at DESC`, &found, repoID)
 	return found, err
 }
 

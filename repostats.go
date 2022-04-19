@@ -80,12 +80,15 @@ func initRouter(router *gin.Engine) {
 	admin.GET("/schedule", controller.SchedulePage)
 	admin.GET("/gitee", controller.GiteePage)
 
-	admin.GET("/commits", controller.CommitsPage)
-	admin.POST("/commits/:sha/delete", controller.CommitDelete)
-
 	admin.GET("/repos", controller.ReposPage)
 	admin.PUT("/repos/:repoID/change_state", controller.RepoStateChange)
 	admin.POST("/repos/:repoID/delete", controller.RepoDelete)
+
+	admin.GET("/commits", controller.CommitsPage)
+	admin.POST("/commits/:sha/delete", controller.CommitDelete)
+
+	admin.GET("/prs", controller.PRsPage)
+	admin.POST("/prs/:id/delete", controller.PRDelete)
 
 	admin.GET("/grafana", controller.GrafanaPage)
 

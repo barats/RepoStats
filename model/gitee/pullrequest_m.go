@@ -38,6 +38,6 @@ type PullRequest struct {
 	} `json:"head" db:"head"`
 }
 
-func (pr PullRequest) isNilOrEmpty() bool {
+func (pr PullRequest) IsNilOrEmpty() bool {
 	return reflect.DeepEqual(pr, PullRequest{})
 }

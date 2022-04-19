@@ -194,3 +194,23 @@ function deleteCommit(sha) {
     }//end of if
   });
 }
+
+function deletePR(prID) {
+  $('body').modal('confirm','删除 PullRequest','确认删除 <b>'+prID+'</b> 的 PullRequest 记录吗？', function(choice){
+    if(choice) {
+      $.ajax({
+        type:"POST",
+        url: "/admin/prs/"+prID+"/delete",
+        data: {
+          "type": "gitee"
+        },
+        success: function() {
+          successToast('操作成功')
+        },
+        error: function(e) {
+          errorToast($.parseJSON(e.responseText).message)
+        }
+      });
+    }//end of if
+  });
+}
