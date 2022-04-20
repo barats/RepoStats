@@ -10,7 +10,8 @@
           <thead>
             <tr>
               <th colspan="11">
-                <p>共计 <span style="color: red;">{{.total_item}}</span> 条记录，当前 <span style="color: red;">{{.current_page}}</span> / <span style="color: red;">{{add (div .total_item .page_size) 1}}</span> 页</p>
+                <p>共计 <span style="color: red;">{{.total_item}}</span> 条记录，当前 <span style="color: red;">{{.current_page}}</span> / <span style="color: red;">{{add (div .total_item .page_size) 1}}</span> 页 </p>
+                <p><button onclick="showRepoModal()" class="ui mini button">添加仓库</button></p>
               </th>
             </tr>
             <tr>       
@@ -71,7 +72,37 @@
         </table>
       </div>
     </div><!--end fo grid-->
-  </div>  <!--end of basic segment-->  
+  </div>  <!--end of basic segment-->
+  <div id="add-repo-modal" class="ui compact modal">
+    <div class="header">添加仓库</div>
+    <div class="content">
+    <p>RepoStats 支持添加单个仓库，也支持添加组织或个人页面链接</p>
+    <p>若添加组织或个人页面链接，RepoStats 将会尝试抓取该用户或组织名下所有公开的仓库</p>
+    <p>
+      以下均是有效链接：
+      <ul>
+        <li>https://gitee.com/barat/ohurlshortener</li>
+        <li>https://gitee.com/barat</li>
+        <li>https://gitee.com/openharmony</li>
+        <li>https://gitee.com/openharmony/community</li>
+      </ul>
+    </p>
+    <form id="add-repo-form" class="ui form">
+      <div class="ui field">
+        <label>仓库链接</label>
+        <input type="text" name="repo_url" placeholder="仓库链接">
+      </div>
+      <div id="add-repo-message" class="ui error message"></div>
+    </form>
+    <div id="add-form-loadder" class="ui inverted dimmer">
+      <div class="ui small text loader">正在尝试抓取仓库信息，请稍后</div>
+    </div>
+    </div>
+    <div class="actions">
+      <div class="ui cancel button">取消</div>
+      <div class="ui primary approve button">添加</div>      
+    </div>
+  </div>
 </div><!--end of admin-right-content-->
 {{template "footer.html" .}}
 {{end -}}

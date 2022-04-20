@@ -9,7 +9,9 @@
 package utils
 
 import (
+	"errors"
 	"log"
+	"net/url"
 	"os"
 	"path/filepath"
 	"reflect"
@@ -55,4 +57,27 @@ func appHomeDir() (string, error) {
 	}
 	appPath := filepath.Join(home, ".repostats")
 	return appPath, os.MkdirAll(appPath, os.ModePerm)
+}
+
+// 给定 url 解析 Gitee 的用户名和仓库名
+//
+func ParseGiteeRepoUrl(urlStr string) (string, string, error) {
+	url, err := url.Parse(urlStr)
+	if err != nil {
+		return "", "", err
+	}
+
+	if !strings.EqualFold(url.Host, "gitee.com") {
+		return "", "", errors.New("不是 Gitee 链接")
+	}
+
+	arr := strings.Split(url.Path, "/")
+
+	if len(arr) == 3 {
+		return arr[1], arr[2], nil
+	} else if len(arr) == 2 {
+		return arr[1], "", nil
+	} else {
+		return "", "", errors.New("无法解析该链接")
+	}
 }

@@ -68,6 +68,17 @@ $(document).ready(function() {
     }
   });
 
+  $('#add-repo-form').form({
+    fields: {
+      repo_url : {
+        rules:[{
+          type: 'empty',
+          prompt: '仓库链接尚未填写'
+        }]
+      }
+    }
+  });
+
   $('#btn-gitee-authorize').click(function(){    
     authForm = $('#form-gitee-authorize');    
     authForm.form('validate form');
@@ -274,5 +285,37 @@ function deletePR(prID) {
         }
       });
     }//end of if
+  });
+}
+
+function showRepoModal() {
+  $('#add-repo-modal').modal({centered: false,onApprove : function() {    
+    repoForm = $('#add-repo-form');    
+    repoForm.form('validate form');
+    if(repoForm.form('is valid')) {
+      AddRepo(repoForm)
+    }
+    return false;
+  }}).modal('show');
+}
+
+function AddRepo(form) {
+  $('#add-form-loadder').removeClass('disabled').addClass('active');  
+  $.ajax({
+    type:"POST",
+    url: "/admin/repos",
+    data:{
+      "repo_url" : form.form('get value', 'repo_url'),
+      "type": "gitee" 
+    },
+    success: function() {            
+      successToast('操作成功')
+    },
+    error: function(e) {
+      errorToast($.parseJSON(e.responseText).message)
+    },
+    complete: function() {
+      $('#add-form-loadder').removeClass('active').addClass('disabled');
+    }
   });
 }

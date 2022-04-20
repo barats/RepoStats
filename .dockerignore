@@ -1,2 +1,4 @@
 .DS_Store
 docker/container-data
+.vscode
+tmp

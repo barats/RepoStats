@@ -18,6 +18,28 @@ import (
 	"time"
 )
 
+// 获取 Gitee 仓库信息
+//
+func GetGiteeRepo(owner, repo string) (gitee_model.Repository, error) {
+	var foundRepo = gitee_model.Repository{}
+	token, err := validGiteeToken()
+	if err != nil {
+		return foundRepo, err
+	}
+	url := fmt.Sprintf("%s/repos/%s/%s", gitee_model.GITEE_OAUTH_V5PREFIX, owner, repo)
+	code, rs, err := HttpGet(token.AccessToken, url, nil, nil)
+
+	if err != nil {
+		return foundRepo, err
+	}
+
+	if code != http.StatusOK {
+		return foundRepo, fmt.Errorf("GrabRepo failed during network. Status Code: %d", code)
+	}
+	e := json.Unmarshal([]byte(rs), &foundRepo)
+	return foundRepo, e
+}
+
 // 获取指定用户的详细信息
 //
 // login 是 Gitee 登录帐号
