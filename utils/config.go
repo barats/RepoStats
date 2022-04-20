@@ -15,7 +15,15 @@ import (
 var (
 	DatabaseConifg  DatabaseConfigInfo
 	RepoStatsConfig RepoStatsConfigInfo
+	GrafanaConfig   GrafanaConfigInfo
 )
+
+type GrafanaConfigInfo struct {
+	Host     string
+	Port     string
+	User     string
+	Password string
+}
 
 type RepoStatsConfigInfo struct {
 	AdminPort int
@@ -55,6 +63,12 @@ func InitConfig(file string) (*ini.File, error) {
 	RepoStatsConfig.AdminPort = repostatsSection.Key("admin_port").MustInt()
 	RepoStatsConfig.Version = repostatsSection.Key("version").String()
 	RepoStatsConfig.Build = repostatsSection.Key("build").String()
+
+	grafanaSection := cfg.Section("grafana")
+	GrafanaConfig.Host = grafanaSection.Key("host").String()
+	GrafanaConfig.Port = grafanaSection.Key("port").String()
+	GrafanaConfig.User = grafanaSection.Key("user").String()
+	GrafanaConfig.Password = grafanaSection.Key("password").String()
 
 	return cfg, err
 }

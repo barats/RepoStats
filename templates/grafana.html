@@ -1,0 +1,61 @@
+{{define "grafana.html" -}}
+{{template "header.html" .}}
+{{template "admin-left-menu.html" .}}
+<div id="admin-right-content">
+  <div class="ui basic segment">
+    <h3 class="ui header">Grafana 配置</h3>
+    <div class="ui content">
+      <div class="ui compact info message">
+        <div class="header">须知事项</div>
+        <p>RepoStats 使用 <a target="_blank" href="https://grafana.com/docs/grafana/latest/http_api/admin/">Grafana Admin HTTP API</a> 与 Grafana 交互 </p>
+        <ul class="list">
+          <li>Grafana 默认帐号密码为 admin/admin ，请根据实际情况做必要的修改 </li>
+          <li>请根据 <a target="_blank" href="https://grafana.com/docs/grafana/latest/http_api/auth/"> Authentication API </a>指导新建 token</li>
+          <li>您也可以填充下列信息并有 RepoStats 自动生成必要的 token 及数据源</li>          
+          <li>在此过程中，RepoStats 不会保存任何第三方应用信息，只记录最终的 token 信息以备后续使用</li>
+        </ul>      
+      </div> 
+      <div class="ui two column stackable grid">
+        <div class="eight wide column">
+          <h3>Grafana 信息</h3>          
+          <form id="form-grafana-token" class="ui form">
+            <div class="two fields">
+              <div class="ui field">
+                <label>Grafana Host</label>
+                <input type="text" name="host" placeholder="localhost" value="{{.grafana.Host}}">
+              </div>
+              <div class="ui field">
+                <label>Grafana Port</label>
+                <input type="text" name="port" placeholder="3000" value="{{.grafana.Port}}">
+              </div>
+            </div>
+           <div class="two fields">
+            <div class="ui field">
+              <label>Grafana 管理员帐号</label>
+              <input type="text" name="account" placeholder="account" value="{{.grafana.User}}">
+            </div>
+            <div class="field">
+              <label>Grafana 管理员密码</label>
+              <input type="password" name="password" placeholder="password" value="{{.grafana.Password}}">
+            </div>  
+           </div>                                          
+            <div id="grafana-token-message" class="ui error message"></div>            
+            <button id="btn-grafana-token" class="ui button" type="button">获取 Token</button>            
+          </form>
+        </div>
+        <div class="eight wide column">
+          {{if .token}}
+              <div class="ui bottom attached compact positive message">
+                <i class="close icon"></i>
+                <div class="header">Grafana API Token</div>
+                  <p>当前 token 信息已存在，若无必要不必重新获取。</p>
+                  <code style="word-break: break-word;">{{.token}}</code>                 
+              </div>            
+          {{end}}   
+        </div>        
+      </div>      
+    </div><!--end of ui content-->
+  </div>  <!--end of basic segment-->
+</div><!--end of admin-right-content-->
+{{template "footer.html" .}}
+{{end -}}

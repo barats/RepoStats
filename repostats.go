@@ -91,6 +91,7 @@ func initRouter(router *gin.Engine) {
 	admin.POST("/prs/:id/delete", controller.PRDelete)
 
 	admin.GET("/grafana", controller.GrafanaPage)
+	admin.POST("/grafana/token", controller.GrafanaToken)
 
 	public := router.Group("/admin") //Same url path with /admin WITHOUT auth handler
 	public.POST("/gitee/token", controller.GiteeTokenRetrieve)

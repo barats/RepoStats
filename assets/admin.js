@@ -39,6 +39,35 @@ $(document).ready(function() {
     }
   });
 
+  $('#form-grafana-token').form({
+    fields: {
+      account: {
+        rules: [{
+          type:'empty',
+          prompt:'帐号尚未填写'
+        }]
+      },
+      password: {
+        rules: [{
+          type:'empty',
+          prompt:'密码尚未填写'
+        }]
+      },
+      host: {
+        rules: [{
+          type:'empty',
+          prompt:'Grafana Host 尚未填写'
+        }]
+      },
+      port: {
+        rules: [{
+          type:'empty',
+          prompt:'Grafana Port 尚未填写'
+        }]
+      } 
+    }
+  });
+
   $('#btn-gitee-authorize').click(function(){    
     authForm = $('#form-gitee-authorize');    
     authForm.form('validate form');
@@ -65,6 +94,14 @@ $(document).ready(function() {
       GetGiteeToken(authForm);
     }
   });
+
+  $('#btn-grafana-token').click(function(){
+    tokenForm = $('#form-grafana-token');    
+    tokenForm.form('validate form');
+    if(tokenForm.form('is valid')) {
+      CreateGrafanaToken(tokenForm)
+    }
+  });
 });
 
 function successToast(message) {
@@ -87,6 +124,31 @@ function errorToast(message) {
     showProgress: 'bottom'
   });
 }
+
+function CreateGrafanaToken(form) {
+  authForm = $('#form-gitee-authorize'); 
+  var data = JSON.stringify( {
+    "account" : form.form('get value', 'account'),
+    "password": form.form('get value', 'password'),
+    "host" : form.form('get value', 'host'),
+    "port" : form.form('get value', 'port')    
+  })
+  $.ajax({
+    type: "POST",
+    url: '/admin/grafana/token',    
+    contentType: "application/json",
+    dataType: "json",
+    data: data,
+    success: function(data) {            
+      $('#grafana-token-message').html('<code>'+data+'</code>');
+      $('#grafana-token-message').removeClass('error').addClass('positive').addClass('visible');
+    },
+    error: function(xhr) {
+      $('#grafana-token-message').html('<code>'+xhr.responseText+'</code>');
+      $('#grafana-token-message').removeClass('positive').addClass('error').addClass('visible');
+    }
+  });
+}//end of function GetGiteeToken
 
 function GetGiteeToken(form) {
   authForm = $('#form-gitee-authorize'); 
