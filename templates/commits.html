@@ -9,7 +9,7 @@
         <table class="ui celled striped small table">
           <thead>
             <tr>
-              <th colspan="11">
+              <th colspan="12">
                 <p>共计 <span style="color: red;">{{.total_item}}</span> 条记录，当前 <span style="color: red;">{{.current_page}} </span> / <span style="color: red;">{{add (div .total_item .page_size) 1}}</span> 页</p>                
                 <p>
                   <form id="search-commit-form" class="ui mini form" method="GET" accept="/admin/commits">
@@ -38,7 +38,8 @@
               </th>
             </tr>
             <tr>       
-              <th class="center aligned collapsing">序号</th>     
+              <th class="center aligned collapsing">序号</th> 
+              <th class="center aligned collapsing">平台</th>     
               <th class="center aligned collapsing">仓库编号</th>
               <th class="center aligned collapsing">Sha</th>              
               <th>提交信息</th>
@@ -55,6 +56,7 @@
             {{range $i,$c := .commits}} 
             <tr>
               <td class="center aligned collapsing">{{add $i 1}}</td>
+              <td class="center aligned collapsing">Gitee</td>
               <td class="center aligned collapsing"><a target="_blank" href="/admin/repos?id={{$c.RepoID}}">{{$c.RepoID}}</a></td>
               <td class="center aligned collapsing">{{$c.Sha}}</td>              
               <td><a href="{{$c.HtmlUrl}}" target="_blank">{{$c.Detail.Message}}</a></td>              
@@ -73,7 +75,7 @@
           <tfoot>
             {{if .total_item}}
             <tr>
-              <td colspan="11" class="center aligned">
+              <td colspan="12" class="center aligned">
                 <div class="ui tiny pagination menu"> 
                   <a  class="item" target="_self"  href="{{.current_url}}?page=1&size={{.page_size}}&sha={{.sha}}&author_email={{.author_email}}&committer_email={{.committer_email}}">首页</a>
                   <a  class="{{if .first_page}}disabled{{end}} item" target="_self"  href="{{.current_url}}?page={{sub .current_page 1}}&size={{.page_size}}&author_email={{.author_email}}&committer_email={{.committer_email}}"><<</a>

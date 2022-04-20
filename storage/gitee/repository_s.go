@@ -11,6 +11,7 @@ package gitee
 import (
 	gitee_model "repostats/model/gitee"
 	"repostats/storage"
+	"strings"
 )
 
 var repoQueryPrefix = `SELECT r.owner_id AS "owner.id", r.assigner_id AS "assigner.id", r.*  FROM gitee.repos r `
@@ -61,4 +62,20 @@ func FindTotalReposCount() (int, error) {
 	var count int
 	query := `SELECT count(r.id) FROM gitee.repos r`
 	return count, storage.DbGet(query, &count)
+}
+
+func FindReposCountByName(name string) (int, error) {
+	var count int
+	query := `SELECT count(r.id) FROM gitee.repos r WHERE lower(r."path") LIKE $1 OR lower(r."name") LIKE $2`
+	return count, storage.DbGet(query, &count, "%"+strings.ToLower(name)+"%", "%"+strings.ToLower(name)+"%")
+}
+
+func FindPagedReposByName(name string, page, size int) ([]gitee_model.Repository, error) {
+	if page < 1 {
+		page = 1
+	}
+	repos := []gitee_model.Repository{}
+	query := repoQueryPrefix + `  WHERE lower(r."path") LIKE $1 OR lower(r."name") LIKE $2 ORDER BY r.id DESC LIMIT $3 OFFSET $4`
+	offset := (page - 1) * size
+	return repos, storage.DbSelect(query, &repos, "%"+strings.ToLower(name)+"%", "%"+strings.ToLower(name)+"%", size, offset)
 }

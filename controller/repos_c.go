@@ -106,6 +106,7 @@ func ReposPage(ctx *gin.Context) {
 	strPage := ctx.DefaultQuery("page", strconv.Itoa(storage.DEFAULT_PAGE_NUMBER))
 	strSize := ctx.DefaultQuery("size", strconv.Itoa(storage.DEFAULT_PAGE_SIZE))
 	strRepoID := ctx.DefaultQuery("id", "")
+	repoName := ctx.DefaultQuery("repo_name", "")
 
 	page, err := strconv.Atoi(strPage)
 	if err != nil || page < storage.DEFAULT_PAGE_NUMBER {
@@ -125,17 +126,34 @@ func ReposPage(ctx *gin.Context) {
 	var count int
 	var repos []gitee_model.Repository
 	if repoID <= 0 {
-		count, err = gitee_storage.FindTotalReposCount()
-		repos, err = gitee_storage.FindPagedRepos(page, size)
 
-		if err != nil {
-			log.Printf("error %s", err)
-			ctx.HTML(http.StatusOK, "repos.html", gin.H{
-				"title":       "代码仓库列表 - RepoStats",
-				"current_url": ctx.Request.URL.Path,
-				"error":       "内部错误，请联系管理员",
-			})
-			return
+		if utils.EmptyString(repoName) {
+			count, err = gitee_storage.FindTotalReposCount()
+			repos, err = gitee_storage.FindPagedRepos(page, size)
+
+			if err != nil {
+				log.Printf("error %s", err)
+				ctx.HTML(http.StatusOK, "repos.html", gin.H{
+					"title":       "代码仓库列表 - RepoStats",
+					"current_url": ctx.Request.URL.Path,
+					"error":       "内部错误，请联系管理员",
+				})
+				return
+			}
+		} else {
+			//search by repo_name
+			count, err = gitee_storage.FindReposCountByName(repoName)
+			repos, err = gitee_storage.FindPagedReposByName(repoName, page, size)
+
+			if err != nil {
+				log.Printf("error %s", err)
+				ctx.HTML(http.StatusOK, "repos.html", gin.H{
+					"title":       "代码仓库列表 - RepoStats",
+					"current_url": ctx.Request.URL.Path,
+					"error":       "内部错误，请联系管理员",
+				})
+				return
+			}
 		}
 	} else {
 		r, errr := gitee_storage.FindRepoByID(repoID)
@@ -148,8 +166,8 @@ func ReposPage(ctx *gin.Context) {
 			})
 			return
 		}
-		count = 1
 		repos = append(repos, r)
+		count = len(repos)
 	}
 
 	ctx.HTML(http.StatusOK, "repos.html", gin.H{
@@ -161,6 +179,7 @@ func ReposPage(ctx *gin.Context) {
 		"page_size":    size,
 		"first_page":   page == 1,
 		"last_page":    page >= (count/size)+1,
+		"repo_name":    repoName,
 	})
 }
 

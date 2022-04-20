@@ -9,13 +9,31 @@
         <table class="ui celled striped small table">
           <thead>
             <tr>
-              <th colspan="11">
+              <th colspan="4">                
                 <p>共计 <span style="color: red;">{{.total_item}}</span> 条记录，当前 <span style="color: red;">{{.current_page}}</span> / <span style="color: red;">{{add (div .total_item .page_size) 1}}</span> 页 </p>
-                <p><button onclick="showRepoModal()" class="ui mini positive button">添加仓库</button></p>
+                <p>                  
+                  <form id="search-repo-form" class="ui mini form" method="GET" action="/admin/repos">
+                    <div class="inline fields">
+                      <div class="field">  
+                        <label>仓库名称</label>                      
+                        <input type="text" name="repo_name" placeholder="仓库名称" value="{{.repo_name}}">
+                      </div>
+                      <div class="field">
+                        <a class="ui mini positive button" onclick="javascript:searchRepos()">查询</a>
+                        <a target="_self" href="/admin/repos" class="ui mini button">重置</a>                        
+                      </div>                                          
+                    </div>                     
+                  </form>                                    
+                </p>
+              </th>
+              <th colspan="8">
+                <p>新增、删除或禁止爬取仓库数据，不会删除 Gitee 数据，但会影响 RepoStats 统计结果</p>
+                <p><button onclick="showAddRepoModal()" class="ui mini positive button">添加仓库</button></p>                
               </th>
             </tr>
             <tr>       
-              <th class="center aligned collapsing">序号</th>     
+              <th class="center aligned collapsing">序号</th>  
+              <th class="center aligned collapsing">平台</th>   
               <th class="center aligned collapsing">仓库ID</th>
               <th>仓库名</th>
               <th class="center aligned collapsing">Star数</th>  
@@ -36,7 +54,8 @@
             <tr>
             {{end}}            
               <td class="center aligned collapsing">{{add $i 1}}</td>
-              <td class="center aligned collapsing">{{$r.ID}}</td>
+              <td class="center aligned collapsing">Gitee</td>
+              <td class="center aligned collapsing">{{$r.ID}}</td>              
               <td><a href="{{$r.HTMLURL}}" target="_blank">{{$r.HumanName}}</a></td>
               <td class="center aligned collapsing">{{$r.StargazersCount}}</td>
               <td class="center aligned collapsing">{{$r.ForksCount}}</td>              
@@ -57,13 +76,13 @@
           <tfoot>
             {{if .total_item}}
             <tr>
-              <td colspan="11" class="center aligned">
+              <td colspan="12" class="center aligned">
                 <div class="ui tiny pagination menu"> 
-                  <a  class="item" target="_self"  href="{{.current_url}}?page=1&size={{.page_size}}">首页</a>
-                  <a  class="{{if .first_page}}disabled{{end}} item" target="_self"  href="{{.current_url}}?page={{sub .current_page 1}}&size={{.page_size}}"><<</a>
+                  <a  class="item" target="_self"  href="{{.current_url}}?page=1&size={{.page_size}}&repo_name={{.repo_name}}">首页</a>
+                  <a  class="{{if .first_page}}disabled{{end}} item" target="_self"  href="{{.current_url}}?page={{sub .current_page 1}}&size={{.page_size}}&repo_name={{.repo_name}}"><<</a>
                   <div class="active item">{{.current_page}}</div>
-                  <a class="{{if .last_page}}disabled{{end}} item" target="_self" href="{{.current_url}}?page={{add .current_page 1}}&size={{.page_size}}">>></a>
-                  <a  class="item" target="_self"  href="{{.current_url}}?page={{add (div .total_item .page_size) 1}}&size={{.page_size}}">末页</a>
+                  <a class="{{if .last_page}}disabled{{end}} item" target="_self" href="{{.current_url}}?page={{add .current_page 1}}&size={{.page_size}}&repo_name={{.repo_name}}">>></a>
+                  <a  class="item" target="_self"  href="{{.current_url}}?page={{add (div .total_item .page_size) 1}}&size={{.page_size}}&repo_name={{.repo_name}}">末页</a>
                 </div>   
               </td>                         
             </tr>

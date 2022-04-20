@@ -288,7 +288,7 @@ function deletePR(prID) {
   });
 }
 
-function showRepoModal() {
+function showAddRepoModal() {
   $('#add-repo-modal').modal({centered: false,onApprove : function() {    
     repoForm = $('#add-repo-form');    
     repoForm.form('validate form');
@@ -327,6 +327,17 @@ function searchCommits() {
   committerEmail = searchForm.form('get value', 'committer_email');
 
   if($.trim(sha).length === 0 && $.trim(authorEmail).length === 0 && $.trim(committerEmail).length === 0) {    
+    return false;
+  }
+
+  searchForm.submit();
+}
+
+function searchRepos() {
+  searchForm = $('#search-repo-form');
+  repoName = searchForm.form('get value', 'repo_name');
+
+  if($.trim(repoName).length === 0) {
     return false;
   }
 
