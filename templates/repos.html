@@ -11,7 +11,7 @@
             <tr>
               <th colspan="11">
                 <p>共计 <span style="color: red;">{{.total_item}}</span> 条记录，当前 <span style="color: red;">{{.current_page}}</span> / <span style="color: red;">{{add (div .total_item .page_size) 1}}</span> 页 </p>
-                <p><button onclick="showRepoModal()" class="ui mini button">添加仓库</button></p>
+                <p><button onclick="showRepoModal()" class="ui mini positive button">添加仓库</button></p>
               </th>
             </tr>
             <tr>       
@@ -81,10 +81,10 @@
     <p>
       以下均是有效链接：
       <ul>
-        <li>https://gitee.com/barat/ohurlshortener</li>
-        <li>https://gitee.com/barat</li>
-        <li>https://gitee.com/openharmony</li>
-        <li>https://gitee.com/openharmony/community</li>
+        <li>http://gitee.com/barat </li>
+        <li>https://gitee.com/openharmony </li>
+        <li>https://gitee.com/barat/ohurlshortener</li>                
+        <li>https://gitee.com/openharmony/community </li>
       </ul>
     </p>
     <form id="add-repo-form" class="ui form">
@@ -100,7 +100,7 @@
     </div>
     <div class="actions">
       <div class="ui cancel button">取消</div>
-      <div class="ui primary approve button">添加</div>      
+      <div class="ui positive approve button">添加</div>      
     </div>
   </div>
 </div><!--end of admin-right-content-->

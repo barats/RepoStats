@@ -53,6 +53,38 @@ func FindCommits() ([]gitee_model.Commit, error) {
 	return found, err
 }
 
+func FindCommitsCountByAuthorEmail(email string) (int, error) {
+	var count int
+	query := `SELECT count(c.sha) FROM gitee.commits c WHERE c.author_email = $1`
+	return count, storage.DbGet(query, &count, email)
+}
+
+func FindCommitsCountByCommitterEmail(email string) (int, error) {
+	var count int
+	query := `SELECT count(c.sha) FROM gitee.commits c WHERE c.committer_email = $1`
+	return count, storage.DbGet(query, &count, email)
+}
+
+func FindPagedCommitsByAuthorEmail(email string, page, size int) ([]gitee_model.Commit, error) {
+	if page < 1 {
+		page = 1
+	}
+	commits := []gitee_model.Commit{}
+	query := commitQueryPrefix + ` WHERE c.author_email = $1 ORDER BY c.author_date DESC LIMIT $2 OFFSET $3`
+	offset := (page - 1) * size
+	return commits, storage.DbSelect(query, &commits, email, size, offset)
+}
+
+func FindPagedCommitsByCommitterEmail(email string, page, size int) ([]gitee_model.Commit, error) {
+	if page < 1 {
+		page = 1
+	}
+	commits := []gitee_model.Commit{}
+	query := commitQueryPrefix + ` WHERE c.committer_email = $1 ORDER BY c.author_date DESC LIMIT $2 OFFSET $3`
+	offset := (page - 1) * size
+	return commits, storage.DbSelect(query, &commits, email, size, offset)
+}
+
 func FindCommitBySha(sha string) (gitee_model.Commit, error) {
 	found := gitee_model.Commit{}
 	query := commitQueryPrefix + ` WHERE c.sha = $1 ORDER BY c.author_date DESC`

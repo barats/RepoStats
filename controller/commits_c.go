@@ -11,6 +11,7 @@ package controller
 import (
 	"log"
 	"net/http"
+	gitee_model "repostats/model/gitee"
 	"repostats/storage"
 	gitee_storage "repostats/storage/gitee"
 	"repostats/utils"
@@ -26,40 +27,140 @@ func CommitsPage(ctx *gin.Context) {
 
 	strPage := ctx.DefaultQuery("page", strconv.Itoa(storage.DEFAULT_PAGE_NUMBER))
 	strSize := ctx.DefaultQuery("size", strconv.Itoa(storage.DEFAULT_PAGE_SIZE))
+	sha := ctx.DefaultQuery("sha", "")
+	authorEmail := ctx.DefaultQuery("author_email", "")
+	committerEmail := ctx.DefaultQuery("committer_email", "")
 
 	page, err := strconv.Atoi(strPage)
 	if err != nil || page < storage.DEFAULT_PAGE_NUMBER {
 		page = storage.DEFAULT_PAGE_NUMBER
+		err = nil
 	}
 
 	size, err := strconv.Atoi(strSize)
 	if err != nil || size < storage.DEFAULT_PAGE_SIZE || size > storage.DEFAULT_MAX_PAGE_SIZE {
 		size = storage.DEFAULT_PAGE_SIZE
+		err = nil
 	}
 
-	count, err1 := gitee_storage.FindTotalCommitsCount()
-	commits, err2 := gitee_storage.FindPagedCommits(page, size)
+	if utils.EmptyString(sha) && utils.EmptyString(authorEmail) && utils.EmptyString(committerEmail) {
 
-	if err1 != nil || err2 != nil {
-		log.Printf("error1 %s \t error2 %s", err1, err2)
+		count, err := gitee_storage.FindTotalCommitsCount()
+		commits, err := gitee_storage.FindPagedCommits(page, size)
+
+		if err != nil {
+			log.Printf("error %s ", err)
+			ctx.HTML(http.StatusOK, "commits.html", gin.H{
+				"title":       "Commit 列表 - RepoStats",
+				"current_url": ctx.Request.URL.Path,
+				"error":       "内部错误，请联系管理员",
+			})
+			return
+		}
+
 		ctx.HTML(http.StatusOK, "commits.html", gin.H{
-			"title":       "Commit 列表 - RepoStats",
-			"current_url": ctx.Request.URL.Path,
-			"error":       "内部错误，请联系管理员",
+			"title":        "Commit 列表 - RepoStats",
+			"current_url":  ctx.Request.URL.Path,
+			"commits":      commits,
+			"total_item":   count,
+			"current_page": page,
+			"page_size":    size,
+			"first_page":   page == 1,
+			"last_page":    page >= (count/size)+1,
 		})
+
+		return
+	} //end of if
+
+	if !utils.EmptyString(sha) {
+		found, err := gitee_storage.FindCommitBySha(sha)
+		if err != nil {
+			log.Printf("err %s", err)
+			ctx.HTML(http.StatusOK, "commits.html", gin.H{
+				"title":       "Commit 列表 - RepoStats",
+				"current_url": ctx.Request.URL.Path,
+				"error":       "内部错误，请联系管理员",
+			})
+			return
+		}
+
+		var commits []gitee_model.Commit
+		if !found.IsNilOrEmpty() {
+			commits = append(commits, found)
+		}
+
+		ctx.HTML(http.StatusOK, "commits.html", gin.H{
+			"title":        "Commit 列表 - RepoStats",
+			"current_url":  ctx.Request.URL.Path,
+			"commits":      commits,
+			"total_item":   len(commits),
+			"current_page": page,
+			"page_size":    size,
+			"first_page":   page == 1,
+			"last_page":    page >= (len(commits)/size)+1,
+		})
+
 		return
 	}
 
-	ctx.HTML(http.StatusOK, "commits.html", gin.H{
-		"title":        "Commit 列表 - RepoStats",
-		"current_url":  ctx.Request.URL.Path,
-		"commits":      commits,
-		"total_item":   count,
-		"current_page": page,
-		"page_size":    size,
-		"first_page":   page == 1,
-		"last_page":    page >= (count/size)+1,
-	})
+	if !utils.EmptyString(authorEmail) {
+		count, err := gitee_storage.FindCommitsCountByAuthorEmail(authorEmail)
+		commits, err := gitee_storage.FindPagedCommitsByAuthorEmail(authorEmail, page, size)
+
+		if err != nil {
+			log.Printf("err %s", err)
+			ctx.HTML(http.StatusOK, "commits.html", gin.H{
+				"title":       "Commit 列表 - RepoStats",
+				"current_url": ctx.Request.URL.Path,
+				"error":       "内部错误，请联系管理员",
+			})
+			return
+		}
+
+		ctx.HTML(http.StatusOK, "commits.html", gin.H{
+			"title":        "Commit 列表 - RepoStats",
+			"current_url":  ctx.Request.URL.Path,
+			"commits":      commits,
+			"total_item":   count,
+			"current_page": page,
+			"page_size":    size,
+			"first_page":   page == 1,
+			"last_page":    page >= (count/size)+1,
+			"author_email": authorEmail,
+		})
+
+		return
+	}
+
+	if !utils.EmptyString(committerEmail) {
+
+		count, err := gitee_storage.FindCommitsCountByCommitterEmail(committerEmail)
+		commits, err := gitee_storage.FindPagedCommitsByCommitterEmail(committerEmail, page, size)
+
+		if err != nil {
+			log.Printf("err %s", err)
+			ctx.HTML(http.StatusOK, "commits.html", gin.H{
+				"title":       "Commit 列表 - RepoStats",
+				"current_url": ctx.Request.URL.Path,
+				"error":       "内部错误，请联系管理员",
+			})
+			return
+		}
+
+		ctx.HTML(http.StatusOK, "commits.html", gin.H{
+			"title":           "Commit 列表 - RepoStats",
+			"current_url":     ctx.Request.URL.Path,
+			"commits":         commits,
+			"total_item":      count,
+			"current_page":    page,
+			"page_size":       size,
+			"first_page":      page == 1,
+			"last_page":       page >= (count/size)+1,
+			"committer_email": committerEmail,
+		})
+
+		return
+	}
 }
 
 // 删除 commit

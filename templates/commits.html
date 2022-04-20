@@ -11,19 +11,43 @@
             <tr>
               <th colspan="11">
                 <p>共计 <span style="color: red;">{{.total_item}}</span> 条记录，当前 <span style="color: red;">{{.current_page}} </span> / <span style="color: red;">{{add (div .total_item .page_size) 1}}</span> 页</p>                
+                <p>
+                  <form id="search-commit-form" class="ui mini form" method="GET" accept="/admin/commits">
+                    <div class="inline fields">
+                      <div class="ui field">  
+                        <label>Commit Sha</label>                      
+                        <input type="text" name="sha" placeholder="Commit Sha" value="{{.sha}}">
+                      </div>
+                      <div class="ui field">
+                        <label>Author Email</label>                      
+                        <input type="text" name="author_email" placeholder="Author Email" value="{{.author_email}}">
+                      </div>
+                      <div class="ui field">
+                        <label>Committer Email</label>                      
+                        <input type="text" name="committer_email" placeholder="Committer Email" value="{{.committer_email}}">
+                      </div>
+                      <div class="ui field">
+                        <a class="ui mini positive button" onclick="javascript:searchCommits()">查询</a>
+                        <a target="_self" href="/admin/commits" class="ui mini button">重置</a>
+                      </div>                    
+                    </div>                    
+                    <div id="search-commit-message" class="ui error message"></div>                    
+                  </form>                  
+                  </form>
+                </p>
               </th>
             </tr>
             <tr>       
               <th class="center aligned collapsing">序号</th>     
-              <th class="center aligned collapsing">Sha</th>
               <th class="center aligned collapsing">仓库编号</th>
+              <th class="center aligned collapsing">Sha</th>              
               <th>提交信息</th>
               <th class="center aligned collapsing">Author</th>  
-              <th class="center aligned collapsing">Author Date</th>                
-              <th class="center aligned collapsing">Author Email</th>  
+              <th class="center aligned collapsing">Author Email</th>
+              <th class="center aligned collapsing">Author Date</th>                                
               <th class="center aligned collapsing">Committer</th>  
-              <th class="center aligned collapsing">Committer Date</th>                
-              <th class="center aligned collapsing">Committer Email</th>                                           
+              <th class="center aligned collapsing">Committer Email</th>           
+              <th class="center aligned collapsing">Committer Date</th>                                                              
               <th class="center aligned">操作</th>       
             </tr>
           </thead>
@@ -31,12 +55,12 @@
             {{range $i,$c := .commits}} 
             <tr>
               <td class="center aligned collapsing">{{add $i 1}}</td>
-              <td class="center aligned collapsing">{{substr 0 8 $c.Sha}}</td>
               <td class="center aligned collapsing"><a target="_blank" href="/admin/repos?id={{$c.RepoID}}">{{$c.RepoID}}</a></td>
+              <td class="center aligned collapsing">{{$c.Sha}}</td>              
               <td><a href="{{$c.HtmlUrl}}" target="_blank">{{$c.Detail.Message}}</a></td>              
               <td class="center aligned collapsing">{{$c.Detail.Author.Name}}</td>
-              <td class="center aligned collapsing">{{$c.Detail.Author.Email}}</td>              
-              <td class="center aligned collapsing">{{$c.Detail.Author.Date | date "2006-01-02 15:04:05"}}</td>
+              <td class="center aligned collapsing">{{$c.Detail.Author.Email}}</td> 
+              <td class="center aligned collapsing">{{$c.Detail.Author.Date | date "2006-01-02 15:04:05"}}</td>                            
               <td class="center aligned collapsing">{{$c.Detail.Committer.Name}}</td>
               <td class="center aligned collapsing">{{$c.Detail.Committer.Email}}</td>              
               <td class="center aligned collapsing">{{$c.Detail.Committer.Date | date "2006-01-02 15:04:05"}}</td>    
@@ -51,11 +75,11 @@
             <tr>
               <td colspan="11" class="center aligned">
                 <div class="ui tiny pagination menu"> 
-                  <a  class="item" target="_self"  href="{{.current_url}}?page=1&size={{.page_size}}">首页</a>
-                  <a  class="{{if .first_page}}disabled{{end}} item" target="_self"  href="{{.current_url}}?page={{sub .current_page 1}}&size={{.page_size}}"><<</a>
+                  <a  class="item" target="_self"  href="{{.current_url}}?page=1&size={{.page_size}}&sha={{.sha}}&author_email={{.author_email}}&committer_email={{.committer_email}}">首页</a>
+                  <a  class="{{if .first_page}}disabled{{end}} item" target="_self"  href="{{.current_url}}?page={{sub .current_page 1}}&size={{.page_size}}&author_email={{.author_email}}&committer_email={{.committer_email}}"><<</a>
                   <div class="active item">{{.current_page}}</div>
-                  <a class="{{if .last_page}}disabled{{end}} item" target="_self" href="{{.current_url}}?page={{add .current_page 1}}&size={{.page_size}}">>></a>
-                  <a  class="item" target="_self"  href="{{.current_url}}?page={{add (div .total_item .page_size) 1}}&size={{.page_size}}">末页</a>
+                  <a class="{{if .last_page}}disabled{{end}} item" target="_self" href="{{.current_url}}?page={{add .current_page 1}}&size={{.page_size}}&author_email={{.author_email}}&committer_email={{.committer_email}}">>></a>
+                  <a  class="item" target="_self"  href="{{.current_url}}?page={{add (div .total_item .page_size) 1}}&size={{.page_size}}&author_email={{.author_email}}&committer_email={{.committer_email}}">末页</a>
                 </div>   
               </td>                         
             </tr>

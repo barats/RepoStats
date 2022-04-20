@@ -319,3 +319,16 @@ function AddRepo(form) {
     }
   });
 }
+
+function searchCommits() {
+  searchForm = $('#search-commit-form');
+  sha = searchForm.form('get value', 'sha');
+  authorEmail = searchForm.form('get value', 'author_email');
+  committerEmail = searchForm.form('get value', 'committer_email');
+
+  if($.trim(sha).length === 0 && $.trim(authorEmail).length === 0 && $.trim(committerEmail).length === 0) {    
+    return false;
+  }
+
+  searchForm.submit();
+}
