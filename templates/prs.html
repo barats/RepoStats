@@ -38,10 +38,10 @@
               <td><a href="{{$pr.HTMLURL}}" target="_blank">{{$pr.Title}}</a></td>              
               <td class="center aligned collapsing">{{$pr.State}}</td>
               <td class="center aligned collapsing">{{$pr.CreatedAt | date "2006-01-02 15:04:05"}}</td>              
-              <td class="center aligned collapsing">{{$pr.UpdatedAt | date "2006-01-02 15:04:05"}}</td>
-              <td class="center aligned collapsing">{{$pr.ClosedAt | date "2006-01-02 15:04:05"}}</td>
+              <td class="center aligned collapsing">{{if not $pr.ClosedAt.IsZero}}{{$pr.UpdatedAt | date "2006-01-02 15:04:05"}}{{end}}</td>
+              <td class="center aligned collapsing">{{if not $pr.ClosedAt.IsZero}}{{$pr.ClosedAt | date "2006-01-02 15:04:05"}}{{end}}</td>
               <td class="center aligned collapsing">{{$pr.Mergeable}}</td>              
-              <td class="center aligned collapsing">{{$pr.MergedAt | date "2006-01-02 15:04:05"}}</td>    
+              <td class="center aligned collapsing">{{if not $pr.MergedAt.IsZero}}{{$pr.MergedAt | date "2006-01-02 15:04:05"}}{{end}}</td>    
               <td class="center aligned collapsing"> 
                 <a href="javascript:deletePR('{{$pr.ID}}')">删除</a>
               </td>

@@ -24,11 +24,31 @@ func TestBulkSaveRepos(t *testing.T) {
 	found1, err := network.GetGiteeUserRepos("barat")
 	utils.ExitOnError(err)
 
+	for i := 0; i < len(found1); i++ {
+		found1[i].EnableCrawl = true
+	}
+
 	found2, err := network.GetGiteeOrgRepos("openharmony")
 	utils.ExitOnError(err)
 
+	for i := 0; i < len(found2); i++ {
+		found1[2].EnableCrawl = true
+	}
+
+	var users []gitee_model.User
 	for i := 0; i < len(found1); i++ {
-		found1[i].EnableCrawl = true
+		users = append(users, found1[i].Owner, found1[i].Assigner)
+	}
+
+	for i := 0; i < len(found2); i++ {
+		users = append(users, found2[i].Owner, found2[i].Assigner)
+	}
+
+	users = gitee_model.RemoveDuplicateUsers(users)
+
+	if len(users) > 0 {
+		err := BulkSaveUsers(users)
+		utils.ExitOnError(err)
 	}
 
 	type args struct {

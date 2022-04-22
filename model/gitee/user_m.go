@@ -25,20 +25,19 @@ type User struct {
 	CreatedAt time.Time `json:"created_at" db:"created_at"`
 }
 
-func (u User) isNilOrEmpty() bool {
+func (u User) IsNilOrEmpty() bool {
 	return reflect.DeepEqual(u, User{})
 }
 
-// func (r *User) Scan(src interface{}) error {
-// 	var userId int
-// 	switch src.(type) {
-// 	case int64:
-// 		userId = int(src.(int64))
-// 	case int32:
-// 		userId = int(src.(int32))
-// 	default:
-// 		return errors.New("can not find any valid user")
-// 	}
-// 	*r = User{ID: userId}
-// 	return nil
-// }
+func RemoveDuplicateUsers(users []User) []User {
+	keys := make(map[int]bool)
+	list := []User{}
+
+	for _, item := range users {
+		if _, value := keys[item.ID]; !value {
+			keys[item.ID] = true
+			list = append(list, item)
+		}
+	}
+	return list
+}

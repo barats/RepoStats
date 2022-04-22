@@ -33,6 +33,6 @@ type Collaborator struct {
 	} `db:"permissions"`
 }
 
-func (c Collaborator) isNilOrEmpty() bool {
+func (c Collaborator) IsNilOrEmpty() bool {
 	return reflect.DeepEqual(c, Collaborator{})
 }

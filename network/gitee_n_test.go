@@ -11,10 +11,14 @@ package network
 import (
 	"log"
 	"reflect"
+	"repostats/storage"
+	"repostats/utils"
 	"testing"
 )
 
 func testSetup(t *testing.T) {
+	utils.InitConfig("../repostats.ini")
+	storage.InitDatabaseService()
 	log.Println("test start -->")
 }
 

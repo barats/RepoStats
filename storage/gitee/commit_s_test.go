@@ -40,11 +40,27 @@ func TestBulkSaveCommits(t *testing.T) {
 	testSetup(t)
 	defer testTeardown(t)
 
-	found, err := network.GetGiteeCommits("openharmony", "community")
+	var users []gitee_model.User
+
+	found1, err := network.GetGiteeCommits("openharmony", "community")
 	utils.ExitOnError(err)
 
-	for i := 0; i < len(found); i++ {
-		found[i].RepoID = 10918992
+	for i := 0; i < len(found1); i++ {
+		found1[i].RepoID = 10918992
+		users = append(users, found1[i].Author, found1[i].Committer)
+	}
+
+	found2, err := network.GetGiteeCommits("barat", "ohurlshortener")
+	utils.ExitOnError(err)
+	for i := 0; i < len(found2); i++ {
+		found2[i].RepoID = 21133399
+		users = append(users, found2[i].Author, found2[i].Committer)
+	}
+
+	if len(users) > 0 {
+		users = gitee_model.RemoveDuplicateUsers(users)
+		err := BulkSaveUsers(users)
+		utils.ExitOnError(err)
 	}
 
 	type args struct {
@@ -55,7 +71,8 @@ func TestBulkSaveCommits(t *testing.T) {
 		args    args
 		wantErr bool
 	}{
-		{name: "TestCase1", args: args{commits: found}, wantErr: false},
+		{name: "TestCase1", args: args{commits: found1}, wantErr: false},
+		{name: "TestCase2", args: args{commits: found2}, wantErr: false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

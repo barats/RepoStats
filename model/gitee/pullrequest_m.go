@@ -11,6 +11,8 @@ package gitee
 import (
 	"reflect"
 	"time"
+
+	"gopkg.in/guregu/null.v4"
 )
 
 type PullRequest struct {
@@ -22,9 +24,9 @@ type PullRequest struct {
 	Number        int64     `json:"number" db:"number"`
 	State         string    `json:"state" db:"state"`
 	CreatedAt     time.Time `json:"created_at" db:"created_at"`
-	UpdatedAt     time.Time `json:"updated_at" db:"updated_at"`
-	ClosedAt      time.Time `json:"closed_at" db:"closed_at"`
-	MergedAt      time.Time `json:"merged_at" db:"merged_at"`
+	UpdatedAt     null.Time `json:"updated_at" db:"updated_at"`
+	ClosedAt      null.Time `json:"closed_at" db:"closed_at"`
+	MergedAt      null.Time `json:"merged_at" db:"merged_at"`
 	Mergeable     bool      `json:"mergeable" db:"mergeable"`
 	CanMergeCheck bool      `json:"can_merge_check" db:"can_merge_check"`
 	Title         string    `json:"title" db:"title"`

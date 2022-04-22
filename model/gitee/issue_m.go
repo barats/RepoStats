@@ -11,6 +11,8 @@ package gitee
 import (
 	"reflect"
 	"time"
+
+	"gopkg.in/guregu/null.v4"
 )
 
 type Issue struct {
@@ -23,9 +25,9 @@ type Issue struct {
 	User           User       `json:"user" db:"user"`
 	Repository     Repository `json:"repository" db:"repository"`
 	CreatedAt      time.Time  `json:"created_at" db:"created_at"`
-	UpdatedAt      time.Time  `json:"updated_at" db:"updated_at"`
-	FinishedAt     time.Time  `json:"finished_at" db:"finished_at"`
-	PlanStarted_at time.Time  `json:"plan_started_at" db:"plan_started_at"`
+	UpdatedAt      null.Time  `json:"updated_at" db:"updated_at"`
+	FinishedAt     null.Time  `json:"finished_at" db:"finished_at"`
+	PlanStarted_at null.Time  `json:"plan_started_at" db:"plan_started_at"`
 	Comments       int        `json:"comments" db:"comments"`
 	Priority       int        `json:"priority" db:"priority"`
 	IssueType      string     `json:"issue_type" db:"issue_type"`
@@ -33,6 +35,6 @@ type Issue struct {
 	IssueState     string     `json:"issue_state" db:"issue_state"`
 }
 
-func (i Issue) isNilOrEmpty() bool {
+func (i Issue) IsNilOrEmpty() bool {
 	return reflect.DeepEqual(i, Issue{})
 }

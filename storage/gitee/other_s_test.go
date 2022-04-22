@@ -9,7 +9,7 @@
 package gitee
 
 import (
-	gitee_mode "repostats/model/gitee"
+	gitee_model "repostats/model/gitee"
 	"repostats/network"
 	"repostats/utils"
 	"testing"
@@ -20,24 +20,34 @@ func TestBulkSaveStargazers(t *testing.T) {
 	testSetup(t)
 	defer testTeardown(t)
 
+	var users []gitee_model.User
+
 	found1, err := network.GetGiteeStargazers("barat", "ohurlshortener")
 	utils.ExitOnError(err)
 
 	//TEST ONLY
 	for i := 0; i < len(found1); i++ {
 		found1[i].RepoID = 21133399
+		users = append(users, found1[i].User)
 	}
 
-	found2, err := network.GetGiteeStargazers("openharmony", "communication_dsoftbus")
+	found2, err := network.GetGiteeStargazers("openharmony", "community")
 	utils.ExitOnError(err)
 
 	//TEST ONLY
 	for i := 0; i < len(found2); i++ {
 		found2[i].RepoID = 16184960
+		users = append(users, found2[i].User)
+	}
+
+	if len(users) > 0 {
+		users = gitee_model.RemoveDuplicateUsers(users)
+		err := BulkSaveUsers(users)
+		utils.ExitOnError(err)
 	}
 
 	type args struct {
-		s []gitee_mode.Stargazer
+		s []gitee_model.Stargazer
 	}
 	tests := []struct {
 		name    string
@@ -61,24 +71,34 @@ func TestBulkSaveCollaborators(t *testing.T) {
 	testSetup(t)
 	defer testTeardown(t)
 
+	var users []gitee_model.User
+
 	found1, err := network.GetGiteeCollaborators("barat", "ohurlshortener")
 	utils.ExitOnError(err)
 
 	//TEST ONLY
 	for i := 0; i < len(found1); i++ {
 		found1[i].RepoID = 21133399
+		users = append(users, found1[i].User)
 	}
 
-	found2, err := network.GetGiteeCollaborators("openharmony", "communication_dsoftbus")
+	found2, err := network.GetGiteeCollaborators("openharmony", "community")
 	utils.ExitOnError(err)
 
 	//TEST ONLY
 	for i := 0; i < len(found2); i++ {
 		found2[i].RepoID = 16184960
+		users = append(users, found2[i].User)
+	}
+
+	if len(users) > 0 {
+		users = gitee_model.RemoveDuplicateUsers(users)
+		err := BulkSaveUsers(users)
+		utils.ExitOnError(err)
 	}
 
 	type args struct {
-		c []gitee_mode.Collaborator
+		c []gitee_model.Collaborator
 	}
 	tests := []struct {
 		name    string

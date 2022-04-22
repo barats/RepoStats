@@ -98,6 +98,7 @@ func CommitsPage(ctx *gin.Context) {
 			"page_size":    size,
 			"first_page":   page == 1,
 			"last_page":    page >= (len(commits)/size)+1,
+			"sha":          sha,
 		})
 
 		return

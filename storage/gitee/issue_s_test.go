@@ -21,11 +21,27 @@ func TestBulkSaveIssues(t *testing.T) {
 	testSetup(t)
 	defer testTeardown(t)
 
-	found, err := network.GetGiteeIssues("openharmony", "community")
+	var users []gitee_model.User
+	found1, err := network.GetGiteeIssues("openharmony", "community")
 	utils.ExitOnError(err)
 
-	for i := 0; i < len(found); i++ {
-		found[i].RepoID = 10918992
+	for i := 0; i < len(found1); i++ {
+		found1[i].RepoID = 10918992
+		users = append(users, found1[i].User)
+	}
+
+	found2, err := network.GetGiteeIssues("barat", "ohurlshortener")
+	utils.ExitOnError(err)
+
+	for i := 0; i < len(found2); i++ {
+		found2[i].RepoID = 21133399
+		users = append(users, found2[i].User)
+	}
+
+	if len(users) > 0 {
+		users = gitee_model.RemoveDuplicateUsers(users)
+		err := BulkSaveUsers(users)
+		utils.ExitOnError(err)
 	}
 
 	type args struct {
@@ -36,8 +52,10 @@ func TestBulkSaveIssues(t *testing.T) {
 		args    args
 		wantErr bool
 	}{
-		{name: "Testcase openharmony/community", args: args{iss: found}, wantErr: false},
-		{name: "Testcase openharmony/community again", args: args{iss: found}, wantErr: false},
+		{name: "Testcase openharmony/community", args: args{iss: found1}, wantErr: false},
+		{name: "Testcase openharmony/community again", args: args{iss: found1}, wantErr: false},
+		{name: "Testcase barat/ohurlshortener", args: args{iss: found2}, wantErr: false},
+		{name: "Testcase barat/ohurlshortener agagin", args: args{iss: found2}, wantErr: false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

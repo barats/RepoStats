@@ -9,7 +9,6 @@
 package gitee
 
 import (
-	gitee_mode "repostats/model/gitee"
 	gitee_model "repostats/model/gitee"
 	"repostats/storage"
 )
@@ -17,7 +16,7 @@ import (
 var prQueryPrefix = `SELECT pr.user_id AS "user.id", pr.head_label AS "head.label", pr.head_ref AS "head.ref", pr.head_sha AS "head.sha", 
 pr.head_user_id AS "head.user.id", pr.head_repo_id AS "head.repo.id",pr.* FROM gitee.pull_requests pr `
 
-func BulkSavePullRequests(prs []gitee_mode.PullRequest) error {
+func BulkSavePullRequests(prs []gitee_model.PullRequest) error {
 	query := `INSERT INTO gitee.pull_requests (id, repo_id, user_id, html_url, diff_url, patch_url, "number", 
 	state, created_at, updated_at, closed_at, merged_at, mergeable, can_merge_check, title, head_label, head_ref, 
 	head_sha, head_user_id, head_repo_id)
@@ -36,7 +35,7 @@ func FindTotalPRsCount() (int, error) {
 	return count, storage.DbGet(query, &count)
 }
 
-func FindPagedPRs(page, size int) ([]gitee_mode.PullRequest, error) {
+func FindPagedPRs(page, size int) ([]gitee_model.PullRequest, error) {
 	if page < 1 {
 		page = 1
 	}
@@ -46,20 +45,20 @@ func FindPagedPRs(page, size int) ([]gitee_mode.PullRequest, error) {
 	return prs, storage.DbSelect(query, &prs, size, offset)
 }
 
-func FindPRByID(prID int) (gitee_mode.PullRequest, error) {
-	found := gitee_mode.PullRequest{}
+func FindPRByID(prID int) (gitee_model.PullRequest, error) {
+	found := gitee_model.PullRequest{}
 	err := storage.DbGet(prQueryPrefix+` WHERE pr.id = $1`, &found, prID)
 	return found, err
 }
 
-func FindPRs() ([]gitee_mode.PullRequest, error) {
-	found := []gitee_mode.PullRequest{}
+func FindPRs() ([]gitee_model.PullRequest, error) {
+	found := []gitee_model.PullRequest{}
 	err := storage.DbSelect(prQueryPrefix+` ORDER BY pr.created_at DESC`, &found)
 	return found, err
 }
 
-func FindPRsByRepoID(repoID int) ([]gitee_mode.PullRequest, error) {
-	found := []gitee_mode.PullRequest{}
+func FindPRsByRepoID(repoID int) ([]gitee_model.PullRequest, error) {
+	found := []gitee_model.PullRequest{}
 	err := storage.DbSelect(prQueryPrefix+` WHERE pr.repo_id = $1 ORDER BY pr.created_at DESC`, &found, repoID)
 	return found, err
 }

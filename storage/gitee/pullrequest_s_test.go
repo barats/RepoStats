@@ -10,7 +10,7 @@ package gitee
 
 import (
 	"reflect"
-	gitee_mode "repostats/model/gitee"
+	gitee_model "repostats/model/gitee"
 	"repostats/network"
 	"repostats/utils"
 	"testing"
@@ -28,8 +28,18 @@ func TestBulkSavePullRequests(t *testing.T) {
 		found[i].RepoID = 10918992
 	}
 
+	if len(found) > 0 {
+		var users []gitee_model.User
+		for i := 0; i < len(found); i++ {
+			users = append(users, found[i].User)
+		}
+		users = gitee_model.RemoveDuplicateUsers(users)
+		err := BulkSaveUsers(users)
+		utils.ExitOnError(err)
+	}
+
 	type args struct {
-		prs []gitee_mode.PullRequest
+		prs []gitee_model.PullRequest
 	}
 	tests := []struct {
 		name    string

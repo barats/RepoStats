@@ -11,6 +11,8 @@ package gitee
 import (
 	"reflect"
 	"time"
+
+	"gopkg.in/guregu/null.v4"
 )
 
 type Repository struct {
@@ -31,26 +33,12 @@ type Repository struct {
 	StargazersCount int       `json:"stargazers_count" db:"stargazers_count"`
 	WatchersCount   int       `json:"watchers_count" db:"watchers_count"`
 	License         string    `json:"license" db:"license"`
-	PushedAt        time.Time `json:"pushed_at" db:"pushed_at"`
+	PushedAt        null.Time `json:"pushed_at" db:"pushed_at"`
 	CreatedAt       time.Time `json:"created_at" db:"created_at"`
-	UpdatedAt       time.Time `json:"updated_at" db:"updated_at"`
+	UpdatedAt       null.Time `json:"updated_at" db:"updated_at"`
 	EnableCrawl     bool      `db:"enable_crawl"`
 }
 
 func (r Repository) IsNilOrEmpty() bool {
 	return reflect.DeepEqual(r, Repository{})
 }
-
-// func (r *Repository) Scan(src interface{}) error {
-// 	var repoID int
-// 	switch src.(type) {
-// 	case int64:
-// 		repoID = int(src.(int64))
-// 	case int32:
-// 		repoID = int(src.(int32))
-// 	default:
-// 		return errors.New("can not find any valid user")
-// 	}
-// 	*r = Repository{ID: repoID}
-// 	return nil
-// }
