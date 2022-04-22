@@ -1,0 +1,2980 @@
+{{define "home-dashboard.tmpl"}}
+{
+  "message": "Home Dashboard Update at {{.time}}",
+  "dashboard": {
+    "title": "RepoStats Overview",
+    "tags": [ "RepoStats" ],
+    "timezone": "browser",
+    "refresh": "2h",
+    "time": {
+      "from": "now-30d",
+      "to": "now"
+    },
+    "panels": [
+      {
+        "collapsed": false,
+        "gridPos": {
+          "h": 1,
+          "w": 24,
+          "x": 0,
+          "y": 0
+        },
+        "panels": [],
+        "title": "统计汇总",
+        "type": "row"
+      },
+      {
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "palette-classic"
+            },
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": null
+                },
+                {
+                  "color": "red",
+                  "value": 80
+                }
+              ]
+            }
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 8,
+          "w": 7,
+          "x": 0,
+          "y": 1
+        },
+        "options": {
+          "colorMode": "value",
+          "graphMode": "area",
+          "justifyMode": "center",
+          "orientation": "auto",
+          "reduceOptions": {
+            "calcs": [
+              "lastNotNull"
+            ],
+            "fields": "",
+            "values": false
+          },
+          "textMode": "auto"
+        },
+        "targets": [
+          {
+            "datasource": {
+              "type": "postgres",
+              "uid": "{{.datasource}}"
+            },
+            "format": "time_series",
+            "group": [],
+            "metricColumn": "none",
+            "rawQuery": false,
+            "rawSql": "SELECT\n  time AS \"time\",\n  total_issue_count,\n  total_issue_user,\n  open_count,\n  rejected_count,\n  closed_count,\n  progressing_count\nFROM gitee_state.issues_stat\nORDER BY 1",
+            "refId": "A",
+            "select": [
+              [
+                {
+                  "params": [
+                    "total_issue_count"
+                  ],
+                  "type": "column"
+                }
+              ],
+              [
+                {
+                  "params": [
+                    "total_issue_user"
+                  ],
+                  "type": "column"
+                }
+              ],
+              [
+                {
+                  "params": [
+                    "open_count"
+                  ],
+                  "type": "column"
+                }
+              ],
+              [
+                {
+                  "params": [
+                    "rejected_count"
+                  ],
+                  "type": "column"
+                }
+              ],
+              [
+                {
+                  "params": [
+                    "closed_count"
+                  ],
+                  "type": "column"
+                }
+              ],
+              [
+                {
+                  "params": [
+                    "progressing_count"
+                  ],
+                  "type": "column"
+                }
+              ]
+            ],
+            "table": "gitee_state.issues_stat",
+            "timeColumn": "time",
+            "timeColumnType": "timestamptz",
+            "where": []
+          }
+        ],
+        "title": "Issue 统计",
+        "transformations": [
+          {
+            "id": "organize",
+            "options": {
+              "excludeByName": {},
+              "indexByName": {},
+              "renameByName": {
+                "closed_count": "关闭 Issue",
+                "open_count": "打开 Issue",
+                "progressing_count": "处理中 Issue",
+                "rejected_count": "拒绝 Issue",
+                "total_issue_count": "Issue 总数",
+                "total_issue_user": "Issue 人数"
+              }
+            }
+          }
+        ],
+        "type": "stat"
+      },
+      {
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "palette-classic"
+            },
+            "custom": {
+              "hideFrom": {
+                "legend": false,
+                "tooltip": false,
+                "viz": false
+              }
+            },
+            "mappings": []
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 8,
+          "w": 5,
+          "x": 7,
+          "y": 1
+        },
+        "options": {
+          "displayLabels": [
+            "name",
+            "percent"
+          ],
+          "legend": {
+            "displayMode": "list",
+            "placement": "right",
+            "values": [
+              "percent"
+            ]
+          },
+          "pieType": "pie",
+          "reduceOptions": {
+            "calcs": [
+              "lastNotNull"
+            ],
+            "fields": "",
+            "values": false
+          },
+          "tooltip": {
+            "mode": "single"
+          }
+        },
+        "targets": [
+          {
+            "datasource": {
+              "type": "postgres",
+              "uid": "{{.datasource}}"
+            },
+            "format": "time_series",
+            "group": [],
+            "metricColumn": "none",
+            "rawQuery": false,
+            "rawSql": "SELECT\n  time AS \"time\",\n  open_count,\n  rejected_count,\n  closed_count,\n  progressing_count\nFROM gitee_state.issues_stat\nORDER BY 1",
+            "refId": "A",
+            "select": [
+              [
+                {
+                  "params": [
+                    "open_count"
+                  ],
+                  "type": "column"
+                }
+              ],
+              [
+                {
+                  "params": [
+                    "rejected_count"
+                  ],
+                  "type": "column"
+                }
+              ],
+              [
+                {
+                  "params": [
+                    "closed_count"
+                  ],
+                  "type": "column"
+                }
+              ],
+              [
+                {
+                  "params": [
+                    "progressing_count"
+                  ],
+                  "type": "column"
+                }
+              ]
+            ],
+            "table": "gitee_state.issues_stat",
+            "timeColumn": "time",
+            "timeColumnType": "timestamptz",
+            "where": []
+          }
+        ],
+        "title": "Issue 状态图",
+        "transformations": [
+          {
+            "id": "organize",
+            "options": {
+              "excludeByName": {
+                "Time": true
+              },
+              "indexByName": {},
+              "renameByName": {
+                "closed_count": "已关闭",
+                "open_count": "打开",
+                "progressing_count": "处理中",
+                "rejected_count": "已拒绝"
+              }
+            }
+          }
+        ],
+        "type": "piechart"
+      },
+      {
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "thresholds"
+            },
+            "mappings": [],
+            "max": 72,
+            "min": 1,
+            "thresholds": {
+              "mode": "percentage",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": null
+                },
+                {
+                  "color": "red",
+                  "value": 50
+                }
+              ]
+            },
+            "unit": "h"
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 8,
+          "w": 12,
+          "x": 12,
+          "y": 1
+        },
+        "id": 25,
+        "options": {
+          "orientation": "auto",
+          "reduceOptions": {
+            "calcs": [
+              "lastNotNull"
+            ],
+            "fields": "",
+            "values": false
+          },
+          "showThresholdLabels": false,
+          "showThresholdMarkers": true
+        },
+        "targets": [
+          {
+            "datasource": {
+              "type": "postgres",
+              "uid": "{{.datasource}}"
+            },
+            "format": "time_series",
+            "group": [],
+            "hide": false,
+            "metricColumn": "none",
+            "rawQuery": true,
+            "rawSql": "SELECT\n  NOW() AS \"time\",\n  MIN(hours_diff) AS \"最短耗时\"\nFROM gitee_state.pr_merge_hours_diff\nORDER BY 1",
+            "refId": "C",
+            "select": [
+              [
+                {
+                  "params": [
+                    "hours_diff"
+                  ],
+                  "type": "column"
+                }
+              ]
+            ],
+            "table": "pr_merge_hours_diff",
+            "timeColumn": "created_at",
+            "timeColumnType": "timestamp",
+            "where": [
+              {
+                "name": "$__timeFilter",
+                "params": [],
+                "type": "macro"
+              }
+            ]
+          },
+          {
+            "datasource": {
+              "type": "postgres",
+              "uid": "{{.datasource}}"
+            },
+            "format": "time_series",
+            "group": [],
+            "metricColumn": "none",
+            "rawQuery": true,
+            "rawSql": "SELECT\n  NOW() AS \"time\",\n  AVG(hours_diff) AS \"平均耗时\"\nFROM gitee_state.pr_merge_hours_diff\nORDER BY 1",
+            "refId": "A",
+            "select": [
+              [
+                {
+                  "params": [
+                    "hours_diff"
+                  ],
+                  "type": "column"
+                },
+                {
+                  "params": [
+                    "hours_diff"
+                  ],
+                  "type": "alias"
+                }
+              ]
+            ],
+            "table": "pr_merge_hours_diff",
+            "timeColumn": "NOW()",
+            "timeColumnType": "timestamp",
+            "where": []
+          },
+          {
+            "datasource": {
+              "type": "postgres",
+              "uid": "{{.datasource}}"
+            },
+            "format": "time_series",
+            "group": [],
+            "hide": false,
+            "metricColumn": "none",
+            "rawQuery": true,
+            "rawSql": "SELECT\n  NOW() AS \"time\",\n  MAX(hours_diff) AS \"最长耗时\"\nFROM gitee_state.pr_merge_hours_diff\nORDER BY 1",
+            "refId": "B",
+            "select": [
+              [
+                {
+                  "params": [
+                    "hours_diff"
+                  ],
+                  "type": "column"
+                }
+              ]
+            ],
+            "table": "pr_merge_hours_diff",
+            "timeColumn": "created_at",
+            "timeColumnType": "timestamp",
+            "where": [
+              {
+                "name": "$__timeFilter",
+                "params": [],
+                "type": "macro"
+              }
+            ]
+          }
+        ],
+        "title": "Pull Request 合并时间",
+        "transformations": [
+          {
+            "id": "organize",
+            "options": {}
+          }
+        ],
+        "type": "gauge"
+      },
+      {
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "continuous-RdYlGr"
+            },
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": null
+                },
+                {
+                  "color": "red",
+                  "value": 80
+                }
+              ]
+            }
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 6,
+          "w": 12,
+          "x": 0,
+          "y": 9
+        },
+        "id": 4,
+        "options": {
+          "colorMode": "value",
+          "graphMode": "none",
+          "justifyMode": "center",
+          "orientation": "auto",
+          "reduceOptions": {
+            "calcs": [
+              "lastNotNull"
+            ],
+            "fields": "",
+            "values": false
+          },
+          "text": {},
+          "textMode": "auto"
+        },
+        "targets": [
+          {
+            "datasource": {
+              "type": "postgres",
+              "uid": "{{.datasource}}"
+            },
+            "format": "time_series",
+            "group": [],
+            "metricColumn": "none",
+            "rawQuery": false,
+            "rawSql": "SELECT\n  time AS \"time\",\n  total_repos_count,\n  total_star_count,\n  total_forks_count,\n  total_watchers_count\nFROM gitee_state.repos_stat\nORDER BY 1",
+            "refId": "A",
+            "select": [
+              [
+                {
+                  "params": [
+                    "total_repos_count"
+                  ],
+                  "type": "column"
+                }
+              ],
+              [
+                {
+                  "params": [
+                    "total_star_count"
+                  ],
+                  "type": "column"
+                }
+              ],
+              [
+                {
+                  "params": [
+                    "total_forks_count"
+                  ],
+                  "type": "column"
+                }
+              ],
+              [
+                {
+                  "params": [
+                    "total_watchers_count"
+                  ],
+                  "type": "column"
+                }
+              ]
+            ],
+            "table": "gitee_state.repos_stat",
+            "timeColumn": "time",
+            "timeColumnType": "timestamptz",
+            "where": []
+          }
+        ],
+        "title": "仓库统计",
+        "transformations": [
+          {
+            "id": "organize",
+            "options": {
+              "excludeByName": {
+                "Time": true
+              },
+              "indexByName": {},
+              "renameByName": {
+                "total_forks_count": "Fork 总人数",
+                "total_repos_count": "仓库总数",
+                "total_star_count": "Star 总人数",
+                "total_watchers_count": "Watch 总人数"
+              }
+            }
+          }
+        ],
+        "type": "stat"
+      },
+      {
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "continuous-BlYlRd"
+            },
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": null
+                },
+                {
+                  "color": "red",
+                  "value": 80
+                }
+              ]
+            }
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 6,
+          "w": 12,
+          "x": 12,
+          "y": 9
+        },
+        "id": 10,
+        "options": {
+          "colorMode": "background",
+          "graphMode": "area",
+          "justifyMode": "center",
+          "orientation": "auto",
+          "reduceOptions": {
+            "calcs": [
+              "lastNotNull"
+            ],
+            "fields": "",
+            "values": false
+          },
+          "textMode": "auto"
+        },
+        "targets": [
+          {
+            "datasource": {
+              "type": "postgres",
+              "uid": "{{.datasource}}"
+            },
+            "format": "time_series",
+            "group": [],
+            "metricColumn": "none",
+            "rawQuery": false,
+            "rawSql": "SELECT\n  time AS \"time\",\n  total_commits_count,\n  total_author_email,\n  total_committer_email\nFROM gitee_state.commits_stat\nORDER BY 1",
+            "refId": "A",
+            "select": [
+              [
+                {
+                  "params": [
+                    "total_commits_count"
+                  ],
+                  "type": "column"
+                }
+              ],
+              [
+                {
+                  "params": [
+                    "total_author_email"
+                  ],
+                  "type": "column"
+                }
+              ],
+              [
+                {
+                  "params": [
+                    "total_committer_email"
+                  ],
+                  "type": "column"
+                }
+              ]
+            ],
+            "table": "gitee_state.commits_stat",
+            "timeColumn": "time",
+            "timeColumnType": "timestamptz",
+            "where": []
+          }
+        ],
+        "title": "Commit 统计",
+        "transformations": [
+          {
+            "id": "organize",
+            "options": {
+              "excludeByName": {
+                "Time": true
+              },
+              "indexByName": {},
+              "renameByName": {
+                "total_author_email": "Auhtor 人数",
+                "total_commits_count": "Commit 总数",
+                "total_committer_email": "Committer 人数"
+              }
+            }
+          }
+        ],
+        "type": "stat"
+      },
+      {
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "palette-classic"
+            },
+            "custom": {
+              "hideFrom": {
+                "legend": false,
+                "tooltip": false,
+                "viz": false
+              }
+            },
+            "mappings": []
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 8,
+          "w": 5,
+          "x": 0,
+          "y": 15
+        },
+        "id": 14,
+        "options": {
+          "displayLabels": [
+            "percent",
+            "name"
+          ],
+          "legend": {
+            "displayMode": "list",
+            "placement": "right",
+            "values": [
+              "percent"
+            ]
+          },
+          "pieType": "pie",
+          "reduceOptions": {
+            "calcs": [
+              "lastNotNull"
+            ],
+            "fields": "",
+            "values": false
+          },
+          "tooltip": {
+            "mode": "single"
+          }
+        },
+        "targets": [
+          {
+            "datasource": {
+              "type": "postgres",
+              "uid": "{{.datasource}}"
+            },
+            "format": "time_series",
+            "group": [],
+            "metricColumn": "none",
+            "rawQuery": false,
+            "rawSql": "SELECT\n  time AS \"time\",\n  open_count,\n  merged_count,\n  closed_count\nFROM gitee_state.pr_stat\nORDER BY 1",
+            "refId": "A",
+            "select": [
+              [
+                {
+                  "params": [
+                    "open_count"
+                  ],
+                  "type": "column"
+                }
+              ],
+              [
+                {
+                  "params": [
+                    "merged_count"
+                  ],
+                  "type": "column"
+                }
+              ],
+              [
+                {
+                  "params": [
+                    "closed_count"
+                  ],
+                  "type": "column"
+                }
+              ]
+            ],
+            "table": "gitee_state.pr_stat",
+            "timeColumn": "time",
+            "timeColumnType": "timestamptz",
+            "where": []
+          }
+        ],
+        "title": "Pull Request 状态图",
+        "transformations": [
+          {
+            "id": "organize",
+            "options": {
+              "excludeByName": {
+                "Time": true
+              },
+              "indexByName": {},
+              "renameByName": {
+                "closed_count": "已关闭",
+                "merged_count": "已合并",
+                "open_closed_count": "已关闭",
+                "open_count": "打开",
+                "open_merged_count": "已合并",
+                "open_pr_count": "打开"
+              }
+            }
+          }
+        ],
+        "type": "piechart"
+      },
+      {
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "continuous-YlBl"
+            },
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": null
+                },
+                {
+                  "color": "red",
+                  "value": 80
+                }
+              ]
+            }
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 8,
+          "w": 7,
+          "x": 5,
+          "y": 15
+        },
+        "id": 8,
+        "options": {
+          "colorMode": "value",
+          "graphMode": "area",
+          "justifyMode": "center",
+          "orientation": "auto",
+          "reduceOptions": {
+            "calcs": [
+              "lastNotNull"
+            ],
+            "fields": "",
+            "values": false
+          },
+          "textMode": "auto"
+        },
+        "targets": [
+          {
+            "datasource": {
+              "type": "postgres",
+              "uid": "{{.datasource}}"
+            },
+            "format": "time_series",
+            "group": [],
+            "metricColumn": "none",
+            "rawQuery": false,
+            "rawSql": "SELECT\n  time AS \"time\",\n  total_pr_count,\n  total_user_count,\n  open_count,\n  merged_count,\n  closed_count\nFROM gitee_state.pr_stat\nORDER BY 1",
+            "refId": "A",
+            "select": [
+              [
+                {
+                  "params": [
+                    "total_pr_count"
+                  ],
+                  "type": "column"
+                }
+              ],
+              [
+                {
+                  "params": [
+                    "total_user_count"
+                  ],
+                  "type": "column"
+                }
+              ],
+              [
+                {
+                  "params": [
+                    "open_count"
+                  ],
+                  "type": "column"
+                }
+              ],
+              [
+                {
+                  "params": [
+                    "merged_count"
+                  ],
+                  "type": "column"
+                }
+              ],
+              [
+                {
+                  "params": [
+                    "closed_count"
+                  ],
+                  "type": "column"
+                }
+              ]
+            ],
+            "table": "gitee_state.pr_stat",
+            "timeColumn": "time",
+            "where": []
+          }
+        ],
+        "title": "Pull Request 统计",
+        "transformations": [
+          {
+            "id": "organize",
+            "options": {
+              "excludeByName": {
+                "Time": true
+              },
+              "indexByName": {},
+              "renameByName": {
+                "closed_count": "已关闭 Pull Request",
+                "merged_count": "已合并 Pull Request",
+                "open_closed_count": "已关闭  Pull Request",
+                "open_count": "打开 Pull Request",
+                "open_merged_count": "已合并  Pull Request",
+                "open_pr_count": "打开 Pull Request",
+                "total_pr_count": "总 数",
+                "total_user_count": " Pull Request 人数"
+              }
+            }
+          }
+        ],
+        "type": "stat"
+      },
+      {
+        "description": "",
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "thresholds"
+            },
+            "mappings": [],
+            "max": 720,
+            "min": 1,
+            "thresholds": {
+              "mode": "percentage",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": null
+                },
+                {
+                  "color": "red",
+                  "value": 50
+                }
+              ]
+            },
+            "unit": "h"
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 8,
+          "w": 12,
+          "x": 12,
+          "y": 15
+        },
+        "id": 26,
+        "options": {
+          "orientation": "auto",
+          "reduceOptions": {
+            "calcs": [
+              "lastNotNull"
+            ],
+            "fields": "",
+            "values": false
+          },
+          "showThresholdLabels": false,
+          "showThresholdMarkers": true
+        },
+        "targets": [
+          {
+            "datasource": {
+              "type": "postgres",
+              "uid": "{{.datasource}}"
+            },
+            "format": "time_series",
+            "group": [],
+            "hide": false,
+            "metricColumn": "none",
+            "rawQuery": true,
+            "rawSql": "SELECT\n  NOW() AS \"time\",\n  MIN(hours_diff) AS \"最短耗时\"\nFROM gitee_state.issue_close_hours_diff\nORDER BY 1",
+            "refId": "C",
+            "select": [
+              [
+                {
+                  "params": [
+                    "hours_diff"
+                  ],
+                  "type": "column"
+                }
+              ]
+            ],
+            "table": "pr_merge_hours_diff",
+            "timeColumn": "created_at",
+            "timeColumnType": "timestamp",
+            "where": [
+              {
+                "name": "$__timeFilter",
+                "params": [],
+                "type": "macro"
+              }
+            ]
+          },
+          {
+            "datasource": {
+              "type": "postgres",
+              "uid": "{{.datasource}}"
+            },
+            "format": "time_series",
+            "group": [],
+            "metricColumn": "none",
+            "rawQuery": true,
+            "rawSql": "SELECT\n  NOW() AS \"time\",\n  AVG(hours_diff) AS \"平均耗时\"\nFROM gitee_state.issue_close_hours_diff\nORDER BY 1",
+            "refId": "A",
+            "select": [
+              [
+                {
+                  "params": [
+                    "hours_diff"
+                  ],
+                  "type": "column"
+                },
+                {
+                  "params": [
+                    "hours_diff"
+                  ],
+                  "type": "alias"
+                }
+              ]
+            ],
+            "table": "pr_merge_hours_diff",
+            "timeColumn": "NOW()",
+            "timeColumnType": "timestamp",
+            "where": []
+          },
+          {
+            "datasource": {
+              "type": "postgres",
+              "uid": "{{.datasource}}"
+            },
+            "format": "time_series",
+            "group": [],
+            "hide": false,
+            "metricColumn": "none",
+            "rawQuery": true,
+            "rawSql": "SELECT\n  NOW() AS \"time\",\n  MAX(hours_diff) AS \"最长耗时\"\nFROM gitee_state.issue_close_hours_diff\nORDER BY 1",
+            "refId": "B",
+            "select": [
+              [
+                {
+                  "params": [
+                    "hours_diff"
+                  ],
+                  "type": "column"
+                }
+              ]
+            ],
+            "table": "pr_merge_hours_diff",
+            "timeColumn": "created_at",
+            "timeColumnType": "timestamp",
+            "where": [
+              {
+                "name": "$__timeFilter",
+                "params": [],
+                "type": "macro"
+              }
+            ]
+          }
+        ],
+        "title": "Issue 处理时间",
+        "transformations": [
+          {
+            "id": "organize",
+            "options": {}
+          }
+        ],
+        "type": "gauge"
+      },
+      {
+        "collapsed": false,
+        "gridPos": {
+          "h": 1,
+          "w": 24,
+          "x": 0,
+          "y": 23
+        },
+        "id": 18,
+        "panels": [],
+        "title": "动态趋势",
+        "type": "row"
+      },
+      {
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "continuous-GrYlRd"
+            },
+            "custom": {
+              "axisLabel": "",
+              "axisPlacement": "auto",
+              "barAlignment": 0,
+              "drawStyle": "line",
+              "fillOpacity": 20,
+              "gradientMode": "scheme",
+              "hideFrom": {
+                "legend": false,
+                "tooltip": false,
+                "viz": false
+              },
+              "lineInterpolation": "smooth",
+              "lineWidth": 3,
+              "pointSize": 5,
+              "scaleDistribution": {
+                "type": "linear"
+              },
+              "showPoints": "auto",
+              "spanNulls": false,
+              "stacking": {
+                "group": "A",
+                "mode": "none"
+              },
+              "thresholdsStyle": {
+                "mode": "off"
+              }
+            },
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": null
+                },
+                {
+                  "color": "red",
+                  "value": 80
+                }
+              ]
+            }
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 8,
+          "w": 8,
+          "x": 0,
+          "y": 24
+        },
+        "id": 23,
+        "options": {
+          "legend": {
+            "calcs": [],
+            "displayMode": "list",
+            "placement": "bottom"
+          },
+          "tooltip": {
+            "mode": "single"
+          }
+        },
+        "targets": [
+          {
+            "datasource": {
+              "type": "postgres",
+              "uid": "{{.datasource}}"
+            },
+            "format": "time_series",
+            "group": [
+              {
+                "params": [
+                  "$__interval",
+                  "none"
+                ],
+                "type": "time"
+              }
+            ],
+            "metricColumn": "none",
+            "rawQuery": false,
+            "rawSql": "SELECT\n  $__timeGroupAlias(star_at,$__interval),\n  count(user_id) AS \"star_count\"\nFROM gitee.stargazers\nWHERE\n  $__timeFilter(star_at)\nGROUP BY 1\nORDER BY 1",
+            "refId": "A",
+            "select": [
+              [
+                {
+                  "params": [
+                    "user_id"
+                  ],
+                  "type": "column"
+                },
+                {
+                  "params": [
+                    "count"
+                  ],
+                  "type": "aggregate"
+                },
+                {
+                  "params": [
+                    "star_count"
+                  ],
+                  "type": "alias"
+                }
+              ]
+            ],
+            "table": "gitee.stargazers",
+            "timeColumn": "star_at",
+            "timeColumnType": "timestamptz",
+            "where": [
+              {
+                "name": "$__timeFilter",
+                "params": [],
+                "type": "macro"
+              }
+            ]
+          }
+        ],
+        "title": "Star 趋势图",
+        "type": "timeseries"
+      },
+      {
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "continuous-GrYlRd"
+            },
+            "custom": {
+              "axisLabel": "",
+              "axisPlacement": "auto",
+              "barAlignment": 0,
+              "drawStyle": "line",
+              "fillOpacity": 20,
+              "gradientMode": "scheme",
+              "hideFrom": {
+                "legend": false,
+                "tooltip": false,
+                "viz": false
+              },
+              "lineInterpolation": "smooth",
+              "lineWidth": 3,
+              "pointSize": 5,
+              "scaleDistribution": {
+                "type": "linear"
+              },
+              "showPoints": "auto",
+              "spanNulls": false,
+              "stacking": {
+                "group": "A",
+                "mode": "none"
+              },
+              "thresholdsStyle": {
+                "mode": "off"
+              }
+            },
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": null
+                },
+                {
+                  "color": "red",
+                  "value": 80
+                }
+              ]
+            }
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 8,
+          "w": 8,
+          "x": 8,
+          "y": 24
+        },
+        "id": 20,
+        "options": {
+          "legend": {
+            "calcs": [],
+            "displayMode": "list",
+            "placement": "bottom"
+          },
+          "tooltip": {
+            "mode": "single"
+          }
+        },
+        "targets": [
+          {
+            "datasource": {
+              "type": "postgres",
+              "uid": "{{.datasource}}"
+            },
+            "format": "time_series",
+            "group": [
+              {
+                "params": [
+                  "$__interval",
+                  "none"
+                ],
+                "type": "time"
+              }
+            ],
+            "metricColumn": "none",
+            "rawQuery": false,
+            "rawSql": "SELECT\n  $__timeGroupAlias(author_date,$__interval),\n  count(sha) AS \"commit_count\"\nFROM gitee.commits\nWHERE\n  $__timeFilter(author_date)\nGROUP BY 1\nORDER BY 1",
+            "refId": "A",
+            "select": [
+              [
+                {
+                  "params": [
+                    "sha"
+                  ],
+                  "type": "column"
+                },
+                {
+                  "params": [
+                    "count"
+                  ],
+                  "type": "aggregate"
+                },
+                {
+                  "params": [
+                    "commit_count"
+                  ],
+                  "type": "alias"
+                }
+              ]
+            ],
+            "table": "gitee.commits",
+            "timeColumn": "author_date",
+            "timeColumnType": "timestamptz",
+            "where": [
+              {
+                "name": "$__timeFilter",
+                "params": [],
+                "type": "macro"
+              }
+            ]
+          }
+        ],
+        "title": "Commit 趋势图",
+        "type": "timeseries"
+      },
+      {
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "continuous-GrYlRd"
+            },
+            "custom": {
+              "axisLabel": "",
+              "axisPlacement": "auto",
+              "barAlignment": 0,
+              "drawStyle": "line",
+              "fillOpacity": 20,
+              "gradientMode": "scheme",
+              "hideFrom": {
+                "legend": false,
+                "tooltip": false,
+                "viz": false
+              },
+              "lineInterpolation": "smooth",
+              "lineWidth": 3,
+              "pointSize": 5,
+              "scaleDistribution": {
+                "type": "linear"
+              },
+              "showPoints": "auto",
+              "spanNulls": false,
+              "stacking": {
+                "group": "A",
+                "mode": "none"
+              },
+              "thresholdsStyle": {
+                "mode": "off"
+              }
+            },
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": null
+                },
+                {
+                  "color": "red",
+                  "value": 80
+                }
+              ]
+            }
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 8,
+          "w": 8,
+          "x": 16,
+          "y": 24
+        },
+        "id": 22,
+        "options": {
+          "legend": {
+            "calcs": [],
+            "displayMode": "list",
+            "placement": "bottom"
+          },
+          "tooltip": {
+            "mode": "single"
+          }
+        },
+        "targets": [
+          {
+            "datasource": {
+              "type": "postgres",
+              "uid": "{{.datasource}}"
+            },
+            "format": "time_series",
+            "group": [
+              {
+                "params": [
+                  "$__interval",
+                  "none"
+                ],
+                "type": "time"
+              }
+            ],
+            "metricColumn": "none",
+            "rawQuery": false,
+            "rawSql": "SELECT\n  $__timeGroupAlias(created_at,$__interval),\n  count(id) AS \"issue_count\"\nFROM gitee.issues\nWHERE\n  $__timeFilter(created_at)\nGROUP BY 1\nORDER BY 1",
+            "refId": "A",
+            "select": [
+              [
+                {
+                  "params": [
+                    "id"
+                  ],
+                  "type": "column"
+                },
+                {
+                  "params": [
+                    "count"
+                  ],
+                  "type": "aggregate"
+                },
+                {
+                  "params": [
+                    "issue_count"
+                  ],
+                  "type": "alias"
+                }
+              ]
+            ],
+            "table": "gitee.issues",
+            "timeColumn": "created_at",
+            "timeColumnType": "timestamptz",
+            "where": [
+              {
+                "name": "$__timeFilter",
+                "params": [],
+                "type": "macro"
+              }
+            ]
+          }
+        ],
+        "title": "Issue 趋势图",
+        "type": "timeseries"
+      },
+      {
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "continuous-GrYlRd"
+            },
+            "custom": {
+              "axisLabel": "",
+              "axisPlacement": "auto",
+              "barAlignment": 0,
+              "drawStyle": "line",
+              "fillOpacity": 20,
+              "gradientMode": "scheme",
+              "hideFrom": {
+                "legend": false,
+                "tooltip": false,
+                "viz": false
+              },
+              "lineInterpolation": "smooth",
+              "lineWidth": 3,
+              "pointSize": 5,
+              "scaleDistribution": {
+                "type": "linear"
+              },
+              "showPoints": "auto",
+              "spanNulls": false,
+              "stacking": {
+                "group": "A",
+                "mode": "none"
+              },
+              "thresholdsStyle": {
+                "mode": "off"
+              }
+            },
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": null
+                },
+                {
+                  "color": "red",
+                  "value": 80
+                }
+              ]
+            }
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 8,
+          "w": 8,
+          "x": 0,
+          "y": 32
+        },
+        "id": 21,
+        "options": {
+          "legend": {
+            "calcs": [],
+            "displayMode": "list",
+            "placement": "bottom"
+          },
+          "tooltip": {
+            "mode": "single"
+          }
+        },
+        "targets": [
+          {
+            "datasource": {
+              "type": "postgres",
+              "uid": "{{.datasource}}"
+            },
+            "format": "time_series",
+            "group": [
+              {
+                "params": [
+                  "$__interval",
+                  "none"
+                ],
+                "type": "time"
+              }
+            ],
+            "metricColumn": "none",
+            "rawQuery": false,
+            "rawSql": "SELECT\n  $__timeGroupAlias(created_at,$__interval),\n  count(id) AS \"pr_count\"\nFROM gitee.pull_requests\nWHERE\n  $__timeFilter(created_at)\nGROUP BY 1\nORDER BY 1",
+            "refId": "A",
+            "select": [
+              [
+                {
+                  "params": [
+                    "id"
+                  ],
+                  "type": "column"
+                },
+                {
+                  "params": [
+                    "count"
+                  ],
+                  "type": "aggregate"
+                },
+                {
+                  "params": [
+                    "pr_count"
+                  ],
+                  "type": "alias"
+                }
+              ]
+            ],
+            "table": "gitee.pull_requests",
+            "timeColumn": "created_at",
+            "timeColumnType": "timestamptz",
+            "where": [
+              {
+                "name": "$__timeFilter",
+                "params": [],
+                "type": "macro"
+              }
+            ]
+          }
+        ],
+        "title": "Pull Request 趋势图",
+        "type": "timeseries"
+      },
+      {
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "thresholds"
+            },
+            "mappings": [],
+            "max": 72,
+            "min": 1,
+            "thresholds": {
+              "mode": "percentage",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": null
+                },
+                {
+                  "color": "red",
+                  "value": 50
+                }
+              ]
+            },
+            "unit": "h"
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 8,
+          "w": 8,
+          "x": 8,
+          "y": 32
+        },
+        "id": 28,
+        "options": {
+          "orientation": "auto",
+          "reduceOptions": {
+            "calcs": [
+              "lastNotNull"
+            ],
+            "fields": "",
+            "values": false
+          },
+          "showThresholdLabels": false,
+          "showThresholdMarkers": true
+        },
+        "targets": [
+          {
+            "datasource": {
+              "type": "postgres",
+              "uid": "{{.datasource}}"
+            },
+            "format": "time_series",
+            "group": [],
+            "hide": false,
+            "metricColumn": "none",
+            "rawQuery": true,
+            "rawSql": "SELECT\n  NOW() AS \"time\",\n  MIN(hours_diff) AS \"最短耗时\"\nFROM gitee_state.pr_merge_hours_diff\nWHERE $__timeFilter(created_at)\nORDER BY 1",
+            "refId": "C",
+            "select": [
+              [
+                {
+                  "params": [
+                    "hours_diff"
+                  ],
+                  "type": "column"
+                }
+              ]
+            ],
+            "table": "pr_merge_hours_diff",
+            "timeColumn": "created_at",
+            "timeColumnType": "timestamp",
+            "where": [
+              {
+                "name": "$__timeFilter",
+                "params": [],
+                "type": "macro"
+              }
+            ]
+          },
+          {
+            "datasource": {
+              "type": "postgres",
+              "uid": "{{.datasource}}"
+            },
+            "format": "time_series",
+            "group": [],
+            "metricColumn": "none",
+            "rawQuery": true,
+            "rawSql": "SELECT\n  NOW() AS \"time\",\n  AVG(hours_diff) AS \"平均耗时\"\nFROM gitee_state.pr_merge_hours_diff\nWHERE $__timeFilter(created_at)\nORDER BY 1",
+            "refId": "A",
+            "select": [
+              [
+                {
+                  "params": [
+                    "hours_diff"
+                  ],
+                  "type": "column"
+                },
+                {
+                  "params": [
+                    "hours_diff"
+                  ],
+                  "type": "alias"
+                }
+              ]
+            ],
+            "table": "pr_merge_hours_diff",
+            "timeColumn": "NOW()",
+            "timeColumnType": "timestamp",
+            "where": []
+          },
+          {
+            "datasource": {
+              "type": "postgres",
+              "uid": "{{.datasource}}"
+            },
+            "format": "time_series",
+            "group": [],
+            "hide": false,
+            "metricColumn": "none",
+            "rawQuery": true,
+            "rawSql": "SELECT\n  NOW() AS \"time\",\n  MAX(hours_diff) AS \"最长耗时\"\nFROM gitee_state.pr_merge_hours_diff\nWHERE $__timeFilter(created_at)\nORDER BY 1",
+            "refId": "B",
+            "select": [
+              [
+                {
+                  "params": [
+                    "hours_diff"
+                  ],
+                  "type": "column"
+                }
+              ]
+            ],
+            "table": "pr_merge_hours_diff",
+            "timeColumn": "created_at",
+            "timeColumnType": "timestamp",
+            "where": [
+              {
+                "name": "$__timeFilter",
+                "params": [],
+                "type": "macro"
+              }
+            ]
+          }
+        ],
+        "title": "Pull Request 合并时间",
+        "transformations": [
+          {
+            "id": "organize",
+            "options": {}
+          }
+        ],
+        "type": "gauge"
+      },
+      {
+        "description": "",
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "thresholds"
+            },
+            "mappings": [],
+            "max": 720,
+            "min": 1,
+            "thresholds": {
+              "mode": "percentage",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": null
+                },
+                {
+                  "color": "red",
+                  "value": 50
+                }
+              ]
+            },
+            "unit": "h"
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 8,
+          "w": 8,
+          "x": 16,
+          "y": 32
+        },
+        "id": 29,
+        "options": {
+          "orientation": "auto",
+          "reduceOptions": {
+            "calcs": [
+              "lastNotNull"
+            ],
+            "fields": "",
+            "values": false
+          },
+          "showThresholdLabels": false,
+          "showThresholdMarkers": true
+        },
+        "targets": [
+          {
+            "datasource": {
+              "type": "postgres",
+              "uid": "{{.datasource}}"
+            },
+            "format": "time_series",
+            "group": [],
+            "hide": false,
+            "metricColumn": "none",
+            "rawQuery": true,
+            "rawSql": "SELECT\n  NOW() AS \"time\",\n  MIN(hours_diff) AS \"最短耗时\"\nFROM gitee_state.issue_close_hours_diff\nWHERE $__timeFilter(created_at)\nORDER BY 1",
+            "refId": "C",
+            "select": [
+              [
+                {
+                  "params": [
+                    "hours_diff"
+                  ],
+                  "type": "column"
+                }
+              ]
+            ],
+            "table": "pr_merge_hours_diff",
+            "timeColumn": "created_at",
+            "timeColumnType": "timestamp",
+            "where": [
+              {
+                "name": "$__timeFilter",
+                "params": [],
+                "type": "macro"
+              }
+            ]
+          },
+          {
+            "datasource": {
+              "type": "postgres",
+              "uid": "{{.datasource}}"
+            },
+            "format": "time_series",
+            "group": [],
+            "metricColumn": "none",
+            "rawQuery": true,
+            "rawSql": "SELECT\n  NOW() AS \"time\",\n  AVG(hours_diff) AS \"平均耗时\"\nFROM gitee_state.issue_close_hours_diff\nWHERE $__timeFilter(created_at)\nORDER BY 1",
+            "refId": "A",
+            "select": [
+              [
+                {
+                  "params": [
+                    "hours_diff"
+                  ],
+                  "type": "column"
+                },
+                {
+                  "params": [
+                    "hours_diff"
+                  ],
+                  "type": "alias"
+                }
+              ]
+            ],
+            "table": "pr_merge_hours_diff",
+            "timeColumn": "NOW()",
+            "timeColumnType": "timestamp",
+            "where": []
+          },
+          {
+            "datasource": {
+              "type": "postgres",
+              "uid": "{{.datasource}}"
+            },
+            "format": "time_series",
+            "group": [],
+            "hide": false,
+            "metricColumn": "none",
+            "rawQuery": true,
+            "rawSql": "SELECT\n  NOW() AS \"time\",\n  MAX(hours_diff) AS \"最长耗时\"\nFROM gitee_state.issue_close_hours_diff\nWHERE $__timeFilter(created_at)\nORDER BY 1",
+            "refId": "B",
+            "select": [
+              [
+                {
+                  "params": [
+                    "hours_diff"
+                  ],
+                  "type": "column"
+                }
+              ]
+            ],
+            "table": "pr_merge_hours_diff",
+            "timeColumn": "created_at",
+            "timeColumnType": "timestamp",
+            "where": [
+              {
+                "name": "$__timeFilter",
+                "params": [],
+                "type": "macro"
+              }
+            ]
+          }
+        ],
+        "title": "Issue 处理时间",
+        "transformations": [
+          {
+            "id": "organize",
+            "options": {}
+          }
+        ],
+        "type": "gauge"
+      },
+      {
+        "collapsed": false,
+        "gridPos": {
+          "h": 1,
+          "w": 24,
+          "x": 0,
+          "y": 40
+        },
+        "id": 31,
+        "panels": [],
+        "title": "数据列表",
+        "type": "row"
+      },
+      {
+        "description": "",
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "thresholds"
+            },
+            "custom": {
+              "align": "auto",
+              "displayMode": "auto"
+            },
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": null
+                },
+                {
+                  "color": "red",
+                  "value": 80
+                }
+              ]
+            }
+          },
+          "overrides": [
+            {
+              "matcher": {
+                "id": "byName",
+                "options": "平台"
+              },
+              "properties": [
+                {
+                  "id": "custom.width",
+                  "value": 64
+                }
+              ]
+            },
+            {
+              "matcher": {
+                "id": "byName",
+                "options": "仓库ID"
+              },
+              "properties": [
+                {
+                  "id": "custom.width",
+                  "value": 91
+                }
+              ]
+            },
+            {
+              "matcher": {
+                "id": "byName",
+                "options": "仓库名"
+              },
+              "properties": [
+                {
+                  "id": "custom.width",
+                  "value": 327
+                }
+              ]
+            },
+            {
+              "matcher": {
+                "id": "byName",
+                "options": "创建时间"
+              },
+              "properties": [
+                {
+                  "id": "custom.width",
+                  "value": 180
+                }
+              ]
+            },
+            {
+              "matcher": {
+                "id": "byName",
+                "options": "Star 数"
+              },
+              "properties": [
+                {
+                  "id": "custom.width",
+                  "value": 72
+                }
+              ]
+            },
+            {
+              "matcher": {
+                "id": "byName",
+                "options": "Fork 数"
+              },
+              "properties": [
+                {
+                  "id": "custom.width",
+                  "value": 84
+                }
+              ]
+            },
+            {
+              "matcher": {
+                "id": "byName",
+                "options": "Watch 数"
+              },
+              "properties": [
+                {
+                  "id": "custom.width",
+                  "value": 86
+                }
+              ]
+            }
+          ]
+        },
+        "gridPos": {
+          "h": 16,
+          "w": 12,
+          "x": 0,
+          "y": 41
+        },
+        "id": 2,
+        "options": {
+          "footer": {
+            "fields": "",
+            "reducer": [
+              "sum"
+            ],
+            "show": false
+          },
+          "showHeader": true,
+          "sortBy": [
+            {
+              "desc": true,
+              "displayName": "创建时间"
+            }
+          ]
+        },
+        "targets": [
+          {
+            "datasource": {
+              "type": "postgres",
+              "uid": "{{.datasource}}"
+            },
+            "format": "table",
+            "group": [],
+            "metricColumn": "none",
+            "rawQuery": false,
+            "rawSql": "SELECT\n  time AS \"time\",\n  repo_id,\n  repo_name,\n  created_at,\n  star_count,\n  fork_count,\n  watch_count,\n  platform\nFROM gitee_state.repos_list\nORDER BY 1",
+            "refId": "A",
+            "select": [
+              [
+                {
+                  "params": [
+                    "repo_id"
+                  ],
+                  "type": "column"
+                }
+              ],
+              [
+                {
+                  "params": [
+                    "repo_name"
+                  ],
+                  "type": "column"
+                }
+              ],
+              [
+                {
+                  "params": [
+                    "created_at"
+                  ],
+                  "type": "column"
+                }
+              ],
+              [
+                {
+                  "params": [
+                    "star_count"
+                  ],
+                  "type": "column"
+                }
+              ],
+              [
+                {
+                  "params": [
+                    "fork_count"
+                  ],
+                  "type": "column"
+                }
+              ],
+              [
+                {
+                  "params": [
+                    "watch_count"
+                  ],
+                  "type": "column"
+                }
+              ],
+              [
+                {
+                  "params": [
+                    "platform"
+                  ],
+                  "type": "column"
+                }
+              ]
+            ],
+            "table": "gitee_state.repos_list",
+            "timeColumn": "time",
+            "timeColumnType": "timestamptz",
+            "where": []
+          }
+        ],
+        "title": "仓库列表",
+        "transformations": [
+          {
+            "id": "organize",
+            "options": {
+              "excludeByName": {
+                "time": true
+              },
+              "indexByName": {
+                "created_at": 4,
+                "fork_count": 6,
+                "platform": 1,
+                "repo_id": 2,
+                "repo_name": 3,
+                "star_count": 5,
+                "time": 0,
+                "watch_count": 7
+              },
+              "renameByName": {
+                "created_at": "创建时间",
+                "fork_count": "Fork 数",
+                "platform": "平台",
+                "repo_id": "仓库ID",
+                "repo_name": "仓库名",
+                "star_count": "Star 数",
+                "watch_count": "Watch 数"
+              }
+            }
+          }
+        ],
+        "type": "table"
+      },
+      {
+        "description": "",
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "thresholds"
+            },
+            "custom": {
+              "align": "auto",
+              "displayMode": "auto"
+            },
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": null
+                },
+                {
+                  "color": "red",
+                  "value": 80
+                }
+              ]
+            }
+          },
+          "overrides": [
+            {
+              "matcher": {
+                "id": "byName",
+                "options": "平台"
+              },
+              "properties": [
+                {
+                  "id": "custom.width",
+                  "value": 64
+                }
+              ]
+            },
+            {
+              "matcher": {
+                "id": "byName",
+                "options": "仓库ID"
+              },
+              "properties": [
+                {
+                  "id": "custom.width",
+                  "value": 91
+                }
+              ]
+            },
+            {
+              "matcher": {
+                "id": "byName",
+                "options": "仓库名"
+              },
+              "properties": [
+                {
+                  "id": "custom.width",
+                  "value": 185
+                }
+              ]
+            },
+            {
+              "matcher": {
+                "id": "byName",
+                "options": "创建时间"
+              },
+              "properties": [
+                {
+                  "id": "custom.width",
+                  "value": 180
+                }
+              ]
+            },
+            {
+              "matcher": {
+                "id": "byName",
+                "options": "Star 数"
+              },
+              "properties": [
+                {
+                  "id": "custom.width",
+                  "value": 72
+                }
+              ]
+            },
+            {
+              "matcher": {
+                "id": "byName",
+                "options": "Fork 数"
+              },
+              "properties": [
+                {
+                  "id": "custom.width",
+                  "value": 84
+                }
+              ]
+            },
+            {
+              "matcher": {
+                "id": "byName",
+                "options": "Watch 数"
+              },
+              "properties": [
+                {
+                  "id": "custom.width",
+                  "value": 86
+                }
+              ]
+            },
+            {
+              "matcher": {
+                "id": "byName",
+                "options": "message"
+              },
+              "properties": [
+                {
+                  "id": "custom.width",
+                  "value": 333
+                }
+              ]
+            },
+            {
+              "matcher": {
+                "id": "byName",
+                "options": "Author Date"
+              },
+              "properties": [
+                {
+                  "id": "custom.width",
+                  "value": 218
+                }
+              ]
+            },
+            {
+              "matcher": {
+                "id": "byName",
+                "options": "Author Email"
+              },
+              "properties": [
+                {
+                  "id": "custom.width",
+                  "value": 212
+                }
+              ]
+            },
+            {
+              "matcher": {
+                "id": "byName",
+                "options": "信息"
+              },
+              "properties": [
+                {
+                  "id": "custom.width",
+                  "value": 367
+                }
+              ]
+            }
+          ]
+        },
+        "gridPos": {
+          "h": 16,
+          "w": 12,
+          "x": 12,
+          "y": 41
+        },
+        "id": 27,
+        "options": {
+          "footer": {
+            "fields": "",
+            "reducer": [
+              "sum"
+            ],
+            "show": false
+          },
+          "showHeader": true,
+          "sortBy": [
+            {
+              "desc": true,
+              "displayName": "Author Date"
+            }
+          ]
+        },
+        "targets": [
+          {
+            "datasource": {
+              "type": "postgres",
+              "uid": "{{.datasource}}"
+            },
+            "format": "table",
+            "group": [],
+            "metricColumn": "none",
+            "rawQuery": false,
+            "rawSql": "SELECT\n  NOW() AS \"time\",\n  repo_id,\n  repo_name,\n  platform,\n  message,\n  author_date,\n  author_email\nFROM gitee_state.commits_list\nORDER BY 1",
+            "refId": "A",
+            "select": [
+              [
+                {
+                  "params": [
+                    "repo_id"
+                  ],
+                  "type": "column"
+                }
+              ],
+              [
+                {
+                  "params": [
+                    "repo_name"
+                  ],
+                  "type": "column"
+                }
+              ],
+              [
+                {
+                  "params": [
+                    "platform"
+                  ],
+                  "type": "column"
+                }
+              ],
+              [
+                {
+                  "params": [
+                    "message"
+                  ],
+                  "type": "column"
+                }
+              ],
+              [
+                {
+                  "params": [
+                    "author_date"
+                  ],
+                  "type": "column"
+                }
+              ],
+              [
+                {
+                  "params": [
+                    "author_email"
+                  ],
+                  "type": "column"
+                }
+              ]
+            ],
+            "table": "gitee_state.commits_list",
+            "timeColumn": "NOW()",
+            "timeColumnType": "timestamptz",
+            "where": []
+          }
+        ],
+        "title": "Commit 列表",
+        "transformations": [
+          {
+            "id": "organize",
+            "options": {
+              "excludeByName": {
+                "time": true
+              },
+              "indexByName": {
+                "author_date": 6,
+                "author_email": 5,
+                "message": 4,
+                "platform": 1,
+                "repo_id": 2,
+                "repo_name": 3,
+                "time": 0
+              },
+              "renameByName": {
+                "author_date": "Author Date",
+                "author_email": "Author Email",
+                "author_name": "Author",
+                "created_at": "创建时间",
+                "fork_count": "Fork 数",
+                "message": "信息",
+                "platform": "平台",
+                "repo_id": "仓库ID",
+                "repo_name": "仓库名",
+                "star_count": "Star 数",
+                "watch_count": "Watch 数"
+              }
+            }
+          }
+        ],
+        "type": "table"
+      },
+      {
+        "description": "",
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "thresholds"
+            },
+            "custom": {
+              "align": "auto",
+              "displayMode": "auto"
+            },
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": null
+                },
+                {
+                  "color": "red",
+                  "value": 80
+                }
+              ]
+            }
+          },
+          "overrides": [
+            {
+              "matcher": {
+                "id": "byName",
+                "options": "平台"
+              },
+              "properties": [
+                {
+                  "id": "custom.width",
+                  "value": 64
+                }
+              ]
+            },
+            {
+              "matcher": {
+                "id": "byName",
+                "options": "仓库ID"
+              },
+              "properties": [
+                {
+                  "id": "custom.width",
+                  "value": 91
+                }
+              ]
+            },
+            {
+              "matcher": {
+                "id": "byName",
+                "options": "仓库名"
+              },
+              "properties": [
+                {
+                  "id": "custom.width",
+                  "value": 256
+                }
+              ]
+            },
+            {
+              "matcher": {
+                "id": "byName",
+                "options": "创建时间"
+              },
+              "properties": [
+                {
+                  "id": "custom.width",
+                  "value": 180
+                }
+              ]
+            },
+            {
+              "matcher": {
+                "id": "byName",
+                "options": "Star 数"
+              },
+              "properties": [
+                {
+                  "id": "custom.width",
+                  "value": 72
+                }
+              ]
+            },
+            {
+              "matcher": {
+                "id": "byName",
+                "options": "Fork 数"
+              },
+              "properties": [
+                {
+                  "id": "custom.width",
+                  "value": 84
+                }
+              ]
+            },
+            {
+              "matcher": {
+                "id": "byName",
+                "options": "Watch 数"
+              },
+              "properties": [
+                {
+                  "id": "custom.width",
+                  "value": 86
+                }
+              ]
+            },
+            {
+              "matcher": {
+                "id": "byName",
+                "options": "标题"
+              },
+              "properties": [
+                {
+                  "id": "custom.width",
+                  "value": 523
+                }
+              ]
+            },
+            {
+              "matcher": {
+                "id": "byName",
+                "options": "用户名"
+              },
+              "properties": [
+                {
+                  "id": "custom.width",
+                  "value": 146
+                }
+              ]
+            }
+          ]
+        },
+        "gridPos": {
+          "h": 16,
+          "w": 12,
+          "x": 0,
+          "y": 57
+        },
+        "id": 32,
+        "options": {
+          "footer": {
+            "fields": "",
+            "reducer": [
+              "sum"
+            ],
+            "show": false
+          },
+          "showHeader": true,
+          "sortBy": [
+            {
+              "desc": true,
+              "displayName": "创建时间"
+            }
+          ]
+        },
+        "targets": [
+          {
+            "datasource": {
+              "type": "postgres",
+              "uid": "{{.datasource}}"
+            },
+            "format": "table",
+            "group": [],
+            "metricColumn": "none",
+            "rawQuery": false,
+            "rawSql": "SELECT\n  NOW() AS \"time\",\n  repo_id,\n  repo_name,\n  created_at,\n  platform,\n  title,\n  issue_state,\n  user_name\nFROM gitee_state.issues_list\nORDER BY 1",
+            "refId": "A",
+            "select": [
+              [
+                {
+                  "params": [
+                    "repo_id"
+                  ],
+                  "type": "column"
+                }
+              ],
+              [
+                {
+                  "params": [
+                    "repo_name"
+                  ],
+                  "type": "column"
+                }
+              ],
+              [
+                {
+                  "params": [
+                    "created_at"
+                  ],
+                  "type": "column"
+                }
+              ],
+              [
+                {
+                  "params": [
+                    "platform"
+                  ],
+                  "type": "column"
+                }
+              ],
+              [
+                {
+                  "params": [
+                    "title"
+                  ],
+                  "type": "column"
+                }
+              ],
+              [
+                {
+                  "params": [
+                    "issue_state"
+                  ],
+                  "type": "column"
+                }
+              ],
+              [
+                {
+                  "params": [
+                    "user_name"
+                  ],
+                  "type": "column"
+                }
+              ]
+            ],
+            "table": "gitee_state.issues_list",
+            "timeColumn": "NOW()",
+            "timeColumnType": "timestamptz",
+            "where": []
+          }
+        ],
+        "title": "Issue 列表",
+        "transformations": [
+          {
+            "id": "organize",
+            "options": {
+              "excludeByName": {
+                "repo_id": true,
+                "time": true
+              },
+              "indexByName": {
+                "created_at": 4,
+                "issue_state": 7,
+                "platform": 1,
+                "repo_id": 2,
+                "repo_name": 3,
+                "time": 0,
+                "title": 6,
+                "user_name": 5
+              },
+              "renameByName": {
+                "created_at": "创建时间",
+                "fork_count": "Fork 数",
+                "issue_state": "状态",
+                "platform": "平台",
+                "repo_id": "仓库ID",
+                "repo_name": "仓库名",
+                "star_count": "Star 数",
+                "title": "标题",
+                "user_name": "用户名",
+                "watch_count": "Watch 数"
+              }
+            }
+          }
+        ],
+        "type": "table"
+      },
+      {
+        "description": "",
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "thresholds"
+            },
+            "custom": {
+              "align": "auto",
+              "displayMode": "auto"
+            },
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": null
+                },
+                {
+                  "color": "red",
+                  "value": 80
+                }
+              ]
+            }
+          },
+          "overrides": [
+            {
+              "matcher": {
+                "id": "byName",
+                "options": "平台"
+              },
+              "properties": [
+                {
+                  "id": "custom.width",
+                  "value": 64
+                }
+              ]
+            },
+            {
+              "matcher": {
+                "id": "byName",
+                "options": "仓库ID"
+              },
+              "properties": [
+                {
+                  "id": "custom.width",
+                  "value": 91
+                }
+              ]
+            },
+            {
+              "matcher": {
+                "id": "byName",
+                "options": "仓库名"
+              },
+              "properties": [
+                {
+                  "id": "custom.width",
+                  "value": 201
+                }
+              ]
+            },
+            {
+              "matcher": {
+                "id": "byName",
+                "options": "创建时间"
+              },
+              "properties": [
+                {
+                  "id": "custom.width",
+                  "value": 180
+                }
+              ]
+            },
+            {
+              "matcher": {
+                "id": "byName",
+                "options": "Star 数"
+              },
+              "properties": [
+                {
+                  "id": "custom.width",
+                  "value": 72
+                }
+              ]
+            },
+            {
+              "matcher": {
+                "id": "byName",
+                "options": "Fork 数"
+              },
+              "properties": [
+                {
+                  "id": "custom.width",
+                  "value": 84
+                }
+              ]
+            },
+            {
+              "matcher": {
+                "id": "byName",
+                "options": "Watch 数"
+              },
+              "properties": [
+                {
+                  "id": "custom.width",
+                  "value": 86
+                }
+              ]
+            },
+            {
+              "matcher": {
+                "id": "byName",
+                "options": "标题"
+              },
+              "properties": [
+                {
+                  "id": "custom.width",
+                  "value": 724
+                }
+              ]
+            },
+            {
+              "matcher": {
+                "id": "byName",
+                "options": "用户名"
+              },
+              "properties": [
+                {
+                  "id": "custom.width",
+                  "value": 124
+                }
+              ]
+            },
+            {
+              "matcher": {
+                "id": "byName",
+                "options": "PR编号"
+              },
+              "properties": [
+                {
+                  "id": "custom.width",
+                  "value": 66
+                }
+              ]
+            }
+          ]
+        },
+        "gridPos": {
+          "h": 16,
+          "w": 12,
+          "x": 12,
+          "y": 57
+        },
+        "id": 33,
+        "options": {
+          "footer": {
+            "fields": "",
+            "reducer": [
+              "sum"
+            ],
+            "show": false
+          },
+          "showHeader": true,
+          "sortBy": [
+            {
+              "desc": true,
+              "displayName": "创建时间"
+            }
+          ]
+        },
+        "targets": [
+          {
+            "datasource": {
+              "type": "postgres",
+              "uid": "{{.datasource}}"
+            },
+            "format": "table",
+            "group": [],
+            "metricColumn": "none",
+            "rawQuery": false,
+            "rawSql": "SELECT\n  NOW() AS \"time\",\n  repo_name,\n  created_at,\n  platform,\n  title,\n  user_name,\n  pr_number,\n  mergeable\nFROM gitee_state.prs_list\nORDER BY 1",
+            "refId": "A",
+            "select": [
+              [
+                {
+                  "params": [
+                    "repo_name"
+                  ],
+                  "type": "column"
+                }
+              ],
+              [
+                {
+                  "params": [
+                    "created_at"
+                  ],
+                  "type": "column"
+                }
+              ],
+              [
+                {
+                  "params": [
+                    "platform"
+                  ],
+                  "type": "column"
+                }
+              ],
+              [
+                {
+                  "params": [
+                    "title"
+                  ],
+                  "type": "column"
+                }
+              ],
+              [
+                {
+                  "params": [
+                    "user_name"
+                  ],
+                  "type": "column"
+                }
+              ],
+              [
+                {
+                  "params": [
+                    "pr_number"
+                  ],
+                  "type": "column"
+                }
+              ],
+              [
+                {
+                  "params": [
+                    "mergeable"
+                  ],
+                  "type": "column"
+                }
+              ]
+            ],
+            "table": "gitee_state.prs_list",
+            "timeColumn": "NOW()",
+            "timeColumnType": "timestamptz",
+            "where": []
+          }
+        ],
+        "title": "Pull Request 列表",
+        "transformations": [
+          {
+            "id": "organize",
+            "options": {
+              "excludeByName": {
+                "platform": false,
+                "repo_id": true,
+                "time": true
+              },
+              "indexByName": {
+                "created_at": 5,
+                "mergeable": 7,
+                "platform": 1,
+                "pr_number": 3,
+                "repo_name": 2,
+                "time": 0,
+                "title": 6,
+                "user_name": 4
+              },
+              "renameByName": {
+                "created_at": "创建时间",
+                "fork_count": "Fork 数",
+                "issue_state": "状态",
+                "mergeable": "是否可合并",
+                "platform": "平台",
+                "pr_number": "PR编号",
+                "repo_id": "仓库ID",
+                "repo_name": "仓库名",
+                "star_count": "Star 数",
+                "title": "标题",
+                "user_name": "用户名",
+                "watch_count": "Watch 数"
+              }
+            }
+          }
+        ],
+        "type": "table"
+      }
+    ]
+  },
+  "folderUid": "{{.folder}}",  
+  "overwrite": true
+}
+{{end}}

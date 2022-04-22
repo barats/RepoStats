@@ -9,10 +9,15 @@
 package network
 
 import (
+	"bytes"
+	"embed"
 	"encoding/json"
 	"fmt"
+	"html/template"
 	"net/http"
+	gitee_model "repostats/model/gitee"
 	"repostats/utils"
+	"strconv"
 	"time"
 )
 
@@ -24,6 +29,9 @@ const (
 	REPOSTATS_HOMEDASHBOARD_NAME = "Overview"
 	REPOSTATS_HOMEDASHBOARD_FILE = "grafana_home_dashboard.json"
 )
+
+//go:embed templates/*.tmpl
+var grafanaFS embed.FS
 
 type GrafanaToken struct {
 	ID   int    `json:"id"`
@@ -192,49 +200,73 @@ func RetrieveGrafanaDatasource() (GrafanaDatasource, error) {
 	return datasource, json.Unmarshal(data, &datasource)
 }
 
-// 给某个项目创建 Dashboard
-//
-// rType 可以是 Gitee、Github
-// func CreateRepoDashboard(token GrafanaToken, repoID int64, rType string) error {
-// 	token, err := RetrieveGrafanaToken()
-// 	folder, err := RetrieveRepostatsFolder()
-// 	datasource, err := RetrieveGrafanaDatasource()
-// 	if err != nil {
-// 		return err
-// 	}
+func CreateRepoDashboard(token GrafanaToken, folder GrafanaFolder, datasource GrafanaDatasource, repo gitee_model.Repository) error {
+	data := map[string]string{
+		"datasource":      datasource.UID,
+		"folder":          folder.UID,
+		"time":            time.Now().Local().String(),
+		"repo_human_name": repo.HumanName,
+		"repo_path":       repo.Path,
+		"repo_owner":      repo.Owner.Name,
+		"repo_id":         strconv.Itoa(repo.ID),
+	}
 
-// 	url := fmt.Sprintf("http://%s:%s/api/dashboards/db", token.Host, token.Port)
-// 	issueTypeChart := fmt.Sprintf(grafana_core.PanelRepoIssueTypeChart, datasource.UID, repoID)
-// 	issueStateChart := fmt.Sprintf(grafana_core.PanelRepoIssueStateChart, datasource.UID, repoID)
-// 	allPanels := strings.Join([]string{issueStateChart, issueTypeChart}, ",")
-// 	data := fmt.Sprintf(grafana_core.RepoDashboard, "title", `"gitee","openharmmony/docs"`, allPanels, folder.UID, time.Now())
-// 	rcode, rs, err := network.HttpPost(token.Key, url, nil, data)
-// 	if err != nil {
-// 		return err
-// 	}
+	var tp bytes.Buffer
+	tmpl, err := template.ParseFS(grafanaFS, "templates/repo-dashboard.tmpl")
+	if err != nil {
+		return err
+	}
 
-// 	if rcode != http.StatusOK {
-// 		return fmt.Errorf("create dashboard for repo failed. %s", rs)
-// 	}
+	if err := tmpl.Execute(&tp, data); err != nil {
+		return err
+	}
 
-// 	var strMap map[string]string
-// 	json.Unmarshal([]byte(rs), &strMap)
-// 	rcode, rrs, rerr := network.HttpGet(token.Key, fmt.Sprintf("http://%s/api/dashboards/uid/%s", graCfg.Url, strMap["uid"]), nil, nil)
-// 	if rerr != nil {
-// 		return rerr
-// 	}
+	code, rs, err := HttpPost(token.Key, fmt.Sprintf("http://%s:%s/api/dashboards/db", token.Host, token.Port), nil, tp.String())
+	if err != nil {
+		return err
+	}
 
-// 	if rcode != http.StatusOK {
-// 		return fmt.Errorf("grafana repo dashboard creation failed. status code: %d , response : %s", rcode, rrs)
-// 	}
+	if code != http.StatusOK {
+		return fmt.Errorf("grafana home dashboard creation failed. status code: %d , response : %s", code, rs)
+	}
 
-// 	var rawMap map[string]json.RawMessage
-// 	json.Unmarshal([]byte(rrs), &rawMap)
+	var rawMap map[string]json.RawMessage
+	json.Unmarshal([]byte(rs), &rawMap)
 
-// 	return utils.WriteRepoStatsFile(fmt.Sprintf("gitee-repo-%d.json", repoID), []byte(rawMap["dashboard"]))
+	return utils.WriteRepoStatsFile(fmt.Sprintf("gitee-repo-%d.json", repo.ID), []byte(rawMap["dashboard"]))
+}
 
-// 	return nil
-// }
+func CreateHomeDashboard(token GrafanaToken, folder GrafanaFolder, datasource GrafanaDatasource) error {
+	data := map[string]string{
+		"datasource": datasource.UID,
+		"folder":     folder.UID,
+		"time":       time.Now().Local().String(),
+	}
+
+	var tp bytes.Buffer
+	tmpl, err := template.ParseFS(grafanaFS, "templates/home-dashboard.tmpl")
+	if err != nil {
+		return err
+	}
+
+	if err := tmpl.Execute(&tp, data); err != nil {
+		return err
+	}
+
+	code, rs, err := HttpPost(token.Key, fmt.Sprintf("http://%s:%s/api/dashboards/db", token.Host, token.Port), nil, tp.String())
+	if err != nil {
+		return err
+	}
+
+	if code != http.StatusOK {
+		return fmt.Errorf("grafana home dashboard creation failed. status code: %d , response : %s", code, rs)
+	}
+
+	var rawMap map[string]json.RawMessage
+	json.Unmarshal([]byte(rs), &rawMap)
+
+	return utils.WriteRepoStatsFile(REPOSTATS_HOMEDASHBOARD_FILE, []byte(rawMap["dashboard"]))
+}
 
 //创建 RepoStats 使用的 Folder
 //
