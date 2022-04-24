@@ -30,7 +30,7 @@ func GrafanaPage(ctx *gin.Context) {
 
 	token, _ := network.RetrieveGrafanaToken()
 	ctx.HTML(http.StatusOK, "grafana.html", gin.H{
-		"title":       "Pull Request - RepoStats",
+		"title":       "Grafana 配置 - RepoStats",
 		"current_url": ctx.Request.URL.Path,
 		"grafana":     utils.GrafanaConfig,
 		"token":       token,

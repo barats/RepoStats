@@ -53,7 +53,7 @@ func PRsPage(ctx *gin.Context) {
 		if err != nil {
 			log.Printf("error %s", err)
 			ctx.HTML(http.StatusOK, "prs.html", gin.H{
-				"title":       "Pull Request - RepoStats",
+				"title":       "Pull Request 列表 - RepoStats",
 				"current_url": ctx.Request.URL.Path,
 				"error":       "内部错误，请联系管理员",
 			})
@@ -64,7 +64,7 @@ func PRsPage(ctx *gin.Context) {
 		if errr != nil {
 			log.Printf("error %s", err)
 			ctx.HTML(http.StatusOK, "prs.html", gin.H{
-				"title":       "Pull Request - RepoStats",
+				"title":       "Pull Request 列表 - RepoStats",
 				"current_url": ctx.Request.URL.Path,
 				"error":       "内部错误，请联系管理员",
 			})
@@ -75,7 +75,7 @@ func PRsPage(ctx *gin.Context) {
 	}
 
 	ctx.HTML(http.StatusOK, "prs.html", gin.H{
-		"title":        "Pull Request - RepoStats",
+		"title":        "Pull Request 列表 - RepoStats",
 		"current_url":  ctx.Request.URL.Path,
 		"prs":          prs,
 		"total_item":   count,

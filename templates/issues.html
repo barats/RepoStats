@@ -1,0 +1,70 @@
+{{define "issues.html" -}}
+{{template "header.html" .}}
+{{template "admin-left-menu.html" .}}
+<div id="admin-right-content">
+  <div class="ui basic segment">
+    <h3 class="ui header">Issues 列表</h3>
+    <div class="ui grid stackable padded">      
+      <div class="column" style="max-width: 100%; overflow-x: auto;">
+        <table class="ui celled striped small table">
+          <thead>
+            <tr>
+              <th colspan="11">
+                <p>共计 <span style="color: red;">{{.total_item}}</span> 条记录，当前 <span style="color: red;">{{.current_page}} </span> / <span style="color: red;">{{add (div .total_item .page_size) 1}}</span> 页</p>                
+              </th>
+            </tr>
+            <tr>       
+              <th class="center aligned collapsing">序号</th>
+              <th class="center aligned collapsing">平台</th>     
+              <th class="center aligned collapsing">Issue 编号</th>
+              <th class="center aligned collapsing">仓库编号</th>
+              <th class="center aligned collapsing">类型</th>
+              <th class="center aligned collapsing">状态</th>                
+              <th>标题</th>              
+              <th class="center aligned collapsing">创建时间</th>                
+              <th class="center aligned collapsing">更新时间</th>  
+              <th class="center aligned collapsing">完成时间</th>                                                    
+              <th class="center aligned">操作</th>       
+            </tr>
+          </thead>
+          <tbody>             
+            {{range $i,$iss := .issues}} 
+            {{if eq "closed" $iss.State}}<tr class="negative">{{else if eq "progressing" $iss.State}}<tr class="positive">{{else}}<tr>{{end}}
+              <td class="center aligned collapsing">{{add $i 1}}</td>
+              <td class="center aligned collapsing">Gitee</td>
+              <td class="center aligned collapsing">{{$iss.Number}}</td>
+              <td class="center aligned collapsing"><a target="_blank" href="/admin/repos?id={{$iss.RepoID}}">{{$iss.RepoID}}</a></td>
+              <td class="center aligned collapsing">{{$iss.IssueType}}</td>
+              <td class="center aligned collapsing">{{$iss.IssueState}}</td>
+              <td><a href="{{$iss.HTMLURL}}" target="_blank">{{$iss.Title}}</a></td>              
+              <td class="center aligned collapsing">{{$iss.CreatedAt | date "2006-01-02 15:04:05"}}</td>              
+              <td class="center aligned collapsing">{{if not $iss.UpdatedAt.IsZero}}{{$iss.UpdatedAt | date "2006-01-02 15:04:05"}}{{end}}</td>
+              <td class="center aligned collapsing">{{if not $iss.FinishedAt.IsZero}}{{$iss.FinishedAt | date "2006-01-02 15:04:05"}}{{end}}</td>
+              <td class="center aligned collapsing"> 
+                --
+              </td>
+            </tr>
+            {{end}}  
+          </tbody>
+          <tfoot>
+            {{if .total_item}}
+            <tr>
+              <td colspan="11" class="center aligned">
+                <div class="ui tiny pagination menu"> 
+                  <a  class="item" target="_self"  href="{{.current_url}}?number={{.number}}&page=1&size={{.page_size}}">首页</a>
+                  <a  class="{{if .first_page}}disabled{{end}} item" target="_self"  href="{{.current_url}}?page={{sub .current_page 1}}&size={{.page_size}}&number={{.number}}"><<</a>
+                  <div class="active item">{{.current_page}}</div>
+                  <a class="{{if .last_page}}disabled{{end}} item" target="_self" href="{{.current_url}}?page={{add .current_page 1}}&size={{.page_size}}&number={{.number}}">>></a>
+                  <a  class="item" target="_self"  href="{{.current_url}}?page={{add (div .total_item .page_size) 1}}&size={{.page_size}}&number={{.number}}">末页</a>
+                </div>   
+              </td>                         
+            </tr>
+            {{end}}
+          </tfoot>
+        </table>
+      </div>
+    </div><!--end fo grid-->
+  </div>  <!--end of basic segment-->  
+</div><!--end of admin-right-content-->
+{{template "footer.html" .}}
+{{end -}}

@@ -28,6 +28,22 @@ func BulkSaveIssues(iss []gitee_model.Issue) error {
 	return storage.DbNamedExec(query, iss)
 }
 
+func FindTotalIssuesCount() (int, error) {
+	var count int
+	query := `SELECT COUNT(iss.id) FROM gitee.issues iss`
+	return count, storage.DbGet(query, &count)
+}
+
+func FindPagedIssues(page, size int) ([]gitee_model.Issue, error) {
+	if page < 1 {
+		page = 1
+	}
+	iss := []gitee_model.Issue{}
+	query := issueQueryPrefix + ` ORDER BY iss.created_at DESC LIMIT $1 OFFSET $2`
+	offset := (page - 1) * size
+	return iss, storage.DbSelect(query, &iss, size, offset)
+}
+
 func FindIssues() ([]gitee_model.Issue, error) {
 	found := []gitee_model.Issue{}
 	query := issueQueryPrefix + `  ORDER BY iss.created_at DESC`
@@ -49,9 +65,26 @@ func FindIssueByID(id int) (gitee_model.Issue, error) {
 	return found, err
 }
 
-func FindIssueByNumber(number string) (gitee_model.Issue, error) {
+func FindIssuesByNumber(number string) (gitee_model.Issue, error) {
 	found := gitee_model.Issue{}
 	query := issueQueryPrefix + ` WHERE iss.number = $1 ORDER BY iss.created_at DESC`
 	err := storage.DbGet(query, &found, number)
 	return found, err
+}
+
+func FindPagedIssuesByNumber(number string, page, size int) (gitee_model.Issue, error) {
+	if page < 1 {
+		page = 1
+	}
+	found := gitee_model.Issue{}
+	query := issueQueryPrefix + ` WHERE iss.number = $1 ORDER BY iss.created_at DESC LIMIT $2 OFFSET $3`
+	offset := (page - 1) * size
+	err := storage.DbGet(query, &found, number, size, offset)
+	return found, err
+}
+
+func FindIssuesCountByNumber(number string) (int, error) {
+	var count int
+	query := `SELECT COUNT(iss.id) FROM gitee.issues iss WHERE iss.number = $1`
+	return count, storage.DbGet(query, &count, number)
 }
