@@ -9,15 +9,12 @@
 package network
 
 import (
+	"fmt"
 	"log"
+	"repostats/utils"
 	"time"
 
 	"github.com/go-resty/resty/v2"
-)
-
-const (
-	CONTENT_TYPE = "application/json"
-	USER_AGENT   = "RepoStats https://gitee.com/barat | https://github.com/barats"
 )
 
 type OauthToken struct {
@@ -49,8 +46,8 @@ func NewNetworkClient(token string) *resty.Client {
 		SetAuthToken(token)
 
 	client.SetHeaders(map[string]string{
-		"Content-Type": CONTENT_TYPE,
-		"User-Agent":   USER_AGENT,
+		"Content-Type": "application/json",
+		"User-Agent":   fmt.Sprintf("RepoStats/%s build %s", utils.Version, utils.Build),
 	})
 
 	client.OnError(func(r *resty.Request, err error) {

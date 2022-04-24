@@ -62,7 +62,7 @@ func TestCreateRepostatsFolder(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if err := CreateRepostatsFolder(tt.args.token); (err != nil) != tt.wantErr {
+			if err := CreateGiteeRepostatsFolder(tt.args.token); (err != nil) != tt.wantErr {
 				t.Errorf("CreateRepostatsFolder() error = %v, wantErr %v", err, tt.wantErr)
 			}
 		})
@@ -80,7 +80,7 @@ func TestCreateHomeDashboard(t *testing.T) {
 	datasource, err := RetrieveGrafanaDatasource()
 	utils.ExitOnError(err)
 
-	folder, err := RetrieveRepostatsFolder()
+	folder, err := RetrieveGiteeRepostatsFolder()
 	utils.ExitOnError(err)
 
 	type args struct {
@@ -97,7 +97,7 @@ func TestCreateHomeDashboard(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if err := CreateHomeDashboard(tt.args.token, tt.args.folder, tt.args.datasource); (err != nil) != tt.wantErr {
+			if err := CreateGiteeHomeDashboard(tt.args.token, tt.args.folder, tt.args.datasource); (err != nil) != tt.wantErr {
 				t.Errorf("CreateHomeDashboard() error = %v, wantErr %v", err, tt.wantErr)
 			}
 		})
@@ -115,11 +115,11 @@ func TestCreateRepoDashboard(t *testing.T) {
 	datasource, err := RetrieveGrafanaDatasource()
 	utils.ExitOnError(err)
 
-	folder, err := RetrieveRepostatsFolder()
+	folder, err := RetrieveGiteeRepostatsFolder()
 	utils.ExitOnError(err)
 
-	// repos, err := GetGiteeUserRepos("barat")
-	repos, err := GetGiteeOrgRepos("openharmony")
+	repos, err := GetGiteeUserRepos("barat")
+	// repos, err := GetGiteeOrgRepos("openharmony")
 	utils.ExitOnError(err)
 
 	type args struct {
@@ -142,7 +142,7 @@ func TestCreateRepoDashboard(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if err := CreateRepoDashboard(tt.args.token, tt.args.folder, tt.args.datasource, tt.args.repo); (err != nil) != tt.wantErr {
+			if err := CreateGiteeRepoDashboard(tt.args.token, tt.args.folder, tt.args.datasource, tt.args.repo); (err != nil) != tt.wantErr {
 				t.Errorf("CreateRepoDashboard() error = %v, wantErr %v", err, tt.wantErr)
 			}
 		})

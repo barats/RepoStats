@@ -14,6 +14,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"html/template"
+	"log"
 	"net/http"
 	gitee_model "repostats/model/gitee"
 	"repostats/utils"
@@ -22,12 +23,12 @@ import (
 )
 
 const (
-	GRAFANA_API_TOKEN            = "grafana_api_token.json"
-	GRAFANA_DATASOURCE           = "grafana_datasource.json"
-	GRAFANA_FOLDER               = "grafana_folder.json"
-	REPOSTATS_FOLDER_NAME        = "RepoStats"
-	REPOSTATS_HOMEDASHBOARD_NAME = "Overview"
-	REPOSTATS_HOMEDASHBOARD_FILE = "grafana_home_dashboard.json"
+	GRAFANA_API_TOKEN           = "grafana_api_token.json"
+	GRAFANA_DATASOURCE          = "grafana_datasource.json"
+	GRAFANA_FOLDER              = "grafana_folder.json"
+	REPOSTATS_GITEE_FOLDER_NAME = "Gitee"
+	// REPOSTATS_HOMEDASHBOARD_NAME = "Overview"
+	// REPOSTATS_HOMEDASHBOARD_FILE = "grafana_home_dashboard.json"
 )
 
 //go:embed templates/*.tmpl
@@ -157,11 +158,11 @@ func CreateDatasource(token GrafanaToken, dbConfig utils.DatabaseConfigInfo) err
 		"database": "%s",
 		"basicAuth": true,
 		"basicAuthUser": "%s",
-		"readOnly": true,	
+		"readOnly": true,
 		"withCredentials": false,
-		"isDefault": true,	
+		"isDefault": true,
 		"secureJsonData": {
-			"password": "%s",   		
+			"password": "%s",
 			"basicAuthPassword": "%s"
 		},
 		"jsonData": {
@@ -200,7 +201,7 @@ func RetrieveGrafanaDatasource() (GrafanaDatasource, error) {
 	return datasource, json.Unmarshal(data, &datasource)
 }
 
-func CreateRepoDashboard(token GrafanaToken, folder GrafanaFolder, datasource GrafanaDatasource, repo gitee_model.Repository) error {
+func CreateGiteeRepoDashboard(token GrafanaToken, folder GrafanaFolder, datasource GrafanaDatasource, repo gitee_model.Repository) error {
 	data := map[string]string{
 		"datasource":      datasource.UID,
 		"folder":          folder.UID,
@@ -212,7 +213,7 @@ func CreateRepoDashboard(token GrafanaToken, folder GrafanaFolder, datasource Gr
 	}
 
 	var tp bytes.Buffer
-	tmpl, err := template.ParseFS(grafanaFS, "templates/repo-dashboard.tmpl")
+	tmpl, err := template.ParseFS(grafanaFS, "templates/gitee-repo-dashboard.tmpl")
 	if err != nil {
 		return err
 	}
@@ -227,16 +228,16 @@ func CreateRepoDashboard(token GrafanaToken, folder GrafanaFolder, datasource Gr
 	}
 
 	if code != http.StatusOK {
-		return fmt.Errorf("grafana home dashboard creation failed. status code: %d , response : %s", code, rs)
+		return fmt.Errorf("grafana gitee remo dashboard creation failed. status code: %d , response : %s", code, rs)
 	}
 
-	var rawMap map[string]json.RawMessage
-	json.Unmarshal([]byte(rs), &rawMap)
-
-	return utils.WriteRepoStatsFile(fmt.Sprintf("gitee-repo-%d.json", repo.ID), []byte(rawMap["dashboard"]))
+	// var rawMap map[string]json.RawMessage
+	// json.Unmarshal([]byte(rs), &rawMap)
+	// return utils.WriteRepoStatsFile(fmt.Sprintf("gitee-repo-%d.json", repo.ID), []byte(rawMap["dashboard"]))
+	return nil
 }
 
-func CreateHomeDashboard(token GrafanaToken, folder GrafanaFolder, datasource GrafanaDatasource) error {
+func CreateGiteeHomeDashboard(token GrafanaToken, folder GrafanaFolder, datasource GrafanaDatasource) error {
 	data := map[string]string{
 		"datasource": datasource.UID,
 		"folder":     folder.UID,
@@ -244,7 +245,7 @@ func CreateHomeDashboard(token GrafanaToken, folder GrafanaFolder, datasource Gr
 	}
 
 	var tp bytes.Buffer
-	tmpl, err := template.ParseFS(grafanaFS, "templates/home-dashboard.tmpl")
+	tmpl, err := template.ParseFS(grafanaFS, "templates/gitee-home-dashboard.tmpl")
 	if err != nil {
 		return err
 	}
@@ -252,6 +253,8 @@ func CreateHomeDashboard(token GrafanaToken, folder GrafanaFolder, datasource Gr
 	if err := tmpl.Execute(&tp, data); err != nil {
 		return err
 	}
+
+	log.Println(tp.String())
 
 	code, rs, err := HttpPost(token.Key, fmt.Sprintf("http://%s:%s/api/dashboards/db", token.Host, token.Port), nil, tp.String())
 	if err != nil {
@@ -262,17 +265,17 @@ func CreateHomeDashboard(token GrafanaToken, folder GrafanaFolder, datasource Gr
 		return fmt.Errorf("grafana home dashboard creation failed. status code: %d , response : %s", code, rs)
 	}
 
-	var rawMap map[string]json.RawMessage
-	json.Unmarshal([]byte(rs), &rawMap)
-
-	return utils.WriteRepoStatsFile(REPOSTATS_HOMEDASHBOARD_FILE, []byte(rawMap["dashboard"]))
+	// var rawMap map[string]json.RawMessage
+	// json.Unmarshal([]byte(rs), &rawMap)
+	// return utils.WriteRepoStatsFile(REPOSTATS_HOMEDASHBOARD_FILE, []byte(rawMap["dashboard"]))
+	return nil
 }
 
 //创建 RepoStats 使用的 Folder
 //
-func CreateRepostatsFolder(token GrafanaToken) error {
+func CreateGiteeRepostatsFolder(token GrafanaToken) error {
 	url := fmt.Sprintf("http://%s:%s/api/folders", token.Host, token.Port)
-	data := fmt.Sprintf(`{"title":"%s"}`, REPOSTATS_FOLDER_NAME)
+	data := fmt.Sprintf(`{"title":"%s"}`, REPOSTATS_GITEE_FOLDER_NAME)
 	code, rs, err := HttpPost(token.Key, url, nil, data)
 	if err != nil {
 		return err
@@ -286,7 +289,7 @@ func CreateRepostatsFolder(token GrafanaToken) error {
 }
 
 // 获取本地存储的 Folder 信息
-func RetrieveRepostatsFolder() (GrafanaFolder, error) {
+func RetrieveGiteeRepostatsFolder() (GrafanaFolder, error) {
 	var folder GrafanaFolder
 	data, _ := utils.ReadRepoStatsFile(GRAFANA_FOLDER)
 	return folder, json.Unmarshal(data, &folder)

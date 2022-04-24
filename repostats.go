@@ -26,9 +26,6 @@ import (
 )
 
 var (
-	Version = "1.0"
-	Build   = "2204111911"
-
 	//go:embed assets/* templates/*
 	FS embed.FS
 
@@ -39,8 +36,8 @@ func main() {
 
 	flag.StringVar(&cmdConfig, "c", "repostats.ini", "config file path")
 	flag.Usage = func() {
-		fmt.Fprintf(os.Stdout, `RepoStats version:%s build %s 
-		Usage: repostats [-c config_file_path]`, Version, Build)
+		fmt.Fprintf(os.Stdout, `RepoStats v:%s build %s 
+		Usage: repostats [-c config_file_path]`, utils.Version, utils.Build)
 		flag.PrintDefaults()
 	}
 
@@ -57,7 +54,7 @@ func main() {
 
 	initRouter(router)
 
-	log.Println(fmt.Sprintf("[RepoStats v%s build:%s] starts at http://localhost:%d", Version, Build, utils.RepoStatsConfig.AdminPort))
+	log.Println(fmt.Sprintf("[RepoStats v%s build:%s] starts at http://localhost:%d", utils.Version, utils.Build, utils.RepoStatsConfig.AdminPort))
 	router.Run(fmt.Sprintf("localhost:%d", utils.RepoStatsConfig.AdminPort))
 }
 

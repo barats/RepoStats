@@ -18,6 +18,11 @@ import (
 	"strings"
 )
 
+var (
+	Version = "1.0"
+	Build   = "2204111911"
+)
+
 func ExitOnError(err error) {
 	if err != nil {
 		log.Fatalln(err)
