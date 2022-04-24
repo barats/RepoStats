@@ -244,3 +244,70 @@ SELECT
 FROM gitee.commits c 
 GROUP BY c.repo_id, c.committer_email
 ORDER BY COUNT(c.sha) DESC;
+
+
+-- pr merge time hours diff
+CREATE OR REPLACE VIEW gitee_state.pr_merge_hours_diff AS 
+SELECT
+	pr.id AS pr_id,
+	pr.repo_id AS repo_id,
+	pr.created_at AS created_at,
+	pr.merged_at AS merged_at,
+	EXTRACT(EPOCH FROM (pr.merged_at - pr.created_at))/3600  AS hours_diff
+FROM gitee.pull_requests pr WHERE pr.mergeable = TRUE AND pr.state = 'merged';
+
+
+-- issue close time hours diff
+CREATE OR REPLACE VIEW gitee_state.issue_close_hours_diff AS 
+SELECT
+	iss.repo_id AS repo_id,
+	iss.id AS issue_id,
+	iss.created_at AS created_at,
+	iss.finished_at AS finished_at,
+	EXTRACT(EPOCH FROM (iss.finished_at - iss.created_at))/3600  AS hours_diff
+FROM gitee.issues iss WHERE iss.state = 'closed' OR iss.state = 'rejected';
+
+-- commit list 
+CREATE OR REPLACE VIEW gitee_state.commits_list AS 
+SELECT
+	'Gitee' AS platform,
+	r.id AS repo_id,
+	r.full_name AS repo_name,
+	c.sha AS sha,	
+	c.detail_message AS message, 
+	c.author_name AS author_name,
+	c.author_email AS author_email,
+	c.author_date AS author_date,
+	c.committer_name AS committer_name,
+	c.committer_email AS committer_email,
+	c.committer_date AS committer_date
+FROM gitee.commits c , gitee.repos r 
+WHERE c.repo_id = r.id;
+
+-- issue list 
+CREATE OR REPLACE VIEW gitee_state.issues_list AS 
+SELECT 
+	'Gitee' AS platform,
+	r.id AS repo_id,
+	r.full_name AS repo_name,
+	iss.state AS issue_state,
+	u."name" AS user_name,
+	iss.title AS title,
+	iss.created_at AS created_at		
+FROM gitee.issues iss , gitee.repos r , gitee.users u 
+WHERE iss.repo_id = r.id AND iss.user_id = u.id;
+
+-- pull request list 
+CREATE OR REPLACE VIEW gitee_state.prs_list AS 
+SELECT
+	'Gitee' AS platform,
+	pr.id AS pr_id,
+	pr.repo_id AS repo_id,
+	pr."number" AS pr_number,
+	pr.created_at AS created_at,
+	pr.title AS title,
+	pr.mergeable AS mergeable,
+	r.full_name AS repo_name,
+	u."name" AS user_name
+FROM gitee.pull_requests pr , gitee.repos r, gitee.users u 
+WHERE pr.repo_id = r.id AND pr.user_id = u.id;

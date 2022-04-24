@@ -38,8 +38,8 @@
               <td class="center aligned collapsing">{{$iss.IssueState}}</td>
               <td><a href="{{$iss.HTMLURL}}" target="_blank">{{$iss.Title}}</a></td>              
               <td class="center aligned collapsing">{{$iss.CreatedAt | date "2006-01-02 15:04:05"}}</td>              
-              <td class="center aligned collapsing">{{if not $iss.UpdatedAt.IsZero}}{{$iss.UpdatedAt | date "2006-01-02 15:04:05"}}{{end}}</td>
-              <td class="center aligned collapsing">{{if not $iss.FinishedAt.IsZero}}{{$iss.FinishedAt | date "2006-01-02 15:04:05"}}{{end}}</td>
+              <td class="center aligned collapsing">{{if not $iss.UpdatedAt.Time.IsZero}}{{$iss.UpdatedAt.Time | date "2006-01-02  15:04:05"}}{{else}}--{{end}}</td>
+              <td class="center aligned collapsing">{{if not $iss.FinishedAt.IsZero}}{{$iss.FinishedAt.Time | date "2006-01-02  15:04:05"}}{{else}}--{{end}}</td>
               <td class="center aligned collapsing"> 
                 --
               </td>

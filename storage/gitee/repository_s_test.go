@@ -59,7 +59,7 @@ func TestBulkSaveRepos(t *testing.T) {
 		args    args
 		wantErr bool
 	}{
-		{name: "TestCase barat/all", args: args{found1}, wantErr: false},
+		// {name: "TestCase barat/all", args: args{found1}, wantErr: false},
 		{name: "TestCase openharmony/all", args: args{found2}, wantErr: false},
 	}
 	for _, tt := range tests {

@@ -18,11 +18,13 @@ import (
 	"time"
 )
 
+const COMMITS_SINCE = "2021-01-01"
+
 // 获取 Gitee 仓库信息
 //
 func GetGiteeRepo(owner, repo string) (gitee_model.Repository, error) {
 	var foundRepo = gitee_model.Repository{}
-	token, err := validGiteeToken()
+	token, err := ValidGiteeToken()
 	if err != nil {
 		return foundRepo, err
 	}
@@ -45,7 +47,7 @@ func GetGiteeRepo(owner, repo string) (gitee_model.Repository, error) {
 // login 是 Gitee 登录帐号
 func GetGiteeUserInfo(login string) (gitee_model.User, error) {
 	var foundUser gitee_model.User
-	token, err := validGiteeToken()
+	token, err := ValidGiteeToken()
 	if err != nil {
 		return foundUser, err
 	}
@@ -70,7 +72,7 @@ func GetGiteeUserInfo(login string) (gitee_model.User, error) {
 // login 是 Gitee 登录帐号
 func GetGiteeOrgInfo(login string) (gitee_model.User, error) {
 	var foundUser gitee_model.User
-	token, err := validGiteeToken()
+	token, err := ValidGiteeToken()
 	if err != nil {
 		return foundUser, err
 	}
@@ -95,7 +97,7 @@ func GetGiteeOrgInfo(login string) (gitee_model.User, error) {
 //
 func GetGiteeStargazers(owner, repo string) ([]gitee_model.Stargazer, error) {
 	var allStargazers = []gitee_model.Stargazer{}
-	token, err := validGiteeToken()
+	token, err := ValidGiteeToken()
 	if err != nil {
 		return allStargazers, err
 	}
@@ -136,7 +138,7 @@ func GetGiteeStargazers(owner, repo string) ([]gitee_model.Stargazer, error) {
 // 获取仓库的 Collaborators
 func GetGiteeCollaborators(owner, repo string) ([]gitee_model.Collaborator, error) {
 	var foundUser = []gitee_model.Collaborator{}
-	token, err := validGiteeToken()
+	token, err := ValidGiteeToken()
 	if err != nil {
 		return foundUser, err
 	}
@@ -177,7 +179,7 @@ func GetGiteeCollaborators(owner, repo string) ([]gitee_model.Collaborator, erro
 //
 //
 func GetGiteePullRequests(owner, repo string) ([]gitee_model.PullRequest, error) {
-	token, err := validGiteeToken()
+	token, err := ValidGiteeToken()
 	if err != nil {
 		return nil, err
 	}
@@ -220,7 +222,7 @@ func GetGiteePullRequests(owner, repo string) ([]gitee_model.PullRequest, error)
 //
 // 调用此方法之前，务必确保是组织帐号
 func GetGiteeOrgRepos(org string) ([]gitee_model.Repository, error) {
-	token, err := validGiteeToken()
+	token, err := ValidGiteeToken()
 	if err != nil {
 		return nil, err
 	}
@@ -264,7 +266,7 @@ func GetGiteeOrgRepos(org string) ([]gitee_model.Repository, error) {
 //
 // 调用此方法之前，务必确保是个人帐号
 func GetGiteeUserRepos(name string) ([]gitee_model.Repository, error) {
-	token, err := validGiteeToken()
+	token, err := ValidGiteeToken()
 	if err != nil {
 		return nil, err
 	}
@@ -310,7 +312,7 @@ func GetGiteeUserRepos(name string) ([]gitee_model.Repository, error) {
 //
 func GetGiteeIssues(owner, repo string) ([]gitee_model.Issue, error) {
 
-	token, err := validGiteeToken()
+	token, err := ValidGiteeToken()
 	if err != nil {
 		return nil, err
 	}
@@ -353,7 +355,7 @@ func GetGiteeIssues(owner, repo string) ([]gitee_model.Issue, error) {
 //
 // 从制定的 owner 和 repo 中获取全部提交
 func GetGiteeCommits(owner, repo string) ([]gitee_model.Commit, error) {
-	token, err := validGiteeToken()
+	token, err := ValidGiteeToken()
 	if err != nil {
 		return nil, err
 	}
@@ -365,6 +367,7 @@ func GetGiteeCommits(owner, repo string) ([]gitee_model.Commit, error) {
 		code, rs, err := HttpGet(token.AccessToken, url, nil, map[string]string{
 			"page":     strconv.Itoa(page),
 			"per_page": strconv.Itoa(gitee_model.GITEE_API_PAGE_SIZE),
+			"since":    COMMITS_SINCE,
 		})
 
 		if err != nil {
@@ -393,7 +396,7 @@ func GetGiteeCommits(owner, repo string) ([]gitee_model.Commit, error) {
 // 获取一个可用、有效的 token
 //
 // 先从本地配置文件中获取 access_token ，如果该 access_token 已失效，则调用 refreshGiteeToken() 更新
-func validGiteeToken() (OauthToken, error) {
+func ValidGiteeToken() (OauthToken, error) {
 	var token OauthToken
 	token, err := retrieveGiteeToken()
 	if err != nil {
