@@ -11,6 +11,15 @@ RepoStats 致力于解决的痛点问题是：
 
 ![RepoStats 示意图](https://oscimg.oschina.net/oscnet/up-fc53571df1456fa0ab21db5831ca129d05a.jpg)
 
+## 功能说明
+1. 当前版本的 RepoStats 仅支持 Gitee 平台相关数据获取 (后续会持续新增其他平台，国产平台优先考虑)
+1. 管理后台：支持界面化的 Gitee Oauth 配置、Grafana Token 获取配置
+1. 管理后台：支持添加单个仓库、支持批量添加个人帐号及组织帐号下的公开仓库
+1. 管理后台：支持禁用、启用 Gitee 数据抓取(启动抓取除外)
+1. 管理后台：支持 Commit 列表显示及查询、Issue 列表显示及查询、Pull Request 列表显示及查询
+1. Grafana 标签：每个面板均有附带仓库拥有者标签、仓库名称、平台名称等信息支持查询过滤
+
+
 ## 安装及配置说明
 
 ### 1. 使用 Docker 环境
@@ -36,7 +45,14 @@ make compress-linux
 
 ### 3. 使用各系统分发版本
 
+启动参数说明
+
+```shell
+repostats [-c config_file]
+```
+
 通过 Release 下载对应平台的分发版并启动运行，启动之前请确保 `repostats.ini` 配置文件中各项内容的正确性
+
 
 ```ini
 [repostats]
@@ -159,7 +175,7 @@ Commit Committer 次数排行
 
 ## 数据抓取策略
 
-RepoStats 启动之后，默认情况下每隔 `4小时` 抓取一次数据并更新 Grafana 视图面板
+RepoStats 启动之后，默认情况下每隔 `6小时` 抓取一次数据并更新 Grafana 视图面板
 
 
 ## Screenshots
