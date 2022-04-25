@@ -1,0 +1,49 @@
+{{define "login.html" -}}
+{{- template "header.html" .}}
+<div class="ui inverted borderless large menu">
+  <div class="ui container">
+    <a class="ui inverted header item" target="_self" href="https://gitee.com/barat/repostats">          
+        <div class="content">RepoStats</div>           
+    </a>                 
+  </div>
+</div>
+<div id="login-grid" class="ui middle aligned center aligned grid">
+  <div class="column">
+    <h2 class="ui image header">      
+      <div class="content">
+        RepoStats
+      </div>
+    </h2>
+    <form id="login-form" class="ui large form" action="/login" method="POST">
+      <div class="ui stacked segment">
+        <div class="field">
+          <div class="ui left icon input">
+            <i class="user icon"></i>
+            <input type="text" name="account" placeholder="Account">
+          </div>
+        </div>
+        <div class="field">
+          <div class="ui left icon input">
+            <i class="lock icon"></i>
+            <input type="password" name="password" placeholder="Password">
+          </div>
+        </div>
+        <div class="field">
+          <div class="two fields">
+            <div class="field">
+              <div class="ui left icon input">
+                <i class="image icon"></i>
+                <input type="text" name="captcha-text" placeholder="验证码">
+              </div>              
+            </div>
+            <div id="captcha-image" class="field"><a class="ui input" href="javascript:reload_captcha()">点击获取验证码</a></div>
+          </div>  
+        </div>     
+        <div class="ui fluid large black submit button">Login</div>
+      </div>  
+      <div class="ui error message"></div>
+    </form>
+  </div>
+</div>
+{{- template "footer.html" .}}
+{{end -}}

@@ -9,15 +9,54 @@
 package controller
 
 import (
-	"log"
+	"net/http"
+	"repostats/storage"
+	"strings"
 
 	"github.com/gin-gonic/gin"
 )
 
-func AdminAuthHanlder() gin.HandlerFunc {
-	return func(ctx *gin.Context) {
-		//TODO: auth handler
-		log.Println("debug only--->" + ctx.Request.URL.Path)
-		ctx.Next()
-	}
+func AdminAuthHandler() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		user, err := c.Cookie("RepoStatsAdmin")
+		if err != nil {
+			c.Redirect(http.StatusFound, "/login")
+			return
+		}
+
+		cookie, err := c.Cookie("RepoStatsCookie")
+		if err != nil {
+			c.Redirect(http.StatusFound, "/login")
+			return
+		}
+
+		if len(user) <= 0 || len(cookie) <= 0 {
+			c.Redirect(http.StatusFound, "/login")
+			return
+		}
+
+		found, err := storage.FindAdminByAccount(user)
+		if err != nil {
+			c.Redirect(http.StatusFound, "/login")
+			return
+		}
+
+		if found.IsEmpty() {
+			c.Redirect(http.StatusFound, "/login")
+			return
+		}
+
+		cValue, err := AdminCookieValue(found)
+		if err != nil {
+			c.Redirect(http.StatusFound, "/login")
+			return
+		}
+
+		if !strings.EqualFold(cValue, cookie) {
+			c.Redirect(http.StatusFound, "/login")
+			return
+		}
+
+		c.Next()
+	} //end of func
 }

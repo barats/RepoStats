@@ -9,6 +9,7 @@
 package utils
 
 import (
+	"crypto/sha256"
 	"errors"
 	"log"
 	"net/url"
@@ -18,12 +19,13 @@ import (
 	"strings"
 	"time"
 
+	"github.com/btcsuite/btcutil/base58"
 	"github.com/remeh/sizedwaitgroup"
 )
 
 const (
-	MAX_ROUTINE_NUMBER       = 25
-	GITEE_SCHEDULER_INTERVAL = 4 * time.Hour
+	MAX_ROUTINE_NUMBER       = 20
+	GITEE_SCHEDULER_INTERVAL = 6 * time.Hour
 )
 
 var (
@@ -98,4 +100,17 @@ func ParseGiteeRepoUrl(urlStr string) (string, string, error) {
 	} else {
 		return "", "", errors.New("无法解析该链接")
 	}
+}
+
+func Sha256Of(input string) ([]byte, error) {
+	algorithm := sha256.New()
+	_, err := algorithm.Write([]byte(strings.TrimSpace(input)))
+	if err != nil {
+		return nil, err
+	}
+	return algorithm.Sum(nil), nil
+}
+
+func Base58Encode(data []byte) string {
+	return base58.Encode(data)
 }

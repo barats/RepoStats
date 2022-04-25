@@ -88,7 +88,7 @@ func GrabRepo(wg *sizedwaitgroup.SizedWaitGroup, repo gitee_model.Repository,
 	str := strings.Split(repo.FullName, "/")
 	repoInfo, err := network.GetGiteeRepo(str[0], str[1])
 	if err != nil {
-		log.Printf("[RepoStats] failed during GetGiteeRepo %s", repo.HTMLURL)
+		log.Printf("[RepoStats] failed during GetGiteeRepo %s, %s", repo.HTMLURL, err)
 		return err
 	}
 

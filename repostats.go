@@ -71,10 +71,12 @@ func initRouter(router *gin.Engine) {
 
 	router.GET("/login", controller.Login)
 	router.POST("/login", controller.DoLogin)
+	router.GET("/captcha/:imageId", controller.ServeCaptchaImage)
+	router.POST("/captcha", controller.RequestCaptchaImage)
 
-	admin := router.Group("/admin", controller.AdminAuthHanlder())
+	admin := router.Group("/admin", controller.AdminAuthHandler())
 	admin.POST("/logout", controller.DoLogout)
-	admin.GET("/", func(ctx *gin.Context) { ctx.Redirect(http.StatusFound, "/admin/dashboard") })
+	admin.GET("/", func(ctx *gin.Context) { ctx.Redirect(http.StatusFound, "/admin/gitee") })
 	admin.GET("/gitee", controller.GiteePage)
 
 	admin.GET("/repos", controller.ReposPage)
