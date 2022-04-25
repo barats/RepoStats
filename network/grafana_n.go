@@ -14,7 +14,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"html/template"
-	"log"
 	"net/http"
 	gitee_model "repostats/model/gitee"
 	"repostats/utils"
@@ -253,8 +252,6 @@ func CreateGiteeHomeDashboard(token GrafanaToken, folder GrafanaFolder, datasour
 	if err := tmpl.Execute(&tp, data); err != nil {
 		return err
 	}
-
-	log.Println(tp.String())
 
 	code, rs, err := HttpPost(token.Key, fmt.Sprintf("http://%s:%s/api/dashboards/db", token.Host, token.Port), nil, tp.String())
 	if err != nil {

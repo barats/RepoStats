@@ -57,7 +57,7 @@ func main() {
 	initRouter(router)
 
 	log.Println(fmt.Sprintf("[RepoStats v%s build:%s] starts at http://localhost:%d", utils.Version, utils.Build, utils.RepoStatsConfig.AdminPort))
-	router.Run(fmt.Sprintf("localhost:%d", utils.RepoStatsConfig.AdminPort))
+	router.Run(fmt.Sprintf(":%d", utils.RepoStatsConfig.AdminPort))
 }
 
 func initRouter(router *gin.Engine) {
