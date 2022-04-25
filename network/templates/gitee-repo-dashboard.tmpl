@@ -10,6 +10,7 @@
       "from": "now-30d",
       "to": "now"
     },
+    "editable": false,
     "panels": [
       {
         "collapsed": false,
@@ -68,7 +69,6 @@
           },
           "textMode": "auto"
         },
-        "pluginVersion": "8.3.4",
         "targets": [
           {
             "datasource": {
@@ -187,7 +187,6 @@
           },
           "textMode": "auto"
         },
-        "pluginVersion": "8.3.4",
         "targets": [
           {
             "datasource": {
@@ -306,7 +305,6 @@
           "showThresholdLabels": false,
           "showThresholdMarkers": true
         },
-        "pluginVersion": "8.3.4",
         "targets": [
           {
             "datasource": {
@@ -460,7 +458,6 @@
           },
           "textMode": "auto"
         },
-        "pluginVersion": "8.3.4",
         "targets": [
           {
             "datasource": {
@@ -754,7 +751,6 @@
           "showThresholdLabels": false,
           "showThresholdMarkers": true
         },
-        "pluginVersion": "8.3.4",
         "targets": [
           {
             "datasource": {
@@ -1030,7 +1026,6 @@
           },
           "textMode": "auto"
         },
-        "pluginVersion": "8.3.4",
         "targets": [
           {
             "datasource": {
@@ -1630,7 +1625,7 @@
             ],
             "metricColumn": "none",
             "rawQuery": false,
-            "rawSql": "SELECT\n  $__timeGroupAlias(created_at,$__interval),\n  count(id) AS \"Pull Request 数\"\nFROM gitee.pull_requests\nWHERE\n  $__timeFilter(created_at)\nGROUP BY 1\nORDER BY 1",
+            "rawSql": "SELECT\n  $__timeGroupAlias(created_at,$__interval),\n  count(id) AS \"Pull Request 数\"\nFROM gitee.pull_requests\nWHERE\n  $__timeFilter(created_at) and repo_id = {{.repo_id}}\nGROUP BY 1\nORDER BY 1",
             "refId": "A",
             "select": [
               [
@@ -1662,7 +1657,17 @@
                 "name": "$__timeFilter",
                 "params": [],
                 "type": "macro"
-              }
+              },
+              {
+              "datatype": "int8",
+              "name": "",
+              "params": [
+                "repo_id",
+                "=",
+                "{{.repo_id}}"
+              ],
+              "type": "expression"
+            }
             ]
           }
         ],
@@ -1714,7 +1719,6 @@
           "showThresholdLabels": false,
           "showThresholdMarkers": true
         },
-        "pluginVersion": "8.3.4",
         "targets": [
           {
             "datasource": {
@@ -1870,7 +1874,6 @@
           "showThresholdLabels": false,
           "showThresholdMarkers": true
         },
-        "pluginVersion": "8.3.4",
         "targets": [
           {
             "datasource": {
@@ -2043,7 +2046,6 @@
             }
           ]
         },
-        "pluginVersion": "8.3.4",
         "targets": [
           {
             "datasource": {
@@ -2161,7 +2163,6 @@
             }
           ]
         },
-        "pluginVersion": "8.3.4",
         "targets": [
           {
             "datasource": {
@@ -2399,7 +2400,6 @@
             }
           ]
         },
-        "pluginVersion": "8.3.4",
         "targets": [
           {
             "datasource": {
@@ -2711,7 +2711,6 @@
             }
           ]
         },
-        "pluginVersion": "8.3.4",
         "targets": [
           {
             "datasource": {
@@ -2988,7 +2987,6 @@
             }
           ]
         },
-        "pluginVersion": "8.3.4",
         "targets": [
           {
             "datasource": {

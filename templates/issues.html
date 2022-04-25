@@ -29,7 +29,7 @@
           </thead>
           <tbody>             
             {{range $i,$iss := .issues}} 
-            {{if eq "closed" $iss.State}}<tr class="negative">{{else if eq "progressing" $iss.State}}<tr class="positive">{{else}}<tr>{{end}}
+            {{if eq "closed" $iss.State}}<tr class="positive">{{else if eq "rejected" $iss.State}}<tr class="positive">{{else}}<tr>{{end}}
               <td class="center aligned collapsing">{{add $i 1}}</td>
               <td class="center aligned collapsing">Gitee</td>
               <td class="center aligned collapsing">{{$iss.Number}}</td>

@@ -10,9 +10,13 @@ package controller
 
 import (
 	"encoding/json"
+	"log"
 	"net/http"
 	"repostats/network"
+	"repostats/schedule"
+	gitee_storage "repostats/storage/gitee"
 	"repostats/utils"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 )
@@ -64,6 +68,98 @@ func GrafanaToken(ctx *gin.Context) {
 		return
 	}
 
+	err = network.CreateDatasource(token, utils.DatabaseConifg)
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{
+			"message": err.Error(),
+		})
+		return
+	}
+
+	datasource, err := network.RetrieveGrafanaDatasource()
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{
+			"message": err.Error(),
+		})
+		return
+	}
+
+	err = network.CreateGiteeRepostatsFolder(token)
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{
+			"message": err.Error(),
+		})
+		return
+	}
+
+	folder, err := network.RetrieveGiteeRepostatsFolder()
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{
+			"message": err.Error(),
+		})
+		return
+	}
+
+	err = network.CreateGiteeHomeDashboard(token, folder, datasource)
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{
+			"message": err.Error(),
+		})
+		return
+	}
+
 	rs, _ := json.Marshal(token)
 	ctx.JSON(http.StatusOK, rs)
+}
+
+//创建或更新制定仓库的 Grafana 视图面板
+//
+func CreateOrUpdateGrafanaDashboard(ctx *gin.Context) {
+	strRepoID := ctx.Param("repoID")
+
+	repoID, err := strconv.Atoi(strRepoID)
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{
+			"message": "repoID 参数非法",
+		})
+		return
+	}
+
+	if repoID <= 0 {
+		ctx.JSON(http.StatusBadRequest, gin.H{
+			"message": "repoID 参数非法",
+		})
+		return
+	}
+
+	repo, err := gitee_storage.FindRepoByID(repoID)
+	if err != nil {
+		log.Println(err)
+		ctx.JSON(http.StatusBadRequest, gin.H{
+			"message": "内部错误，请联系管理员！ ",
+		})
+		return
+	}
+
+	if repo.IsNilOrEmpty() {
+		ctx.JSON(http.StatusBadRequest, gin.H{
+			"message": "找不到指定的仓库，repoID =" + strRepoID,
+		})
+		return
+	}
+
+	token, _ := network.RetrieveGrafanaToken()
+	datasource, _ := network.RetrieveGrafanaDatasource()
+	folder, _ := network.RetrieveGiteeRepostatsFolder()
+
+	err = schedule.CreateOrUpdateGrafanaRepo(repo, token, folder, datasource)
+	if err != nil {
+		log.Println(err)
+		ctx.JSON(http.StatusBadRequest, gin.H{
+			"message": "内部错误，请联系管理员！ " + err.Error(),
+		})
+		return
+	}
+
+	ctx.JSON(http.StatusOK, nil)
 }

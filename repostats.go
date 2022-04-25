@@ -46,6 +46,8 @@ func main() {
 	_, err := utils.InitConfig(cmdConfig)
 	utils.ExitOnError(err)
 
+	utils.InitWaitingGruop()
+
 	_, err = storage.InitDatabaseService()
 	utils.ExitOnError(err)
 
@@ -79,6 +81,7 @@ func initRouter(router *gin.Engine) {
 	admin.PUT("/repos/:repoID/change_state", controller.RepoStateChange)
 	admin.POST("/repos/:repoID/delete", controller.RepoDelete)
 	admin.POST("/repos", controller.AddRepo)
+	admin.POST("/repos/grab", controller.StartToGrab)
 
 	admin.GET("/commits", controller.CommitsPage)
 	admin.POST("/commits/:sha/delete", controller.CommitDelete)
@@ -88,6 +91,7 @@ func initRouter(router *gin.Engine) {
 
 	admin.GET("/grafana", controller.GrafanaPage)
 	admin.POST("/grafana/token", controller.GrafanaToken)
+	admin.PUT("/grafana/:repoID/update", controller.CreateOrUpdateGrafanaDashboard)
 
 	admin.GET("/issues", controller.IssuesPage)
 

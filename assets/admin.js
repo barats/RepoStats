@@ -343,3 +343,39 @@ function searchRepos() {
 
   searchForm.submit();
 }
+
+function CreateOrUpdateGrafana(repoID) {
+  $.ajax({
+    type:"PUT",
+    url: "/admin/grafana/"+repoID+"/update",
+    data: {
+      "type": "gitee"
+    },
+    success: function() {            
+      successToast('操作成功')
+    },
+    error: function(e) {
+      errorToast($.parseJSON(e.responseText).message)
+    }
+  });
+}
+
+function startToGrabRepos() {
+  $('body').modal('confirm','开始爬取','确认现在就开始爬取数据吗？<br/> 如果需要爬取的仓库较多，过程可能比较久。', function(choice){
+    if(choice) {
+      $.ajax({
+        type:"POST",
+        url: "/admin/repos/grab",
+        data: {
+          "type": "gitee"
+        },
+        success: function() {
+          successToast('操作成功')
+        },
+        error: function(e) {
+          errorToast($.parseJSON(e.responseText).message)
+        }
+      });
+    }//end of if
+  });
+}

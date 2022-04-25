@@ -28,7 +28,10 @@
               </th>
               <th colspan="8">
                 <p>新增、删除或禁止爬取仓库数据，不会删除 Gitee 数据，但会影响 RepoStats 统计结果</p>
-                <p><button onclick="showAddRepoModal()" class="ui mini positive button">添加仓库</button></p>                
+                <p>
+                  <button onclick="showAddRepoModal()" class="ui mini positive button">添加仓库</button>
+                  <button onclick="startToGrabRepos()" class="ui mini red button">开始爬取</button>
+                </p>                  
               </th>
             </tr>
             <tr>       
@@ -69,7 +72,9 @@
                 <a href="javascript:disableCrawl('{{$r.ID}}','{{$r.HumanName}}')">禁止爬取</a>
                 {{else}}
                 <a href="javascript:enableCrawl('{{$r.ID}}','{{$r.HumanName}}')">开启爬取</a>
-                {{end}} | <a href="javascript:deleteRepo('{{$r.ID}}','{{$r.HumanName}}')">删除</a></td>
+                {{end}}
+                | <a href="javascript:CreateOrUpdateGrafana('{{$r.ID}}')">更新 Grafana 面板</a> 
+                | <a href="javascript:deleteRepo('{{$r.ID}}','{{$r.HumanName}}')">删除</a></td>
             </tr>
             {{end}}  
           </tbody>

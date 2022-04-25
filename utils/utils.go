@@ -16,12 +16,25 @@ import (
 	"path/filepath"
 	"reflect"
 	"strings"
+	"time"
+
+	"github.com/remeh/sizedwaitgroup"
+)
+
+const (
+	MAX_ROUTINE_NUMBER       = 25
+	GITEE_SCHEDULER_INTERVAL = 4 * time.Hour
 )
 
 var (
-	Version = "1.0"
-	Build   = "2204111911"
+	Version      = "1.0"
+	Build        = "2204111911"
+	WaitingGroup = sizedwaitgroup.SizedWaitGroup{}
 )
+
+func InitWaitingGruop() {
+	WaitingGroup = sizedwaitgroup.New(MAX_ROUTINE_NUMBER)
+}
 
 func ExitOnError(err error) {
 	if err != nil {

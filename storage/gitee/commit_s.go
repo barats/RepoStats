@@ -13,6 +13,8 @@ import (
 	"repostats/storage"
 )
 
+const max_array_size = 60000
+
 var commitQueryPrefix = `SELECT c.author_name AS "author.name",c.author_email AS "author.email", 
 c.author_name AS "commit.author.name", c.author_email AS "commit.author.email", c.author_date AS "commit.author.date",
 c.committer_name AS "committer.name",c.committer_email AS "committer.email", 
@@ -27,6 +29,13 @@ func BulkSaveCommits(commits []gitee_model.Commit) error {
 	ON CONFLICT (repo_id,sha) DO UPDATE SET repo_id=EXCLUDED.repo_id,html_url=EXCLUDED.html_url,
 	author_name=EXCLUDED.author_name,author_email=EXCLUDED.author_email,author_date=EXCLUDED.author_date,committer_name=EXCLUDED.committer_name,
 	committer_email=EXCLUDED.committer_email,committer_date=EXCLUDED.committer_date,detail_message=EXCLUDED.detail_message,tree=EXCLUDED.tree`
+	if len(commits) > max_array_size {
+		nc := splitCommitsArray(commits)
+		for i := 0; i < len(nc); i++ {
+			storage.DbNamedExec(query, nc[i])
+		}
+		return nil
+	}
 	return storage.DbNamedExec(query, commits)
 }
 
@@ -102,4 +111,19 @@ func FindCommitsByRepoID(repoID int) ([]gitee_model.Commit, error) {
 func DeleteCommitBySha(sha string) error {
 	query := `DELETE FROM gitee.commits WHERE sha = $1`
 	return storage.DbExec(query, sha)
+}
+
+func splitCommitsArray(slice []gitee_model.Commit) [][]gitee_model.Commit {
+	var chunks [][]gitee_model.Commit
+	for i := 0; i < len(slice); i += max_array_size {
+		end := i + max_array_size
+
+		if end > len(slice) {
+			end = len(slice)
+		}
+
+		chunks = append(chunks, slice[i:end])
+	}
+
+	return chunks
 }

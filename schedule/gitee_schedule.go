@@ -6,24 +6,20 @@ import (
 	gitee_model "repostats/model/gitee"
 	"repostats/network"
 	gitee_storage "repostats/storage/gitee"
+	"repostats/utils"
 	"strings"
 	"time"
 
 	"github.com/remeh/sizedwaitgroup"
 )
 
-const (
-	GITEE_SCHEDULER_INTERVAL = 4 * time.Hour
-	MAX_ROUTINE_NUMBER       = 20
-)
-
 // 启动 Gitee 定时器
 //
 func StartGiteeSchedule() error {
-	ticker := time.NewTicker(GITEE_SCHEDULER_INTERVAL)
+	ticker := time.NewTicker(utils.GITEE_SCHEDULER_INTERVAL)
 	for range ticker.C {
 		log.Println("[RepoStats] Gitee Schedule Start.")
-		if err := StarGiteeJobs(); err != nil {
+		if err := StarGiteeJobs(true); err != nil {
 			log.Printf("[RepoStats] error while doing schedule jobs. %s", err)
 		}
 		log.Println("[RepoStats] Gitee Schedule Finish.")
@@ -33,7 +29,7 @@ func StartGiteeSchedule() error {
 
 // 启动 Gitee 任务
 //
-func StarGiteeJobs() error {
+func StarGiteeJobs(wait bool) error {
 
 	//检查 Grafana Token, Datasource
 	grafanaToken, err := network.RetrieveGrafanaToken()
@@ -64,7 +60,7 @@ func StarGiteeJobs() error {
 	}
 
 	//抓取 Gitee 信息并存储到数据库
-	wg := sizedwaitgroup.New(MAX_ROUTINE_NUMBER)
+	wg := utils.WaitingGroup
 	for _, repo := range repos {
 		if !repo.EnableCrawl {
 			continue
@@ -72,13 +68,21 @@ func StarGiteeJobs() error {
 		wg.Add()
 		go GrabRepo(&wg, repo, giteeToken, grafanaToken, datasource, folder)
 	}
-	wg.Wait()
+
+	if wait {
+		wg.Wait()
+	}
 	return nil
 }
 
+//抓取 Gitee 仓库信息并更新 Grafana 面板
+//
 func GrabRepo(wg *sizedwaitgroup.SizedWaitGroup, repo gitee_model.Repository,
 	giteeToken network.OauthToken, grafanaToken network.GrafanaToken, grafanaDatasource network.GrafanaDatasource, grafanaFolder network.GrafanaFolder) error {
-	defer wg.Done()
+
+	if wg != nil {
+		defer wg.Done()
+	}
 
 	log.Printf("[RepoStats] start to grab [%s]", repo.HTMLURL)
 	str := strings.Split(repo.FullName, "/")
@@ -96,79 +100,85 @@ func GrabRepo(wg *sizedwaitgroup.SizedWaitGroup, repo gitee_model.Repository,
 	}
 
 	var users []gitee_model.User
-
 	commits, err := network.GetGiteeCommits(str[0], str[1])
 	if err != nil {
 		log.Printf("[RepoStats] failed during GetGiteeCommits %s,%s", repo.HTMLURL, err)
-		// return err
 	}
 	for i := 0; i < len(commits); i++ {
 		commits[i].RepoID = repo.ID
 		users = append(users, commits[i].Author)
 		users = append(users, commits[i].Committer)
 	}
-	err = gitee_storage.BulkSaveCommits(commits)
-	if err != nil {
-		log.Printf("[RepoStats] failed during BulkSaveCommits %s, %s", repo.HTMLURL, err)
-		// return err
+	if len(commits) > 0 {
+		err = gitee_storage.BulkSaveCommits(commits)
+		if err != nil {
+			log.Printf("[RepoStats] failed during BulkSaveCommits %s, %s", repo.HTMLURL, err)
+		}
 	}
 
 	issues, err := network.GetGiteeIssues(str[0], str[1])
 	if err != nil {
 		log.Printf("[RepoStats] failed during GetGiteeIssues %s, %s", repo.HTMLURL, err)
-		// return err
 	}
 	for i := 0; i < len(issues); i++ {
 		issues[i].RepoID = int64(repo.ID)
 		users = append(users, issues[i].User)
 	}
-	err = gitee_storage.BulkSaveIssues(issues)
-	if err != nil {
-		log.Printf("[RepoStats] failed during BulkSaveIssues %s, %s", repo.HTMLURL, err)
-		// return err
+	if len(issues) > 0 {
+		err = gitee_storage.BulkSaveIssues(issues)
+		if err != nil {
+			log.Printf("[RepoStats] failed during BulkSaveIssues %s, %s", repo.HTMLURL, err)
+		}
 	}
 
 	prs, err := network.GetGiteePullRequests(str[0], str[1])
 	if err != nil {
 		log.Printf("[RepoStats] failed during GetGiteePullRequests %s, %s", repo.HTMLURL, err)
-		// return err
 	}
 	for i := 0; i < len(prs); i++ {
 		prs[i].RepoID = int64(repo.ID)
 		users = append(users, prs[i].User)
 	}
 	usersNeededToSave := gitee_model.RemoveDuplicateUsers(users)
-	err = gitee_storage.BulkSaveUsers(usersNeededToSave)
-	if err != nil {
-		log.Printf("[RepoStats] failed during BulkSaveUsers %s, %s", repo.HTMLURL, err)
-		// return err
+	if len(usersNeededToSave) > 0 {
+		err = gitee_storage.BulkSaveUsers(usersNeededToSave)
+		if err != nil {
+			log.Printf("[RepoStats] failed during BulkSaveUsers %s, %s", repo.HTMLURL, err)
+		}
 	}
-	err = gitee_storage.BulkSavePullRequests(prs)
-	if err != nil {
-		log.Printf("[RepoStats] failed during BulkSavePullRequests %s,%s", repo.HTMLURL, err)
-		// return err
+	if len(prs) > 0 {
+		err = gitee_storage.BulkSavePullRequests(prs)
+		if err != nil {
+			log.Printf("[RepoStats] failed during BulkSavePullRequests %s,%s", repo.HTMLURL, err)
+		}
 	}
 
 	stargazers, err := network.GetGiteeStargazers(str[0], str[1])
 	if err != nil {
 		log.Printf("[RepoStats] failed during GetGiteeStargazers %s, %s", repo.HTMLURL, err)
-		// return err
 	}
 	for i := 0; i < len(stargazers); i++ {
 		stargazers[i].RepoID = int64(repo.ID)
 	}
-	err = gitee_storage.BulkSaveStargazers(stargazers)
-	if err != nil {
-		log.Printf("[RepoStats] failed during BulkSaveStargazers %s, %s", repo.HTMLURL, err)
-		// return err
+	if len(stargazers) > 0 {
+		err = gitee_storage.BulkSaveStargazers(stargazers)
+		if err != nil {
+			log.Printf("[RepoStats] failed during BulkSaveStargazers %s, %s", repo.HTMLURL, err)
+		}
 	}
 
-	err = network.CreateGiteeRepoDashboard(grafanaToken, grafanaFolder, grafanaDatasource, repo)
+	err = CreateOrUpdateGrafanaRepo(repo, grafanaToken, grafanaFolder, grafanaDatasource)
 	if err != nil {
 		log.Printf("[RepoStats] failed during CreateGiteeRepoDashboard %s, %s", repo.HTMLURL, err)
-		// return err
 	}
 
 	log.Printf("[RepoStats] finish to grab [%s]", repo.HTMLURL)
 	return nil
+}
+
+//创建或更新 Grafana 的项目视图面板
+//
+func CreateOrUpdateGrafanaRepo(repo gitee_model.Repository, token network.GrafanaToken,
+	folder network.GrafanaFolder, datasource network.GrafanaDatasource) error {
+	return network.CreateGiteeRepoDashboard(token, folder, datasource, repo)
 }

@@ -13,6 +13,7 @@ import (
 	"net/http"
 	gitee_model "repostats/model/gitee"
 	"repostats/network"
+	"repostats/schedule"
 	"repostats/storage"
 	gitee_storage "repostats/storage/gitee"
 	"repostats/utils"
@@ -288,5 +289,10 @@ func RepoDelete(ctx *gin.Context) {
 		return
 	}
 
+	ctx.JSON(http.StatusOK, nil)
+}
+
+func StartToGrab(ctx *gin.Context) {
+	go schedule.StarGiteeJobs(false)
 	ctx.JSON(http.StatusOK, nil)
 }
