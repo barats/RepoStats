@@ -30,7 +30,7 @@ const (
 
 var (
 	Version      = "1.0"
-	Build        = "2204111911"
+	Build        = "2204252110"
 	WaitingGroup = sizedwaitgroup.SizedWaitGroup{}
 )
 
