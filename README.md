@@ -189,6 +189,10 @@ RepoStats 启动之后，默认情况下每隔 `6小时` 抓取一次数据并�
 1. Admin 后端管理界面 
 ![Admin 后端管理界面](https://oscimg.oschina.net/oscnet/up-101d6ca0c57de648c7fa20ec7b3f863fcd6.jpg)
 
+## Contributor License Agreement
+
+在 **第一次提交 Pull Request 时** ，请您在 Pull Request 内容中明确写明「本人自愿接受并签署 [《RepoStats Contributor License Agreement》](CLA.md)」，并在 Pull Request 信息中附带该协议链接信息。
+
 ## Inspired By 
 1. [CNCF DevStats](https://devstats.cncf.io/)
 1. [cncf/devstatscode](https://github.com/cncf/devstatscode)
