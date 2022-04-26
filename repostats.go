@@ -18,11 +18,13 @@ import (
 	"net/http"
 	"os"
 	"repostats/controller"
+	"repostats/schedule"
 	"repostats/storage"
 	"repostats/utils"
 
 	"github.com/Masterminds/sprig"
 	"github.com/gin-gonic/gin"
+	"golang.org/x/sync/errgroup"
 )
 
 var (
@@ -30,6 +32,8 @@ var (
 	FS embed.FS
 
 	cmdConfig string
+
+	group errgroup.Group
 )
 
 func main() {
@@ -56,8 +60,18 @@ func main() {
 
 	initRouter(router)
 
-	log.Println(fmt.Sprintf("[RepoStats v%s build:%s] starts at http://localhost:%d", utils.Version, utils.Build, utils.RepoStatsConfig.AdminPort))
-	router.Run(fmt.Sprintf(":%d", utils.RepoStatsConfig.AdminPort))
+	group.Go(func() error {
+		log.Println(fmt.Sprintf("[RepoStats v%s build:%s] starts at http://localhost:%d", utils.Version, utils.Build, utils.RepoStatsConfig.AdminPort))
+		return router.Run(fmt.Sprintf(":%d", utils.RepoStatsConfig.AdminPort))
+	})
+
+	group.Go(func() error {
+		log.Println(fmt.Sprintf("[RepoStats v%s build:%s] schedule started. ", utils.Version, utils.Build))
+		return schedule.StartGiteeSchedule()
+	})
+
+	err = group.Wait()
+	utils.ExitOnError(err)
 }
 
 func initRouter(router *gin.Engine) {
@@ -97,7 +111,7 @@ func initRouter(router *gin.Engine) {
 
 	admin.GET("/issues", controller.IssuesPage)
 
-	public := router.Group("/admin") //Same url path with /admin WITHOUT auth handler
+	public := router.Group("/admin") //Same url path WITHOUT admin auth handler
 	public.POST("/gitee/token", controller.GiteeTokenRetrieve)
 
 	router.SetHTMLTemplate(tmpl)

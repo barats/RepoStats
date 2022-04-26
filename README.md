@@ -24,7 +24,7 @@ RepoStats 致力于解决的痛点问题是：
 
 ### 1. 使用 Docker 环境
 启动 Docker 镜像前请注意查看 `docker/vars.env` 文件，并根据自己的实际情况调整需要的参数(eg：本地端口号等)。启动 `docker/start_docker_repostats.sh` 可以通过 Docker 环境将所有依赖安装并启动。该命令将：
-1. 拉取 [repostats-app](https://hub.docker.com/r/baratsemet/repostats-app) 镜像(本地构建可查看 `docker/repostats.Dockerfile` 文件) 
+1. 拉取 [repostats](https://hub.docker.com/r/baratsemet/repostats) 镜像(本地构建可查看 `docker/repostats.Dockerfile` 文件) 
 1. 通过 `docker/pull_build.yml` 其他描述内容构建 `Grafana` 和 `PostgreSQL` 镜像及服务，并对其运行状态做判断，再启动其他必要服务 (本地构建镜像请查阅 `local_build.yml`) 
 1. 构建名为 `network_repostats` 的虚拟网络供上述服务使用
 1. 开启本机 `9103` 端口应对 RepoStats 工具、启动 `13000` 端口应对 Grafana 工具，启动 `15432` 应对 PostgreSQL 数据库
@@ -142,10 +142,10 @@ Pull Request 总数、Pull Request 人数、打开状态的 Pull Request 总数�
 - Issue 趋势图  
 指定时间范围内，新增 Issue 数的变化趋势
 
-- Pull Request 趋势图
+- Pull Request 趋势图  
 指定时间范围内，新增 Pull Request 数的变化趋势
 
-- Pull Request 合并时间分析
+- Pull Request 合并时间分析  
 指定时间范围内，`可合并的` Pull Request 从 `created_at` 到 `merged_at` 的最小耗时、平均耗时、最大耗时，单位：小时
 
 - Issue 处理时间分析  
@@ -161,10 +161,10 @@ Pull Request 总数、Pull Request 人数、打开状态的 Pull Request 总数�
 - Commit 列表  
 Commit 明细列表
 
-- Issue 列表
+- Issue 列表  
 Issue 明细列表
 
-- Pull Request 列表  
+- Pull Request 列表    
 Pull Request 明细列表
 
 - Commit Author 排行  

@@ -2,11 +2,12 @@ version: '3'
 services:
 
   repostats:
-    image: baratsemet/repostats-app:${REPOSTATS_VERSION}
+    image: baratsemet/repostats:${REPOSTATS_VERSION}
     container_name: ${REPOSTATS_CONTAINER_NAME} 
     hostname: repostats
     volumes:
       - ../docker/docker_repostats.ini:/app/repostats.ini 
+      - ../docker/container-data/repostats:/root/.repostats         
     ports:    
       - ${REPOSTATS_LOCAL_PORT}:9103
     networks:
@@ -34,8 +35,8 @@ services:
     healthcheck:
       test: [ "CMD", "psql", "-U","${PG_SUPER_USER}","-d","repostats" ]
       timeout: 10s
-      interval: 3s
-      retries: 10      
+      interval: 5s
+      retries: 20      
     networks:
       - network_repostats
 

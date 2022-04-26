@@ -17,6 +17,7 @@ require (
 	github.com/lib/pq v1.10.5
 	github.com/mitchellh/copystructure v1.2.0 // indirect
 	github.com/remeh/sizedwaitgroup v1.0.0
+	golang.org/x/sync v0.0.0-20210220032951-036812b2e83c
 	gopkg.in/guregu/null.v4 v4.0.0
 	gopkg.in/ini.v1 v1.66.4
 )
