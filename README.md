@@ -3,16 +3,16 @@
 开源代码仓库的 star、fork、commit、pull request、issue 等相关数据，是分析和了解代码仓库的客观依据，这些数据在一定程度上反应了开源项目的受欢迎程度、活跃度、影响力等。
 
 RepoStats 致力于解决的痛点问题是：  
-1. 开源代码仓库的数据抓取、存储、分析及统计 (当前版本仅支持 Gitee 平台)
+1. 开源代码仓库的数据抓取、存储、分析及统计
 1. 开源代码仓库的相关数据可视化展示
-1. 做到全平台打通，并支持分隔、组合展示
+1. 做到全网、全平台平台打通，并支持分隔、组合展示
 
 主要原理示意图如下：
 
 ![RepoStats 示意图](https://oscimg.oschina.net/oscnet/up-fc53571df1456fa0ab21db5831ca129d05a.jpg)
 
 ## 功能说明
-1. 当前版本的 RepoStats 仅支持 Gitee 平台相关数据获取 (后续会持续新增其他平台，国产平台优先考虑)
+1. 支持平台：当前版本的 RepoStats 仅支持 Gitee 平台相关数据获取   
 1. 管理后台：支持界面化的 Gitee Oauth 配置、Grafana Token 获取配置
 1. 管理后台：支持添加单个仓库、支持批量添加个人帐号及组织帐号下的公开仓库
 1. 管理后台：支持禁用、启用 Gitee 数据抓取(启动抓取除外)
@@ -45,14 +45,7 @@ make compress-linux
 
 ### 3. 使用各系统分发版本
 
-启动参数说明
-
-```shell
-repostats [-c config_file]
-```
-
 通过 Release 下载对应平台的分发版并启动运行，启动之前请确保 `repostats.ini` 配置文件中各项内容的正确性
-
 
 ```ini
 [repostats]
@@ -76,13 +69,21 @@ user = admin
 password = admin
 ```
 
-**数据库说明：**
+数据库说明
+
 1. 请在 `PostgreSQL` 数据库中创建名称 `repostats` 的数据库
-1. 请分别 **顺序执行** `sql/db.sql`、`sql/gitee.sql`、`sql/roles.sql` 创建必要的表及视图等 
+2. 请分别 **顺序执行** `sql/db.sql`、`sql/gitee.sql`、`sql/roles.sql` 创建必要的表及视图等
+
+启动参数说明
+
+```shell
+repostats [-c config_file]
+```
 
 ## 使用前置条件
 
 RepoStats 启动成功之后，请使用帐号密码登录 Admin 管理后台。管理后台默认的账户名密码信息如下：  
+
 ```
 repostats
 -2aDzm=0(ln_9^1
@@ -173,20 +174,15 @@ Commit Auhtor 次数排行
 - Commit Committer 排行 
 Commit Committer 次数排行
 
-## 数据抓取策略
+## 截图分享
 
-RepoStats 启动之后，默认情况下每隔 `6小时` 抓取一次数据并更新 Grafana 视图面板
-
-
-## Screenshots
-
-1. 所有仓库总视图
+所有仓库总视图
 ![所有仓库总视图](https://oscimg.oschina.net/oscnet/up-1d0f56655abc5a92846614e9862620e55b4.jpg)
 
-1. 指定某个仓库的视图  
+指定某个仓库的视图  
 ![指定某个仓库的视图](https://oscimg.oschina.net/oscnet/up-6fac497c4428602cc7a44a363c7b674165a.jpg)
 
-1. Admin 后端管理界面 
+Admin 后端管理界面 
 ![Admin 后端管理界面](https://oscimg.oschina.net/oscnet/up-101d6ca0c57de648c7fa20ec7b3f863fcd6.jpg)
 
 ## Contributor License Agreement
