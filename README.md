@@ -7,6 +7,8 @@ RepoStats 致力于解决的痛点问题是：
 1. 开源代码仓库的相关数据可视化展示
 1. 做到全网、全平台平台打通，并支持分隔、组合展示
 
+[![OSCHINA](https://www.oschina.net/comment/badge/project/64186)](https://www.oschina.net/comment/project/64186)
+
 主要原理示意图如下：
 
 ![RepoStats 示意图](https://oscimg.oschina.net/oscnet/up-fc53571df1456fa0ab21db5831ca129d05a.jpg)
