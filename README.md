@@ -7,11 +7,6 @@ RepoStats 致力于解决的痛点问题是：
 1. 开源代码仓库的相关数据可视化展示
 1. 做到全网、全平台平台打通，并支持分隔、组合展示
 
-[![OSCHINA](https://www.oschina.net/comment/badge/project/64186)](https://www.oschina.net/comment/project/64186)
-
-主要原理示意图如下：
-
-![RepoStats 示意图](https://oscimg.oschina.net/oscnet/up-fc53571df1456fa0ab21db5831ca129d05a.jpg)
 
 ## 功能说明
 1. 支持平台：当前版本的 RepoStats 仅支持 Gitee 平台相关数据获取   
@@ -21,6 +16,7 @@ RepoStats 致力于解决的痛点问题是：
 1. 管理后台：支持 Commit 列表显示及查询、Issue 列表显示及查询、Pull Request 列表显示及查询
 1. Grafana 标签：每个面板均有附带仓库拥有者标签、仓库名称、平台名称等信息支持查询过滤
 
+[![OSCHINA](https://www.oschina.net/comment/badge/project/64186)](https://www.oschina.net/comment/project/64186)
 
 ## 安装及配置说明
 
@@ -96,6 +92,17 @@ repostats
 1. 在 Admin 管理界面中的 `Grafana 配置` 页面中根据提示配置必要的 `Grafana 参数` 从而确保能够与 Grafana 进行通信
 1. 上一步骤中，与 Grafana 通信成功之后，需要在 Grafana 操作页面中对数据源进行一次 `Test & Save` 才能保证数据源正常 (这个问题暂时似乎是没办法处理的，后续会想办法处理)
 1. 在 Admin 管理界面中的 `代码仓库列表` 页面中，根据界面提示添加想要关注的代码仓库
+
+## 截图分享
+
+所有仓库总视图
+![所有仓库总视图](https://oscimg.oschina.net/oscnet/up-1d0f56655abc5a92846614e9862620e55b4.jpg)
+
+指定某个仓库的视图  
+![指定某个仓库的视图](https://oscimg.oschina.net/oscnet/up-6fac497c4428602cc7a44a363c7b674165a.jpg)
+
+Admin 后端管理界面 
+![Admin 后端管理界面](https://oscimg.oschina.net/oscnet/up-101d6ca0c57de648c7fa20ec7b3f863fcd6.jpg)
 
 ## 统计指标说明
 
@@ -176,17 +183,6 @@ Commit Auhtor 次数排行
 - Commit Committer 排行 
 Commit Committer 次数排行
 
-## 截图分享
-
-所有仓库总视图
-![所有仓库总视图](https://oscimg.oschina.net/oscnet/up-1d0f56655abc5a92846614e9862620e55b4.jpg)
-
-指定某个仓库的视图  
-![指定某个仓库的视图](https://oscimg.oschina.net/oscnet/up-6fac497c4428602cc7a44a363c7b674165a.jpg)
-
-Admin 后端管理界面 
-![Admin 后端管理界面](https://oscimg.oschina.net/oscnet/up-101d6ca0c57de648c7fa20ec7b3f863fcd6.jpg)
-
 ## Contributor License Agreement
 
 在 **第一次提交 Pull Request 时** ，请您在 Pull Request 内容中明确写明「本人自愿接受并签署 [《RepoStats Contributor License Agreement》](CLA.md)」，并在 Pull Request 信息中附带该协议链接信息。
@@ -206,3 +202,8 @@ Admin 后端管理界面
 1. [Masterminds/sprig](https://github.com/Masterminds/sprig)
 1. [jmoiron/sqlx](https://github.com/jmoiron/sqlx)
 1. [go-ini/ini](https://github.com/go-ini/ini)
+
+## RepoStats News
+1. 2022-05-11 [RepoStats v1.1 正式发布，开源代码仓库数据可视化工具](https://www.oschina.net/news/195251/repostats-1-1-released)
+1. 2022-04-27 [安装并使用 RepoStats 代码仓库数据可视化工具](https://mp.weixin.qq.com/s/St3OItSpgcxl_wuuIGnuIA)
+1. 2022-04-26 [RepoStats v1.0 发布，开源代码仓库统计数据可视化](https://www.oschina.net/news/193100/repostats-1-0-released)
