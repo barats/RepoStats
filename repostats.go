@@ -83,6 +83,7 @@ func initRouter(router *gin.Engine) {
 	tmpl, err := template.New("").Funcs(sprig.FuncMap()).ParseFS(FS, "templates/*.html")
 	utils.ExitOnError(err)
 
+	router.GET("/", func(ctx *gin.Context) { ctx.Redirect(http.StatusFound, "/admin/gitee") })
 	router.GET("/login", controller.Login)
 	router.POST("/login", controller.DoLogin)
 	router.GET("/captcha/:imageId", controller.ServeCaptchaImage)

@@ -24,13 +24,13 @@ import (
 )
 
 const (
-	MAX_ROUTINE_NUMBER       = 20
-	GITEE_SCHEDULER_INTERVAL = 6 * time.Hour
+	MAX_ROUTINE_NUMBER       = 30
+	GITEE_SCHEDULER_INTERVAL = 3 * time.Hour
 )
 
 var (
-	Version      = "1.0"
-	Build        = "2204252028"
+	Version      = "1.1"
+	Build        = "2205111123"
 	WaitingGroup = sizedwaitgroup.SizedWaitGroup{}
 )
 
