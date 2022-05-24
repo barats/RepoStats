@@ -16,7 +16,14 @@ RepoStats 致力于解决的痛点问题是：
 1. 管理后台：支持 Commit 列表显示及查询、Issue 列表显示及查询、Pull Request 列表显示及查询
 1. Grafana 标签：每个面板均有附带仓库拥有者标签、仓库名称、平台名称等信息支持查询过滤
 
-[![OSCHINA](https://www.oschina.net/comment/badge/project/64186)](https://www.oschina.net/comment/project/64186)
+<p style="text-align: center">
+<a target="_blank" href="https://github.com/barats/RepoStats/stargazers"><img src="https://img.shields.io/github/stars/barats/RepoStats"/></a>
+<a target="_blank" href="https://github.com/barats/RepoStats/network/members"><img src="https://img.shields.io/github/forks/barats/RepoStats"/></a>
+<a target="_blank" href="https://github.com/barats/RepoStats/issues"><img src="https://img.shields.io/github/issues/barats/RepoStats"/></a>  
+<a target="_blank" href='https://gitee.com/barat/repostats/stargazers'><img src='https://gitee.com/barat/repostats/badge/star.svg?theme=dark' /></a>
+<a target="_blank" href='https://gitee.com/barat/repostats/members'><img src='https://gitee.com/barat/repostats/badge/fork.svg?theme=dark' /></a>
+<a target="_blank" href='https://www.oschina.net/comment/project/64186'><img src='https://www.oschina.net/comment/badge/project/64186'/></a> 
+</p>
 
 ## 安装及配置说明
 
