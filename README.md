@@ -10,19 +10,20 @@ RepoStats 致力于解决的痛点问题是：
 
 ## 功能说明
 1. 支持平台：当前版本的 RepoStats 仅支持 Gitee 平台相关数据获取   
-1. 管理后台：支持界面化的 Gitee Oauth 配置、Grafana Token 获取配置
-1. 管理后台：支持添加单个仓库、支持批量添加个人帐号及组织帐号下的公开仓库
-1. 管理后台：支持禁用、启用 Gitee 数据抓取(启动抓取除外)
-1. 管理后台：支持 Commit 列表显示及查询、Issue 列表显示及查询、Pull Request 列表显示及查询
-1. Grafana 标签：每个面板均有附带仓库拥有者标签、仓库名称、平台名称等信息支持查询过滤
+2. 管理后台：支持界面化的 Gitee Oauth 配置、Grafana Token 获取配置
+3. 管理后台：支持添加单个仓库、支持批量添加个人帐号及组织帐号下的公开仓库
+4. 管理后台：支持禁用、启用 Gitee 数据抓取(启动抓取除外)
+5. 管理后台：支持 Commit 列表显示及查询、Issue 列表显示及查询、Pull Request 列表显示及查询
+6. Grafana 标签：每个面板均有附带仓库拥有者标签、仓库名称、平台名称等信息支持查询过滤
 
-<p style="text-align: center">
+<p align="center">
+<a target="_blank">https://www.repostats.cn</a><br/>
 <a target="_blank" href="https://github.com/barats/RepoStats/stargazers"><img src="https://img.shields.io/github/stars/barats/RepoStats"/></a>
 <a target="_blank" href="https://github.com/barats/RepoStats/network/members"><img src="https://img.shields.io/github/forks/barats/RepoStats"/></a>
 <a target="_blank" href="https://github.com/barats/RepoStats/issues"><img src="https://img.shields.io/github/issues/barats/RepoStats"/></a>  
 <a target="_blank" href='https://gitee.com/barat/repostats/stargazers'><img src='https://gitee.com/barat/repostats/badge/star.svg?theme=dark' /></a>
 <a target="_blank" href='https://gitee.com/barat/repostats/members'><img src='https://gitee.com/barat/repostats/badge/fork.svg?theme=dark' /></a>
-<a target="_blank" href='https://www.oschina.net/comment/project/64186'><img src='https://www.oschina.net/comment/badge/project/64186'/></a> 
+<a target="_blank" href='https://www.oschina.net/comment/project/64186'><img src='https://www.oschina.net/comment/badge/project/64186'/></a>
 </p>
 
 ## 安装及配置说明
