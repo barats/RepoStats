@@ -17,7 +17,7 @@ RepoStats 致力于解决的痛点问题是：
 6. Grafana 标签：每个面板均有附带仓库拥有者标签、仓库名称、平台名称等信息支持查询过滤
 
 <p align="center">
-<a target="_blank">https://www.repostats.cn</a><br/>
+<a target="_blank" href="https://www.repostats.cn">https://www.repostats.cn</a> <br/>
 <a target="_blank" href="https://github.com/barats/RepoStats/stargazers"><img src="https://img.shields.io/github/stars/barats/RepoStats"/></a>
 <a target="_blank" href="https://github.com/barats/RepoStats/network/members"><img src="https://img.shields.io/github/forks/barats/RepoStats"/></a>
 <a target="_blank" href="https://github.com/barats/RepoStats/issues"><img src="https://img.shields.io/github/issues/barats/RepoStats"/></a>  
