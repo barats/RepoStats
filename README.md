@@ -212,6 +212,7 @@ Commit Committer 次数排行
 1. [go-ini/ini](https://github.com/go-ini/ini)
 
 ## RepoStats News
+1. 2022-06-01 [RepoStats 代码仓库数据可视化工具，路线图发布](https://www.oschina.net/news/198120/repostats-roadmap)
 1. 2022-05-11 [RepoStats v1.1 正式发布，开源代码仓库数据可视化工具](https://www.oschina.net/news/195251/repostats-1-1-released)
 1. 2022-04-27 [安装并使用 RepoStats 代码仓库数据可视化工具](https://mp.weixin.qq.com/s/St3OItSpgcxl_wuuIGnuIA)
 1. 2022-04-26 [RepoStats v1.0 发布，开源代码仓库统计数据可视化](https://www.oschina.net/news/193100/repostats-1-0-released)
