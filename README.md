@@ -26,6 +26,10 @@ RepoStats 致力于解决的痛点问题是：
 <a target="_blank" href='https://www.oschina.net/comment/project/64186'><img src='https://www.oschina.net/comment/badge/project/64186'/></a>
 </p>
 
+## 路线图
+
+![roadmap](https://oscimg.oschina.net/oscnet/up-07e32603022526b8d73616c4c562feb931e.png)
+
 ## 安装及配置说明
 
 ### 1. 使用 Docker 环境
