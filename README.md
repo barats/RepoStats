@@ -24,6 +24,7 @@ RepoStats 致力于解决的痛点问题是：
 <a target="_blank" href='https://gitee.com/barat/repostats/stargazers'><img src='https://gitee.com/barat/repostats/badge/star.svg?theme=dark' /></a>
 <a target="_blank" href='https://gitee.com/barat/repostats/members'><img src='https://gitee.com/barat/repostats/badge/fork.svg?theme=dark' /></a>
 <a target="_blank" href='https://www.oschina.net/comment/project/64186'><img src='https://www.oschina.net/comment/badge/project/64186'/></a>
+<a target="_blank" href="https://hub.docker.com/r/baratsemet/repostats"><img src="https://img.shields.io/docker/pulls/baratsemet/repostats" alt="Docker Pulls"/></a>
 </p>
 
 ## 路线图
